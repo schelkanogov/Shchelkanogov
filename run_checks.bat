@@ -1,3 +1,4 @@
+
 @echo off
 TITLE URL Validator - Personal Lending Page
 echo Starting URL validation for index.html...
