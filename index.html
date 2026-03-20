@@ -6,6 +6,23 @@
     <title>Павел Щелканогов - Cybersecurity & AI Systems Expert</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* Scroll Reveal */
+        .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
+        .reveal.visible { opacity: 1; transform: none; }
+
+        /* Gradient text animation */
+        @keyframes gradient-shift { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+        .gradient-text { background: linear-gradient(135deg, #00ff9f, #00d4ff, #00ff9f); background-size: 200% 200%; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: gradient-shift 4s ease infinite; }
+
+        /* Consultation form */
+        .consultation-form { max-width: 640px; margin: 0 auto; }
+        .form-group { margin-bottom: 24px; }
+        .form-label { display: block; font-size: 14px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; }
+        .form-input { width: 100%; padding: 14px 18px; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 10px; color: var(--text-primary); font-size: 15px; font-family: 'Inter', sans-serif; transition: border-color 0.3s, box-shadow 0.3s; }
+        .form-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0, 255, 159, 0.15); }
+        .form-input::placeholder { color: var(--text-muted); }
+        select.form-input { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238f9bb3' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; }
+        textarea.form-input { resize: vertical; min-height: 100px; }
         :root {
             --bg-primary: #0a0e27;
             --bg-secondary: #111633;
@@ -38,6 +55,25 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
+        }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            z-index: 1001;
+            padding: 10px;
+            border: none;
+            background: transparent;
+        }
+        .menu-toggle span {
+            display: block;
+            width: 25px;
+            height: 2px;
+            background: var(--accent);
+            transition: all 0.3s ease;
         }
         
         /* Header */
@@ -267,6 +303,74 @@
             transform: translateY(-2px);
             box-shadow: var(--accent-glow);
         }
+
+        .secondary-btn {
+            background: transparent !important;
+            border: 1px solid rgba(0, 255, 159, 0.4) !important;
+            color: var(--accent) !important;
+        }
+
+        .secondary-btn:hover {
+            background: rgba(0, 255, 159, 0.05) !important;
+        }
+
+        .hero-layout {
+            display: flex;
+            align-items: center;
+            gap: 60px;
+            padding-top: 0;
+            padding-bottom: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-content {
+            flex: 1;
+            text-align: left;
+            padding: 100px 0;
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .hero-avatar {
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .avatar-ring {
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(0, 255, 159, 0.15), rgba(0, 212, 255, 0.15));
+            border: 2px solid rgba(0, 255, 159, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 0 60px rgba(0, 255, 159, 0.2), 0 0 120px rgba(0, 212, 255, 0.1);
+        }
+
+        .avatar-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            position: relative;
+            z-index: 2;
+            border: 2px solid rgba(0, 255, 159, 0.3);
+        }
+
+        .avatar-badge {
+            text-align: center;
+        }
         
         /* Sections */
         .section {
@@ -284,7 +388,7 @@
         /* Expertise */
         .expertise-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 30px;
             margin-bottom: 60px;
         }
@@ -577,33 +681,75 @@
         }
         
         /* Responsive */
-        @media (max-width: 768px) {
-            .header-container {
-                flex-direction: column;
-                gap: 20px;
+        @media (max-width: 1024px) {
+            .hero-layout { 
+                flex-direction: column !important; 
+                text-align: center !important; 
+                gap: 20px !important; 
+                padding-top: 40px !important;
             }
+            .hero-content { 
+                order: 2 !important;
+                padding: 20px 0 !important;
+                width: 100% !important;
+            }
+            .hero-avatar { 
+                order: 1 !important;
+                width: 100% !important;
+            }
+            .hero-tags { justify-content: center; }
+            .hero-btns { justify-content: center; }
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle { display: flex; }
             
             .nav {
-                flex-wrap: wrap;
-                justify-content: center;
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 80%;
+                height: 100vh;
+                background: var(--bg-secondary);
+                flex-direction: column;
+                padding: 100px 40px;
+                transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+                z-index: 1000;
+                gap: 20px;
+                border-left: 1px solid var(--border-light);
             }
             
+            .nav.active { right: 0; }
+            
+            .nav-link { font-size: 18px; width: 100%; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+
             .cluster-nav {
-                margin-left: 0;
-                margin-top: 10px;
+                margin: 20px 0;
+                width: 100%;
+                overflow-x: auto;
+                padding: 15px 0;
+                justify-content: flex-start;
+                gap: 10px;
+                mask-image: linear-gradient(to right, black 85%, transparent 100%);
             }
             
-            .hero h1 {
-                font-size: 32px;
-            }
+            .lang-switcher { margin-top: 20px; width: fit-content; }
             
-            .section {
-                padding: 60px 0;
-            }
+            .hero h1 { font-size: 36px; }
             
-            .section-title {
-                font-size: 28px;
+            .section { padding: 60px 0; }
+            .section-title { font-size: 28px; }
+
+            .avatar-ring {
+                width: 180px !important;
+                height: 180px !important;
             }
+
+            /* Hamburger animation */
+            .menu-toggle.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+            .menu-toggle.active span:nth-child(2) { opacity: 0; }
+            .menu-toggle.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
         }
         
         @media (max-width: 480px) {
@@ -612,6 +758,9 @@
             .publications-grid {
                 grid-template-columns: 1fr;
             }
+            .hero h1 { font-size: 28px; }
+            .hero-desc { font-size: 16px; }
+            .cta-btn { width: 100%; text-align: center; }
         }
     </style>
 </head>
@@ -623,6 +772,12 @@
                 <div class="logo-icon">ПЩ</div>
                 <span>Павел Щелканогов</span>
             </a>
+            
+            <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
             
             <div class="nav">
                 <a href="#expertise" class="nav-link active" data-section="expertise">
@@ -637,17 +792,22 @@
                     <span class="lang-content active" data-lang="ru">Публикации</span>
                     <span class="lang-content" data-lang="en">Publications</span>
                 </a>
+                <a href="#consultation" class="nav-link" data-section="consultation">
+                    <span class="lang-content active" data-lang="ru">Консультация</span>
+                    <span class="lang-content" data-lang="en">Consultation</span>
+                </a>
                 <a href="#contacts" class="nav-link" data-section="contacts">
                     <span class="lang-content active" data-lang="ru">Контакты</span>
                     <span class="lang-content" data-lang="en">Contacts</span>
                 </a>
                 
                 <div class="cluster-nav">
-                    <a href="vulndetector-core-full.html" class="cluster-nav-item cluster-nav-core">VulnDetector</a>
-                    <a href="kii-control-full.html" class="cluster-nav-item cluster-nav-kii">KII.control</a>
-                    <a href="dns53-full.html" class="cluster-nav-item cluster-nav-dns">DNS53</a>
-                    <a href="site443-full.html" class="cluster-nav-item cluster-nav-site">Site443</a>
-                    <a href="relay25-full.html" class="cluster-nav-item cluster-nav-relay">Relay25</a>
+                    <a href="https://vulndetector.ru" target="_blank" rel="noopener" class="cluster-nav-item cluster-nav-core">VulnDetector</a>
+                    <a href="https://kiicontrol.ru" target="_blank" rel="noopener" class="cluster-nav-item cluster-nav-kii">KII.control</a>
+                    <a href="https://dns53.ru" target="_blank" rel="noopener" class="cluster-nav-item cluster-nav-dns">DNS53</a>
+                    <a href="https://site443.ru" target="_blank" rel="noopener" class="cluster-nav-item cluster-nav-site">Site443</a>
+                    <a href="http://relay25.ru/" target="_blank" rel="noopener" class="cluster-nav-item cluster-nav-relay">Relay25</a>
+                    <a href="https://hftcloud.com" target="_blank" rel="noopener" class="cluster-nav-item" style="color:#00d4ff;border-color:rgba(0,212,255,0.4);background:rgba(0,212,255,0.08);">HFTCloud</a>
                 </div>
                 
                 <div class="lang-switcher">
@@ -658,36 +818,53 @@
         </div>
     </header>
     
-    <!-- Hero Section -->
     <section class="hero">
         <div class="hero-bg"></div>
-        <div class="container hero-content">
-            <h1 class="lang-content active" data-lang="ru">Павел Щелканогов</h1>
-            <h1 class="lang-content" data-lang="en">Pavel Shchelkanogov</h1>
-            
-            <p class="hero-subtitle lang-content active" data-lang="ru">Cybersecurity & AI Systems Architecture</p>
-            <p class="hero-subtitle lang-content" data-lang="en">Cybersecurity & AI Systems Architecture</p>
-            
-            <p class="hero-desc lang-content active" data-lang="ru">
-                Сооснователь VulnDetector Cluster. Эксперт в кибербезопасности, AI-системах и нейрошлюзах на основе LLM. 
-                10+ лет в телекоммуникациях и IT-разработке.
-            </p>
-            <p class="hero-desc lang-content" data-lang="en">
-                Co-founder of VulnDetector Cluster. Expert in cybersecurity, AI systems and LLM-based neural gateways. 
-                10+ years in telecommunications and IT development.
-            </p>
-            
-            <div class="hero-tags">
-                <div class="hero-tag">10+ лет в ИБ</div>
-                <div class="hero-tag">Системное мышление</div>
-                <div class="hero-tag">Neural Gateway Architect</div>
-                <div class="hero-tag">LLM Integration</div>
+        <div class="container hero-layout">
+            <div class="hero-content">
+                <h1 class="lang-content active gradient-text" data-lang="ru">Павел Щелканогов</h1>
+                <h1 class="lang-content gradient-text" data-lang="en">Pavel Shchelkanogov</h1>
+                
+                <p class="hero-subtitle lang-content active" data-lang="ru">Cybersecurity &amp; AI Systems Architecture</p>
+                <p class="hero-subtitle lang-content" data-lang="en">Cybersecurity &amp; AI Systems Architecture</p>
+                
+                <p class="hero-desc lang-content active" data-lang="ru">
+                    Сооснователь VulnDetector Cluster. Эксперт в кибербезопасности, AI-системах и нейрошлюзах на основе LLM. 
+                    10+ лет в телекоммуникациях и IT-разработке.
+                </p>
+                <p class="hero-desc lang-content" data-lang="en">
+                    Co-founder of VulnDetector Cluster. Expert in cybersecurity, AI systems and LLM-based neural gateways. 
+                    10+ years in telecommunications and IT development.
+                </p>
+                
+                <div class="hero-tags">
+                    <div class="hero-tag">10+ лет в ИБ</div>
+                    <div class="hero-tag">Системное мышление</div>
+                    <div class="hero-tag">Neural Gateway Architect</div>
+                    <div class="hero-tag">LLM Integration</div>
+                </div>
+                
+                <div class="hero-btns">
+                    <a href="#consultation" class="cta-btn">
+                        <span class="lang-content active" data-lang="ru">Записаться на консультацию</span>
+                        <span class="lang-content" data-lang="en">Book a Consultation</span>
+                    </a>
+                    <a href="#contacts" class="cta-btn secondary-btn">
+                        <span class="lang-content active" data-lang="ru">Написать</span>
+                        <span class="lang-content" data-lang="en">Contact</span>
+                    </a>
+                </div>
             </div>
-            
-            <a href="#contacts" class="cta-btn">
-                <span class="lang-content active" data-lang="ru">Связаться со мной</span>
-                <span class="lang-content" data-lang="en">Contact Me</span>
-            </a>
+            <!-- Author Avatar -->
+            <div class="hero-avatar">
+                <div class="avatar-ring">
+                    <img src="../avatar.jpg" alt="Павел Щелканогов" class="avatar-img">
+                </div>
+                <div class="avatar-badge">
+                    <div style="font-size:13px;color:var(--accent);font-weight:600;letter-spacing:1px;">CYBERSECURITY EXPERT</div>
+                    <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">Co-founder · VulnDetector Cluster</div>
+                </div>
+            </div>
         </div>
     </section>
     
@@ -820,7 +997,7 @@
                         Distributed fault-tolerant DNS hosting for .RF, .RU and .SU domains. 
                         99.99% SLA, DDoS protection.
                     </p>
-                    <a href="dns53-full.html" class="project-link">Подробнее</a>
+                    <a href="https://dns53.ru" target="_blank" rel="noopener" class="project-link">dns53.ru</a>
                 </div>
                 
                 <div class="project-card">
@@ -834,7 +1011,7 @@
                         Distributed fault-tolerant hosting for static websites. 
                         Global CDN, WAF, SSL/TLS.
                     </p>
-                    <a href="site443-full.html" class="project-link">Подробнее</a>
+                    <a href="https://site443.ru" target="_blank" rel="noopener" class="project-link">site443.ru</a>
                 </div>
                 
                 <div class="project-card">
@@ -848,7 +1025,21 @@
                         Distributed fault-tolerant SMTP mail delivery. 
                         99.95% delivery rate, SPF/DKIM/DMARC.
                     </p>
-                    <a href="relay25-full.html" class="project-link">Подробнее</a>
+                    <a href="http://relay25.ru/" target="_blank" rel="noopener" class="project-link">relay25.ru</a>
+                </div>
+
+                <div class="project-card" style="border-color: rgba(0, 212, 255, 0.3);">
+                    <div class="project-icon">⚡</div>
+                    <h3 class="project-title">HFTCloud</h3>
+                    <p class="project-desc lang-content active" data-lang="ru">
+                        Премиальная self-serve платформа аренды ультра-низколатентной инфраструктуры 
+                        для крипто-трейдинга. Compute, Bridges, Wallet Billing.
+                    </p>
+                    <p class="project-desc lang-content" data-lang="en">
+                        Premium self-serve platform for renting ultra-low-latency crypto trading 
+                        infrastructure. Compute, Bridges, Wallet Billing.
+                    </p>
+                    <a href="https://hftcloud.com" target="_blank" class="project-link" style="border-color: rgba(0, 212, 255, 0.3); color: #00d4ff; background: rgba(0, 212, 255, 0.1);">hftcloud.com</a>
                 </div>
             </div>
         </div>
@@ -1007,6 +1198,101 @@
         </div>
     </section>
     
+    <!-- Consultation Booking Section -->
+    <section class="section" id="consultation">
+        <div class="container">
+            <h2 class="section-title lang-content active" data-lang="ru">Записаться на консультацию</h2>
+            <h2 class="section-title lang-content" data-lang="en">Book a Consultation</h2>
+
+            <p class="section-subtitle" style="text-align:center;margin-bottom:50px;color:var(--text-secondary);max-width:600px;margin-left:auto;margin-right:auto;">
+                <span class="lang-content active" data-lang="ru">Ответьте на несколько вопросов, чтобы я мог подготовиться к нашей встрече</span>
+                <span class="lang-content" data-lang="en">Answer a few questions so I can prepare for our meeting</span>
+            </p>
+
+            <form action="https://formsubmit.co/Schelkanogov@internet.ru" method="POST" class="consultation-form" id="consultationForm">
+                <input type="hidden" name="_subject" value="Новая заявка на консультацию — schelkanogov.github.io">
+                <input type="hidden" name="_captcha" value="false">
+                <input type="hidden" name="_template" value="table">
+                <input type="hidden" name="_next" value="https://schelkanogov.github.io/">
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <span class="lang-content active" data-lang="ru">Ваше имя</span>
+                        <span class="lang-content" data-lang="en">Your name</span>
+                    </label>
+                    <input type="text" name="name" class="form-input" required placeholder="Иван Петров">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <span class="lang-content active" data-lang="ru">Email для связи</span>
+                        <span class="lang-content" data-lang="en">Contact email</span>
+                    </label>
+                    <input type="email" name="email" class="form-input" required placeholder="email@company.com">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <span class="lang-content active" data-lang="ru">Отрасль / сфера деятельности</span>
+                        <span class="lang-content" data-lang="en">Industry / field</span>
+                    </label>
+                    <select name="industry" class="form-input" required>
+                        <option value="" disabled selected>—</option>
+                        <option value="КИИ / Critical Infrastructure">КИИ / Critical Infrastructure</option>
+                        <option value="Финтех / Fintech">Финтех / Fintech</option>
+                        <option value="Телеком / Telecom">Телеком / Telecom</option>
+                        <option value="E-commerce">E-commerce</option>
+                        <option value="Госсектор / Government">Госсектор / Government</option>
+                        <option value="Другое / Other">Другое / Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <span class="lang-content active" data-lang="ru">Основная задача</span>
+                        <span class="lang-content" data-lang="en">Main challenge</span>
+                    </label>
+                    <select name="challenge" class="form-input" required>
+                        <option value="" disabled selected>—</option>
+                        <option value="Аудит безопасности">Аудит безопасности / Security Audit</option>
+                        <option value="Внедрение AI/LLM">Внедрение AI/LLM систем</option>
+                        <option value="Соответствие ФСТЭК">Соответствие ФСТЭК / Compliance</option>
+                        <option value="Мониторинг уязвимостей">Мониторинг уязвимостей / Vuln Monitoring</option>
+                        <option value="Архитектура систем">Архитектура систем / Systems Design</option>
+                        <option value="Другое">Другое / Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <span class="lang-content active" data-lang="ru">Масштаб инфраструктуры</span>
+                        <span class="lang-content" data-lang="en">Infrastructure scale</span>
+                    </label>
+                    <select name="scale" class="form-input">
+                        <option value="" disabled selected>—</option>
+                        <option value="1-10 серверов">1–10 серверов</option>
+                        <option value="10-100 серверов">10–100 серверов</option>
+                        <option value="100+ серверов">100+ серверов</option>
+                        <option value="Облако / Cloud">Облако / Cloud</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <span class="lang-content active" data-lang="ru">Дополнительные детали</span>
+                        <span class="lang-content" data-lang="en">Additional details</span>
+                    </label>
+                    <textarea name="details" class="form-input" rows="4" placeholder="Опишите вашу ситуацию..."></textarea>
+                </div>
+
+                <button type="submit" class="cta-btn" style="width:100%;text-align:center;cursor:pointer;font-size:16px;padding:16px 32px;">
+                    <span class="lang-content active" data-lang="ru">Отправить заявку</span>
+                    <span class="lang-content" data-lang="en">Submit Request</span>
+                </button>
+            </form>
+        </div>
+    </section>
+
     <!-- Contacts Section -->
     <section class="section" id="contacts" style="background: var(--bg-secondary);">
         <div class="container">
@@ -1096,11 +1382,11 @@
                         <span class="lang-content" data-lang="en">Cluster Products</span>
                     </h4>
                     <ul class="footer-links">
-                        <li><a href="vulndetector-core-full.html">VulnDetector Core</a></li>
-                        <li><a href="kii-control-full.html">KII.control</a></li>
-                        <li><a href="dns53-full.html">DNS53</a></li>
-                        <li><a href="site443-full.html">Site443</a></li>
-                        <li><a href="relay25-full.html">Relay25</a></li>
+                        <li><a href="https://vulndetector.ru" target="_blank" rel="noopener">VulnDetector Core</a></li>
+                        <li><a href="https://kiicontrol.ru" target="_blank" rel="noopener">KII.control</a></li>
+                        <li><a href="https://dns53.ru" target="_blank" rel="noopener">DNS53</a></li>
+                        <li><a href="https://site443.ru" target="_blank" rel="noopener">Site443</a></li>
+                        <li><a href="http://relay25.ru/" target="_blank" rel="noopener">Relay25</a></li>
                     </ul>
                 </div>
                 
@@ -1123,9 +1409,10 @@
                         <span class="lang-content" data-lang="en">Other Projects</span>
                     </h4>
                     <ul class="footer-links">
-                        <li><a href="https://mountstor.com" target="_blank">MountStor</a></li>
-                        <li><a href="https://kiicontrol.ru" target="_blank">KII.control</a></li>
-                        <li><a href="https://vulndetector.ru" target="_blank">VulnDetector</a></li>
+                        <li><a href="https://hftcloud.com" target="_blank" rel="noopener">HFTCloud</a></li>
+                        <li><a href="https://mountstor.com" target="_blank" rel="noopener">MountStor</a></li>
+                        <li><a href="https://kiicontrol.ru" target="_blank" rel="noopener">KII.control</a></li>
+                        <li><a href="https://vulndetector.ru" target="_blank" rel="noopener">VulnDetector</a></li>
                     </ul>
                 </div>
             </div>
@@ -1148,6 +1435,71 @@
     </footer>
     
     <script>
+        // ---- Particle background (Hero) ----
+        (function() {
+            const canvas = document.createElement('canvas');
+            canvas.id = 'hero-particles';
+            canvas.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:0.4;';
+            const hero = document.querySelector('.hero');
+            if (hero) { hero.style.position='relative'; hero.insertBefore(canvas, hero.firstChild); }
+            function resize() { canvas.width=canvas.offsetWidth; canvas.height=canvas.offsetHeight; }
+            resize(); window.addEventListener('resize', resize);
+            const ctx = canvas.getContext('2d');
+            const dots = Array.from({length: 60}, () => ({
+                x: Math.random()*canvas.width, y: Math.random()*canvas.height,
+                vx: (Math.random()-0.5)*0.4, vy: (Math.random()-0.5)*0.4,
+                r: Math.random()*2+1
+            }));
+            function draw() {
+                ctx.clearRect(0,0,canvas.width,canvas.height);
+                dots.forEach(d => {
+                    d.x+=d.vx; d.y+=d.vy;
+                    if(d.x<0||d.x>canvas.width) d.vx*=-1;
+                    if(d.y<0||d.y>canvas.height) d.vy*=-1;
+                    ctx.beginPath(); ctx.arc(d.x,d.y,d.r,0,Math.PI*2);
+                    ctx.fillStyle='rgba(0,255,159,0.6)'; ctx.fill();
+                });
+                dots.forEach((a,i) => dots.slice(i+1).forEach(b => {
+                    const dist = Math.hypot(a.x-b.x, a.y-b.y);
+                    if(dist<120) { ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);
+                    ctx.strokeStyle=`rgba(0,212,255,${1-dist/120})`; ctx.lineWidth=0.5; ctx.stroke(); }
+                }));
+                requestAnimationFrame(draw);
+            }
+            draw();
+        })();
+
+        // ---- Scroll Reveal ----
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add('visible'); revealObserver.unobserve(e.target); } });
+        }, { threshold: 0.15 });
+        document.querySelectorAll('.expertise-card, .project-card, .publication-card, .contact-card, .form-group').forEach(el => {
+            el.classList.add('reveal');
+            revealObserver.observe(el);
+        });
+
+        // Mobile Menu Toggle Logic
+        const menuToggle = document.getElementById('menuToggle');
+        const nav = document.querySelector('.nav');
+        const navLinks = document.querySelectorAll('.nav-link, .cluster-nav-item');
+
+        if (menuToggle && nav) {
+            menuToggle.addEventListener('click', () => {
+                menuToggle.classList.toggle('active');
+                nav.classList.toggle('active');
+                document.body.style.overflow = nav.classList.contains('active') ? 'hidden' : '';
+            });
+
+            // Close menu when clicking a link
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    menuToggle.classList.remove('active');
+                    nav.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            });
+        }
+
         // Language Switching
         document.addEventListener('DOMContentLoaded', function() {
             const langButtons = document.querySelectorAll('.lang-btn');
