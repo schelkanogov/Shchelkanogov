@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>КиберКвиз — Диагностическая карта ИБ | VulnDetector</title>
+    <meta name="description" content="Пройдите экспресс-диагностику кибербезопасности за 3 минуты. Узнайте уровень защиты вашей инфраструктуры.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap');
+        
+        :root {
+            --accent: #22c55e;
+            --accent-dim: rgba(34,197,94,0.15);
+            --bg: #0a0e1a;
+            --card: rgba(15,23,42,0.7);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: var(--bg); color: #e2e8f0;
+            margin: 0; min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated grid background */
+        .grid-bg {
+            position: fixed; inset: 0; z-index: 0;
+            background-image: 
+                linear-gradient(rgba(34,197,94,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(34,197,94,0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            animation: gridShift 20s linear infinite;
+        }
+        @keyframes gridShift {
+            0% { background-position: 0 0; }
+            100% { background-position: 60px 60px; }
+        }
+
+        .vignette {
+            position: fixed; inset: 0; z-index: 1; pointer-events: none;
+            background: radial-gradient(ellipse at center, transparent 30%, rgba(10,14,26,0.95) 100%);
+        }
+
+        .content { position: relative; z-index: 2; }
+
+        /* Progress bar */
+        .progress-track {
+            height: 3px; background: rgba(255,255,255,0.05);
+            border-radius: 10px; overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%; background: linear-gradient(90deg, #22c55e, #10b981);
+            border-radius: 10px; transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
+            box-shadow: 0 0 12px rgba(34,197,94,0.4);
+        }
+
+        /* Quiz card */
+        .quiz-card {
+            background: var(--card);
+            border: 1px solid rgba(255,255,255,0.08);
+            backdrop-filter: blur(25px);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+            transition: all 0.6s cubic-bezier(0.4,0,0.2,1);
+        }
+
+        /* Answer option */
+        .answer-opt {
+            display: flex; align-items: center; gap: 14px;
+            padding: 16px 20px; border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.06);
+            background: rgba(255,255,255,0.02);
+            cursor: pointer; transition: all 0.3s ease;
+            user-select: none;
+        }
+        .answer-opt:hover {
+            background: rgba(34,197,94,0.06);
+            border-color: rgba(34,197,94,0.3);
+            transform: translateX(4px);
+        }
+        .answer-opt.selected {
+            background: rgba(34,197,94,0.12);
+            border-color: rgba(34,197,94,0.5);
+            box-shadow: 0 0 20px rgba(34,197,94,0.08);
+        }
+        .answer-opt.selected .opt-dot {
+            background: #22c55e;
+            border-color: #22c55e;
+            box-shadow: 0 0 10px rgba(34,197,94,0.5);
+        }
+        .opt-dot {
+            width: 20px; height: 20px; border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.15);
+            flex-shrink: 0; transition: all 0.3s ease;
+        }
+        .opt-dot::after {
+            content: '✓'; color: white; font-size: 11px;
+            display: flex; align-items: center; justify-content: center;
+            height: 100%; opacity: 0; transition: opacity 0.2s;
+        }
+        .answer-opt.selected .opt-dot::after { opacity: 1; }
+
+        /* Risk meter */
+        .risk-ring { position: relative; width: 160px; height: 160px; }
+        .risk-ring svg { transform: rotate(-90deg); }
+        .risk-ring-text {
+            position: absolute; inset: 0;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+        }
+
+        /* Slide animation */
+        .slide-enter { animation: slideIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both; }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(30px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .slide-exit { animation: slideOut 0.3s ease both; }
+        @keyframes slideOut {
+            to { opacity: 0; transform: translateY(-20px) scale(0.95); }
+        }
+
+        /* Pulse */
+        .pulse-green { animation: pulseG 2s ease-in-out infinite; }
+        @keyframes pulseG {
+            0%,100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.3); }
+            50% { box-shadow: 0 0 0 12px rgba(34,197,94,0); }
+        }
+
+        .mono { font-family: 'JetBrains Mono', monospace; }
+
+        /* Floating particles */
+        .particle {
+            position: fixed; width: 4px; height: 4px;
+            background: rgba(34,197,94,0.3); border-radius: 50%;
+            pointer-events: none; z-index: 0;
+            animation: floatUp linear infinite;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-20vh) scale(1); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+<div class="vignette"></div>
+
+<!-- Floating particles -->
+<div id="particles"></div>
+
+<div class="content min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="flex items-center justify-between px-8 py-5">
+        <div class="flex items-center gap-3">
+            <img src="images/logo-vulndetector.png" alt="VulnDetector" class="h-8 opacity-80">
+            <div class="text-[0.6rem] text-gray-500 uppercase tracking-[0.15em] font-bold border-l border-white/10 pl-3 ml-1">КиберКвиз</div>
+        </div>
+        <div class="flex items-center gap-4">
+            <div class="text-[0.65rem] text-gray-500 mono" id="timer">⏱ 00:00</div>
+            <a href="https://vulndetector.ru" target="_blank" class="text-xs text-gray-500 hover:text-green-400 transition-colors">vulndetector.ru →</a>
+        </div>
+    </header>
+
+    <!-- Progress -->
+    <div class="px-8">
+        <div class="flex items-center justify-between mb-2">
+            <span class="text-[0.6rem] text-gray-500 uppercase tracking-widest font-bold">Диагностика</span>
+            <span id="progressLabel" class="text-[0.65rem] text-green-400 mono font-bold">0 / 10</span>
+        </div>
+        <div class="progress-track">
+            <div id="progressFill" class="progress-fill" style="width:0%"></div>
+        </div>
+    </div>
+
+    <!-- Main quiz area -->
+    <div class="flex-1 flex items-center justify-center px-4 py-8">
+        <div id="quizContainer" class="w-full max-w-[600px]">
+            
+            <!-- Intro screen -->
+            <div id="introScreen" class="quiz-card text-center slide-enter">
+                <div class="text-5xl mb-5">🛡️</div>
+                <h1 class="text-2xl font-black mb-3">Экспресс-диагностика<br>кибербезопасности</h1>
+                <p class="text-gray-400 text-sm mb-2 leading-relaxed">
+                    10 вопросов · 3 минуты · Персональная диагностическая карта
+                </p>
+                <div class="flex items-center justify-center gap-3 mb-6">
+                    <span class="px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-[0.65rem] font-bold">Бесплатно</span>
+                    <span class="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[0.65rem] font-bold">Без регистрации</span>
+                </div>
+                <p class="text-gray-500 text-xs mb-8 leading-relaxed max-w-md mx-auto">
+                    Пока VulnDetector готовит технический отчёт по вашей инфраструктуре, пройдите экспресс-квиз. 
+                    Результаты квиза обогатят финальное заключение.
+                </p>
+                <button onclick="startQuiz()" class="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white px-10 py-4 rounded-2xl font-bold text-base transition-all hover:-translate-y-0.5 shadow-lg shadow-green-900/30 pulse-green">
+                    Начать диагностику →
+                </button>
+                <div class="mt-6 text-[0.65rem] text-gray-600">
+                    Ещё не заказали отчёт? <a href="https://vulndetector.ru/#order" target="_blank" class="text-green-500 hover:text-green-400 underline underline-offset-2">Запустить проверку →</a>
+                </div>
+            </div>
+
+            <!-- Question screen (hidden initially) -->
+            <div id="questionScreen" class="quiz-card hidden"></div>
+
+            <!-- Results screen (hidden initially) -->
+            <div id="resultsScreen" class="quiz-card hidden"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ===== QUIZ DATA =====
+const questions = [
+    {
+        icon: '🏢', category: 'Инфраструктура',
+        q: 'Сколько серверов и рабочих станций в вашей организации?',
+        opts: [
+            { text: 'До 10 устройств', score: 1, tag: 'micro' },
+            { text: '10–50 устройств', score: 2, tag: 'small' },
+            { text: '50–500 устройств', score: 3, tag: 'medium' },
+            { text: 'Более 500 устройств', score: 4, tag: 'enterprise' }
+        ]
+    },
+    {
+        icon: '🔐', category: 'Аутентификация',
+        q: 'Используете ли вы многофакторную аутентификацию (MFA)?',
+        opts: [
+            { text: 'Нет, только логин/пароль', score: 0, tag: 'no-mfa' },
+            { text: 'Только для админов', score: 1, tag: 'partial-mfa' },
+            { text: 'Для критичных систем', score: 2, tag: 'critical-mfa' },
+            { text: 'Да, везде (включая VPN)', score: 3, tag: 'full-mfa' }
+        ]
+    },
+    {
+        icon: '🛡️', category: 'Периметр',
+        q: 'Какие средства защиты периметра вы используете?',
+        opts: [
+            { text: 'Обычный роутер/NAT', score: 0, tag: 'no-fw' },
+            { text: 'Базовый файрвол', score: 1, tag: 'basic-fw' },
+            { text: 'NGFW (нового поколения)', score: 2, tag: 'ngfw' },
+            { text: 'NGFW + WAF + IDS/IPS', score: 3, tag: 'full-perimeter' }
+        ]
+    },
+    {
+        icon: '💾', category: 'Резервирование',
+        q: 'Как часто делаются бэкапы критичных данных?',
+        opts: [
+            { text: 'Не делаются / не знаю', score: 0, tag: 'no-backup' },
+            { text: 'Раз в месяц или реже', score: 1, tag: 'rare-backup' },
+            { text: 'Еженедельно', score: 2, tag: 'weekly-backup' },
+            { text: 'Ежедневно + offsite/облако', score: 3, tag: 'full-backup' }
+        ]
+    },
+    {
+        icon: '📋', category: 'Compliance',
+        q: 'Есть ли утверждённая модель угроз (по требованиям ФСТЭК)?',
+        opts: [
+            { text: 'Нет, даже не слышали', score: 0, tag: 'no-model' },
+            { text: 'Знаем что нужна, но нет', score: 1, tag: 'aware-model' },
+            { text: 'Есть, но устарела', score: 2, tag: 'old-model' },
+            { text: 'Актуальная, пересматривается ежегодно', score: 3, tag: 'current-model' }
+        ]
+    },
+    {
+        icon: '👨‍💻', category: 'Команда',
+        q: 'Кто отвечает за информационную безопасность?',
+        opts: [
+            { text: 'Никто / сисадмин по совместительству', score: 0, tag: 'no-team' },
+            { text: 'Один ИБ-специалист', score: 1, tag: 'one-person' },
+            { text: 'Отдел ИБ (2-5 человек)', score: 2, tag: 'small-team' },
+            { text: 'SOC / выделенная ИБ-команда', score: 3, tag: 'soc-team' }
+        ]
+    },
+    {
+        icon: '📡', category: 'Мониторинг',
+        q: 'Есть ли система сбора и анализа логов (SIEM)?',
+        opts: [
+            { text: 'Нет, логи не собираем', score: 0, tag: 'no-siem' },
+            { text: 'Логи есть, но не анализируются', score: 1, tag: 'logs-only' },
+            { text: 'Базовый мониторинг (Zabbix и т.п.)', score: 2, tag: 'basic-mon' },
+            { text: 'SIEM + корреляция событий', score: 3, tag: 'full-siem' }
+        ]
+    },
+    {
+        icon: '🎓', category: 'Осведомлённость',
+        q: 'Проводятся ли тренинги по ИБ для сотрудников?',
+        opts: [
+            { text: 'Никогда', score: 0, tag: 'no-training' },
+            { text: 'Были когда-то давно', score: 1, tag: 'old-training' },
+            { text: 'Раз в год', score: 2, tag: 'annual-training' },
+            { text: 'Регулярно + фишинг-тесты', score: 3, tag: 'full-training' }
+        ]
+    },
+    {
+        icon: '🔄', category: 'Обновления',
+        q: 'Как быстро устанавливаются критические патчи?',
+        opts: [
+            { text: 'Не обновляемся / когда придётся', score: 0, tag: 'no-patch' },
+            { text: 'В течение месяца', score: 1, tag: 'slow-patch' },
+            { text: 'В течение недели', score: 2, tag: 'week-patch' },
+            { text: 'В течение 48 часов', score: 3, tag: 'fast-patch' }
+        ]
+    },
+    {
+        icon: '🚨', category: 'Инцидент-менеджмент',
+        q: 'Есть ли план реагирования на инциденты (IRP)?',
+        opts: [
+            { text: 'Нет плана', score: 0, tag: 'no-irp' },
+            { text: 'Есть на бумаге, не тестировался', score: 1, tag: 'paper-irp' },
+            { text: 'Есть, проводятся учения раз в год', score: 2, tag: 'tested-irp' },
+            { text: 'Автоматизированный IRP + регулярные drill', score: 3, tag: 'auto-irp' }
+        ]
+    }
+];
+
+let currentQ = 0, answers = [], quizStartTime = null, timerInterval = null;
+
+// ===== PARTICLES =====
+function spawnParticles() {
+    const c = document.getElementById('particles');
+    for (let i = 0; i < 15; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.animationDuration = (8 + Math.random() * 12) + 's';
+        p.style.animationDelay = (Math.random() * 10) + 's';
+        p.style.width = p.style.height = (2 + Math.random() * 4) + 'px';
+        c.appendChild(p);
+    }
+}
+spawnParticles();
+
+// ===== TIMER =====
+function startTimer() {
+    quizStartTime = Date.now();
+    timerInterval = setInterval(() => {
+        const s = Math.floor((Date.now() - quizStartTime) / 1000);
+        document.getElementById('timer').textContent = `⏱ ${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+    }, 1000);
+}
+
+// ===== START =====
+function startQuiz() {
+    document.getElementById('introScreen').classList.add('slide-exit');
+    setTimeout(() => {
+        document.getElementById('introScreen').classList.add('hidden');
+        showQuestion(0);
+        startTimer();
+    }, 300);
+}
+
+// ===== SHOW QUESTION =====
+function showQuestion(idx) {
+    currentQ = idx;
+    const q = questions[idx];
+    const screen = document.getElementById('questionScreen');
+    
+    document.getElementById('progressFill').style.width = ((idx / questions.length) * 100) + '%';
+    document.getElementById('progressLabel').textContent = `${idx + 1} / ${questions.length}`;
+
+    screen.innerHTML = `
+        <div class="slide-enter">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="text-3xl">${q.icon}</span>
+                <div>
+                    <div class="text-[0.6rem] text-green-400 uppercase tracking-[0.15em] font-bold">${q.category}</div>
+                    <div class="text-[0.55rem] text-gray-600 mono">Вопрос ${idx+1} из ${questions.length}</div>
+                </div>
+            </div>
+            <h2 class="text-lg font-bold mb-6 leading-relaxed">${q.q}</h2>
+            <div class="space-y-3" id="optsList">
+                ${q.opts.map((o, i) => `
+                    <div class="answer-opt" onclick="selectAnswer(${idx}, ${i})" id="opt-${i}">
+                        <div class="opt-dot"></div>
+                        <span class="text-sm">${o.text}</span>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+    screen.classList.remove('hidden');
+}
+
+// ===== SELECT ANSWER =====
+function selectAnswer(qIdx, optIdx) {
+    const q = questions[qIdx];
+    answers[qIdx] = q.opts[optIdx];
+    
+    document.querySelectorAll('.answer-opt').forEach(el => el.classList.remove('selected'));
+    document.getElementById('opt-' + optIdx).classList.add('selected');
+
+    setTimeout(() => {
+        if (qIdx < questions.length - 1) {
+            const screen = document.getElementById('questionScreen');
+            screen.querySelector('.slide-enter')?.classList.add('slide-exit');
+            setTimeout(() => showQuestion(qIdx + 1), 300);
+        } else {
+            showResults();
+        }
+    }, 500);
+}
+
+// ===== RESULTS =====
+function showResults() {
+    clearInterval(timerInterval);
+    const elapsed = Math.floor((Date.now() - quizStartTime) / 1000);
+    
+    document.getElementById('progressFill').style.width = '100%';
+    document.getElementById('progressLabel').textContent = 'Готово!';
+
+    const totalScore = answers.reduce((s, a) => s + a.score, 0);
+    const maxScore = questions.length * 3;
+    const pct = Math.round((totalScore / maxScore) * 100);
+
+    // Determine risk level
+    let level, levelColor, levelBg, levelIcon, recommendation;
+    if (pct >= 75) {
+        level = 'Высокий уровень защиты'; levelColor = '#22c55e'; levelBg = 'rgba(34,197,94,0.1)';
+        levelIcon = '🟢';
+        recommendation = 'Ваша инфраструктура хорошо защищена. Рекомендуем непрерывный мониторинг для поддержания уровня.';
+    } else if (pct >= 50) {
+        level = 'Средний уровень защиты'; levelColor = '#f59e0b'; levelBg = 'rgba(245,158,11,0.1)';
+        levelIcon = '🟡';
+        recommendation = 'Есть критические пробелы. Необходимо усилить периметр, внедрить MFA и наладить мониторинг.';
+    } else if (pct >= 25) {
+        level = 'Низкий уровень защиты'; levelColor = '#f97316'; levelBg = 'rgba(249,115,22,0.1)';
+        levelIcon = '🟠';
+        recommendation = 'Серьёзный риск инцидентов. Срочно внедрите базовые меры: NGFW, бэкапы, модель угроз.';
+    } else {
+        level = 'Критический риск'; levelColor = '#ef4444'; levelBg = 'rgba(239,68,68,0.1)';
+        levelIcon = '🔴';
+        recommendation = 'Ваша инфраструктура практически не защищена. Каждый день без защиты — это потенциальный инцидент.';
+    }
+
+    // Find weakest areas
+    const weakAreas = answers
+        .map((a, i) => ({ score: a.score, category: questions[i].category, icon: questions[i].icon }))
+        .sort((a, b) => a.score - b.score)
+        .slice(0, 3);
+
+    // Save quiz data for boardroom simulator
+    const quizData = {
+        score: pct,
+        totalScore, maxScore,
+        level, answers,
+        weakAreas,
+        timestamp: new Date().toISOString(),
+        elapsed
+    };
+    localStorage.setItem('vulndetector_quiz', JSON.stringify(quizData));
+
+    const screen = document.getElementById('questionScreen');
+    screen.classList.add('hidden');
+    const rs = document.getElementById('resultsScreen');
+    
+    rs.innerHTML = `
+        <div class="slide-enter text-center">
+            <div class="text-xs text-green-400 font-bold uppercase tracking-[0.15em] mb-5">Диагностика завершена</div>
+            
+            <!-- Risk Ring -->
+            <div class="flex justify-center mb-6">
+                <div class="risk-ring">
+                    <svg viewBox="0 0 160 160" width="160" height="160">
+                        <circle cx="80" cy="80" r="70" stroke="rgba(255,255,255,0.05)" stroke-width="8" fill="none"/>
+                        <circle id="riskRing" cx="80" cy="80" r="70" stroke="${levelColor}" stroke-width="8" fill="none"
+                                stroke-linecap="round" stroke-dasharray="440" stroke-dashoffset="440"
+                                style="transition: stroke-dashoffset 2s cubic-bezier(0.4,0,0.2,1)"/>
+                    </svg>
+                    <div class="risk-ring-text">
+                        <div id="riskPct" class="text-4xl font-black mono" style="color:${levelColor}">0</div>
+                        <div class="text-[0.6rem] text-gray-500 uppercase tracking-widest">из 100</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold mb-4" style="background:${levelBg};color:${levelColor}">
+                ${levelIcon} ${level}
+            </div>
+            <p class="text-gray-400 text-sm mb-6 max-w-md mx-auto">${recommendation}</p>
+
+            <!-- Weak Areas -->
+            <div class="text-left mb-6">
+                <div class="text-[0.6rem] text-gray-500 uppercase tracking-widest font-bold mb-3">⚠️ Слабые места</div>
+                <div class="space-y-2">
+                    ${weakAreas.map(w => `
+                        <div class="flex items-center gap-3 px-4 py-3 rounded-xl bg-red-500/5 border border-red-500/10">
+                            <span>${w.icon}</span>
+                            <span class="text-sm text-gray-300 flex-1">${w.category}</span>
+                            <span class="text-xs mono font-bold" style="color:${w.score === 0 ? '#ef4444' : w.score === 1 ? '#f97316' : '#f59e0b'}">${w.score}/3</span>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+
+            <!-- CTA: Go to Boardroom -->
+            <div class="space-y-3">
+                <a href="index.html?quiz=loaded" 
+                   class="block w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white py-4 rounded-2xl font-bold text-center transition-all hover:-translate-y-0.5 shadow-lg shadow-green-900/30">
+                    🎮 Перейти в КиберПереговорку →
+                </a>
+                <a href="https://vulndetector.ru/#order" target="_blank"
+                   class="block w-full bg-white/5 hover:bg-white/8 border border-white/10 text-gray-300 hover:text-white py-3.5 rounded-2xl font-semibold text-sm text-center transition-all">
+                    📊 Заказать полный технический отчёт
+                </a>
+            </div>
+
+            <div class="mt-5 text-[0.6rem] text-gray-600 leading-relaxed">
+                Время: ${Math.floor(elapsed/60)}м ${elapsed%60}с · Результаты сохранены для симулятора
+            </div>
+        </div>
+    `;
+    rs.classList.remove('hidden');
+
+    // Animate ring
+    setTimeout(() => {
+        const ring = document.getElementById('riskRing');
+        ring.style.strokeDashoffset = 440 * (1 - pct / 100);
+        // Animate number
+        let c = 0;
+        const iv = setInterval(() => {
+            c++;
+            document.getElementById('riskPct').textContent = c;
+            if (c >= pct) clearInterval(iv);
+        }, 20);
+    }, 300);
+}
+</script>
+</body>
+</html>

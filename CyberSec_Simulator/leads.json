@@ -1,0 +1,17 @@
+[
+  {
+    "contact": {
+      "name": "Test User",
+      "email": "test@example.com",
+      "phone": "+7999123456",
+      "company": "TestCorp"
+    },
+    "scenario": "FSTEK check",
+    "kpi": null,
+    "quiz": null,
+    "report": null,
+    "timeline": [],
+    "timestamp": "2026-03-26T09:19:47.411480",
+    "source": "cybersec_boardroom_simulator"
+  }
+]

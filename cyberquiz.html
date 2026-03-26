@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>КиберКвиз для бизнеса · Оцените уровень защищённости</title>
+  <meta name="description" content="8 вопросов — и вы узнаете реальный уровень кибербезопасности вашей компании. Бесплатная экспресс-оценка за 3 минуты.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <!-- EmailJS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <style>
+    :root {
+      --bg: #030810; --surface: rgba(8,16,30,0.92);
+      --border: #1a2a44; --border-hover: #00e5ff;
+      --txt: #e8edf5; --txt2: #8899b3; --txt3: #556688;
+      --accent: #00e5ff; --accent-dim: rgba(0,229,255,0.15);
+      --green: #00E676; --green-dim: rgba(0,230,118,0.12);
+      --warn: #FFC107; --warn-dim: rgba(255,193,7,0.12);
+      --red: #FF1744; --red-dim: rgba(255,23,68,0.12);
+      --mono: 'Space Mono', monospace;
+      --sans: 'Inter', -apple-system, sans-serif;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: var(--sans); background: var(--bg); color: var(--txt);
+      min-height: 100vh; overflow-x: hidden;
+    }
+
+    /* ═══ MATRIX CANVAS ═══ */
+    #matrixBg { position:fixed; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none; }
+
+    .page { position:relative; z-index:1; max-width:820px; margin:0 auto; padding:20px; }
+
+    /* ═══ NAV ═══ */
+    .top-bar {
+      display:flex; justify-content:space-between; align-items:center;
+      padding:14px 20px; background:rgba(0,0,0,0.7); border:1px solid var(--border);
+      margin-bottom:32px; backdrop-filter:blur(12px);
+    }
+    .top-bar a { color:var(--accent); text-decoration:none; font-size:13px; font-weight:600; font-family:var(--mono); }
+    .top-bar a:hover { text-decoration:underline; }
+    .top-bar .brand { font-family:var(--mono); font-size:14px; color:var(--txt2); letter-spacing:1px; }
+
+    /* ═══ HERO ═══ */
+    .hero {
+      text-align:center; padding:40px 20px 48px;
+      background:var(--surface); border:1px solid var(--border);
+      margin-bottom:32px; backdrop-filter:blur(12px);
+    }
+    .hero h1 {
+      font-family:var(--mono); font-size:clamp(1.8rem,4vw,2.8rem);
+      font-weight:900; color:#fff; letter-spacing:2px; margin-bottom:12px;
+    }
+    .hero-accent { color:var(--accent); }
+    .hero p { color:var(--txt2); font-size:16px; max-width:560px; margin:0 auto 24px; line-height:1.7; }
+    .hero-tags { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; }
+    .hero-tag {
+      font-family:var(--mono); font-size:11px; padding:5px 14px;
+      border:1px solid var(--border); color:var(--txt2);
+      letter-spacing:1px; text-transform:uppercase;
+    }
+
+    /* ═══ PROGRESS ═══ */
+    .progress-wrap {
+      background:rgba(0,0,0,0.5); border:1px solid var(--border); padding:16px 20px;
+      margin-bottom:24px; backdrop-filter:blur(8px);
+    }
+    .progress-top { display:flex; justify-content:space-between; margin-bottom:8px; font-family:var(--mono); font-size:12px; color:var(--txt2); }
+    .progress-bar { height:6px; background:#111; border-radius:0; overflow:hidden; }
+    .progress-fill { height:100%; width:0%; background:linear-gradient(90deg,var(--accent),var(--green)); transition:width 0.4s; }
+
+    /* ═══ QUESTION CARD ═══ */
+    .q-card {
+      background:var(--surface); border:1px solid var(--border);
+      padding:28px 24px; margin-bottom:20px;
+      backdrop-filter:blur(8px); transition:border-color 0.3s;
+      display:none;
+    }
+    .q-card.active { display:block; animation:fadeIn 0.4s ease; }
+    .q-card.answered { border-color:var(--green); }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(12px);} to{opacity:1;transform:none;} }
+
+    .q-number { font-family:var(--mono); font-size:12px; color:var(--accent); letter-spacing:2px; margin-bottom:8px; text-transform:uppercase; }
+    .q-category { font-family:var(--mono); font-size:11px; color:var(--txt3); letter-spacing:1px; margin-bottom:16px; text-transform:uppercase; }
+    .q-text { font-size:17px; font-weight:700; color:#fff; line-height:1.5; margin-bottom:20px; }
+
+    .q-options { display:flex; flex-direction:column; gap:10px; }
+    .q-option {
+      display:flex; align-items:flex-start; gap:14px;
+      padding:14px 16px; background:rgba(255,255,255,0.02);
+      border:2px solid var(--border); cursor:pointer; transition:all 0.2s;
+    }
+    .q-option:hover { border-color:var(--accent); background:var(--accent-dim); transform:translateX(4px); }
+    .q-option.selected { border-color:var(--accent); background:var(--accent-dim); }
+    .q-option.selected .opt-letter { background:var(--accent); color:#000; }
+
+    .opt-letter {
+      font-family:var(--mono); font-size:13px; font-weight:700;
+      width:28px; height:28px; display:flex; align-items:center; justify-content:center;
+      border:2px solid var(--accent); color:var(--accent); flex-shrink:0;
+    }
+    .opt-text { font-size:14px; color:var(--txt); line-height:1.5; }
+
+    /* ═══ NAVIGATION ═══ */
+    .nav-btns { display:flex; gap:12px; justify-content:center; margin:24px 0; }
+    .nav-btn {
+      font-family:var(--mono); font-size:14px; font-weight:700;
+      padding:14px 40px; border:2px solid var(--border); background:transparent;
+      color:var(--txt); cursor:pointer; letter-spacing:2px; text-transform:uppercase; transition:0.2s;
+    }
+    .nav-btn:hover { border-color:var(--accent); color:var(--accent); }
+    .nav-btn.primary { border-color:var(--accent); color:var(--accent); }
+    .nav-btn.primary:hover { background:var(--accent); color:#000; }
+    .nav-btn:disabled { opacity:0.3; cursor:not-allowed; }
+
+    /* ═══ RESULT ═══ */
+    .result { display:none; background:var(--surface); border:1px solid var(--border); padding:36px 28px; margin-bottom:24px; backdrop-filter:blur(12px); text-align:center; animation:fadeIn 0.5s; }
+    .result h2 { font-family:var(--mono); font-size:clamp(1.5rem,3vw,2rem); color:#fff; margin-bottom:8px; }
+
+    .score-circle {
+      width:160px; height:160px; margin:24px auto;
+      border-radius:50%; display:flex; flex-direction:column; align-items:center; justify-content:center;
+      font-family:var(--mono);
+    }
+    .score-circle.high { border:4px solid var(--red); box-shadow:0 0 40px rgba(255,23,68,0.3); }
+    .score-circle.medium { border:4px solid var(--warn); box-shadow:0 0 40px rgba(255,193,7,0.3); }
+    .score-circle.low { border:4px solid var(--green); box-shadow:0 0 40px rgba(0,230,118,0.3); }
+    .score-num { font-size:48px; font-weight:900; color:#fff; }
+    .score-max { font-size:14px; color:var(--txt2); }
+    .score-label { font-family:var(--mono); font-size:18px; font-weight:700; margin:8px 0 24px; letter-spacing:2px; }
+
+    /* ═══ WEAK ZONES ═══ */
+    .weak-zones { text-align:left; margin:24px 0; }
+    .weak-zones h3 { font-family:var(--mono); font-size:13px; color:var(--accent); letter-spacing:2px; margin-bottom:12px; text-transform:uppercase; }
+    .zone-item {
+      display:flex; align-items:center; gap:12px;
+      padding:12px 16px; border:1px solid var(--border); margin-bottom:8px;
+      background:rgba(0,0,0,0.3);
+    }
+    .zone-score {
+      font-family:var(--mono); font-size:13px; font-weight:700;
+      padding:4px 10px; flex-shrink:0;
+    }
+    .zone-score.s0 { color:var(--red); border:1px solid var(--red); background:var(--red-dim); }
+    .zone-score.s1 { color:var(--warn); border:1px solid var(--warn); background:var(--warn-dim); }
+    .zone-score.s2 { color:var(--accent); border:1px solid var(--accent); background:var(--accent-dim); }
+    .zone-score.s3 { color:var(--green); border:1px solid var(--green); background:var(--green-dim); }
+    .zone-name { font-size:13px; color:var(--txt); }
+
+    /* ═══ PROMO ═══ */
+    .promo {
+      background:var(--accent-dim); border:2px solid var(--accent);
+      padding:24px; margin-top:24px; text-align:center;
+    }
+    .promo h3 { font-family:var(--mono); color:var(--accent); font-size:16px; margin-bottom:8px; letter-spacing:1px; }
+    .promo p { font-size:14px; color:var(--txt2); line-height:1.6; margin-bottom:16px; }
+    .promo-code {
+      font-family:var(--mono); font-size:24px; font-weight:900;
+      color:var(--accent); letter-spacing:4px;
+      padding:12px 32px; border:2px dashed var(--accent);
+      display:inline-block; margin-bottom:16px;
+    }
+    .promo .nav-btn { display:inline-block; margin-top:8px; }
+
+    /* ═══ LEAD FORM ═══ */
+    .lead-form {
+      background:rgba(0,20,40,0.85); border:2px solid var(--accent);
+      padding:28px 24px; margin-top:24px; text-align:left;
+      backdrop-filter:blur(12px);
+    }
+    .lead-form h3 {
+      font-family:var(--mono); font-size:15px; color:var(--accent);
+      letter-spacing:1px; margin-bottom:6px; text-align:center;
+    }
+    .lead-form .lead-subtitle {
+      font-size:13px; color:var(--txt2); text-align:center;
+      margin-bottom:20px; line-height:1.5;
+    }
+    .lead-field { margin-bottom:14px; }
+    .lead-field label {
+      font-family:var(--mono); font-size:11px; color:var(--txt2);
+      letter-spacing:1px; text-transform:uppercase; display:block; margin-bottom:4px;
+    }
+    .lead-field input {
+      width:100%; padding:12px 14px; font-family:var(--sans); font-size:14px;
+      background:rgba(0,0,0,0.6); border:1px solid var(--border); color:var(--txt);
+      outline:none; transition:border-color 0.2s;
+    }
+    .lead-field input:focus { border-color:var(--accent); }
+    .lead-field input::placeholder { color:var(--txt3); }
+    .lead-submit {
+      width:100%; padding:14px; font-family:var(--mono); font-size:14px;
+      font-weight:700; letter-spacing:2px; text-transform:uppercase;
+      background:var(--accent); color:#000; border:none; cursor:pointer;
+      transition:0.2s; margin-top:4px;
+    }
+    .lead-submit:hover { background:#33ecff; box-shadow:0 0 20px rgba(0,229,255,0.3); }
+    .lead-submit:disabled { opacity:0.5; cursor:not-allowed; }
+    .lead-success {
+      display:none; text-align:center; padding:20px;
+      font-family:var(--mono); color:var(--green); font-size:14px;
+    }
+    .lead-error {
+      display:none; text-align:center; padding:12px;
+      font-family:var(--mono); color:var(--red); font-size:12px;
+    }
+    .lead-skip {
+      display:block; text-align:center; margin-top:12px;
+      font-family:var(--mono); font-size:11px; color:var(--txt3);
+      cursor:pointer; text-decoration:underline;
+    }
+    .lead-skip:hover { color:var(--txt2); }
+
+    .footer-q { text-align:center; padding:32px 0; font-size:12px; color:var(--txt3); font-family:var(--mono); }
+    .footer-q a { color:var(--accent); text-decoration:none; }
+
+    @media (max-width:600px) {
+      .hero { padding:28px 16px 36px; }
+      .q-card { padding:20px 16px; }
+      .result { padding:24px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="matrixBg"></canvas>
+
+<div class="page">
+
+  <!-- NAV -->
+  <div class="top-bar">
+    <a href="index.html">← На главную</a>
+    <span class="brand">КИБЕРКВИЗ</span>
+    <a href="https://vulndetector.ru" target="_blank">vulndetector.ru</a>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero" id="heroSection">
+    <h1>КИБЕР<span class="hero-accent">КВИЗ</span></h1>
+    <p>Экспресс-оценка кибербезопасности вашей компании за 3 минуты. 8 вопросов — и вы узнаете реальный уровень защищённости.</p>
+    <div class="hero-tags">
+      <span class="hero-tag">8 вопросов</span>
+      <span class="hero-tag">3 минуты</span>
+      <span class="hero-tag">0–24 баллов</span>
+      <span class="hero-tag">бесплатно</span>
+    </div>
+    <div class="nav-btns" style="margin-top:28px;">
+      <button class="nav-btn primary" onclick="beginQuiz()">▶ НАЧАТЬ ОЦЕНКУ</button>
+    </div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-wrap" id="progressWrap" style="display:none;">
+    <div class="progress-top">
+      <span id="progressLabel">Вопрос 1 из 8</span>
+      <span id="progressPct">0%</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <!-- QUESTIONS (8 cards, shown one at a time) -->
+  <div id="quizContainer"></div>
+
+  <!-- NAV BUTTONS -->
+  <div class="nav-btns" id="quizNav" style="display:none;">
+    <button class="nav-btn" id="prevBtn" onclick="prevQuestion()" disabled>← НАЗАД</button>
+    <button class="nav-btn primary" id="nextBtn" onclick="nextQuestion()">ДАЛЕЕ →</button>
+  </div>
+
+  <!-- RESULT -->
+  <div class="result" id="resultSection">
+    <h2>РЕЗУЛЬТАТ ОЦЕНКИ</h2>
+    <div class="score-circle" id="scoreCircle">
+      <div class="score-num" id="scoreNum">0</div>
+      <div class="score-max">из 24</div>
+    </div>
+    <div class="score-label" id="scoreLabel"></div>
+    <p id="scoreDesc" style="color:var(--txt2); font-size:15px; line-height:1.7; max-width:500px; margin:0 auto;"></p>
+
+    <div class="weak-zones" id="weakZones">
+      <h3>Разбор по категориям</h3>
+      <div id="zonesList"></div>
+    </div>
+
+    <div class="promo">
+      <h3>🔍 Хотите детальный аудит?</h3>
+      <p>VulnDetector — автоматическое сканирование уязвимостей инфраструктуры с AI-патчингом. Используйте промокод для бесплатного первого аудита:</p>
+      <div class="promo-code">QUIZ2026</div>
+      <br>
+      <a href="https://vulndetector.ru" target="_blank" class="nav-btn primary" style="display:inline-block; text-decoration:none; margin-top:12px;">Записаться на консультацию →</a>
+    </div>
+
+    <!-- LEAD CAPTURE FORM -->
+    <div class="lead-form" id="leadForm">
+      <h3>📩 Получить детальный отчёт</h3>
+      <div class="lead-subtitle">Оставьте контакты — мы пришлём персональные рекомендации по усилению защиты вашей компании</div>
+      <div class="lead-field">
+        <label>Компания *</label>
+        <input type="text" id="leadCompany" placeholder="Название вашей компании" required>
+      </div>
+      <div class="lead-field">
+        <label>Имя *</label>
+        <input type="text" id="leadName" placeholder="Ваше имя"required>
+      </div>
+      <div class="lead-field">
+        <label>Email *</label>
+        <input type="email" id="leadEmail" placeholder="email@company.ru" required>
+      </div>
+      <div class="lead-field">
+        <label>Телефон (необязательно)</label>
+        <input type="tel" id="leadPhone" placeholder="+7 (___) ___-__-__">
+      </div>
+      <button class="lead-submit" id="leadSubmitBtn" onclick="submitLead()">📧 ОТПРАВИТЬ ЗАЯВКУ</button>
+      <div class="lead-success" id="leadSuccess">✅ Заявка отправлена! Мы свяжемся с вами в течение 24 часов.</div>
+      <div class="lead-error" id="leadError">⚠️ Ошибка отправки. Попробуйте ещё раз или напишите на vulndetector@yandex.ru</div>
+      <span class="lead-skip" onclick="document.getElementById('leadForm').style.display='none'">Пропустить</span>
+    </div>
+  </div>
+
+  <div class="footer-q">
+    v5.0 B2B · <a href="index.html">Павел Щелканогов</a> · <a href="https://vulndetector.ru" target="_blank">vulndetector.ru</a>
+  </div>
+</div>
+
+<script>
+/* ═══ MATRIX RAIN ═══ */
+(function(){
+  const c=document.getElementById('matrixBg'),x=c.getContext('2d');
+  function r(){c.width=innerWidth;c.height=innerHeight;}
+  r();addEventListener('resize',r);
+  const ch='アイウエオカキクケコАБВГДЕ0123456789@#≡±∞∇'.split('');
+  const fs=14;let cols,dr;
+  function id(){cols=Math.floor(c.width/fs);dr=Array.from({length:cols},()=>Math.floor(Math.random()*-40));}
+  id();addEventListener('resize',id);
+  function d(){
+    x.fillStyle='rgba(0,0,0,0.06)';x.fillRect(0,0,c.width,c.height);
+    for(let i=0;i<dr.length;i++){
+      const s=ch[Math.floor(Math.random()*ch.length)];
+      const px=i*fs,py=dr[i]*fs;
+      if(dr[i]>0){x.fillStyle='#00FF00';x.font=`bold ${fs}px monospace`;x.fillText(s,px,py);
+        x.fillStyle='rgba(0,180,0,0.25)';if(py-fs*4>0)x.fillText(s,px,py-fs*4);}
+      if(py>c.height&&Math.random()>0.975)dr[i]=0;
+      dr[i]+=0.4+Math.random()*0.6;
+    }
+    requestAnimationFrame(d);
+  }
+  d();
+})();
+
+/* ═══ QUIZ DATA ═══ */
+const QUESTIONS = [
+  {
+    cat: 'Доступ и пароли',
+    text: 'Насколько в вашей компании формализованы правила по паролям и MFA?',
+    opts: [
+      { letter:'A', text:'У всех включена MFA, используются менеджеры паролей и политики сложности', pts:3 },
+      { letter:'B', text:'MFA включена только для критичных сервисов, остальное на усмотрение сотрудников', pts:2 },
+      { letter:'C', text:'Нет общих правил, каждый придумывает пароли сам', pts:1 },
+      { letter:'D', text:'Не знаю / этим занимается подрядчик', pts:0 },
+    ]
+  },
+  {
+    cat: 'Обновления и патчи',
+    text: 'Как вы управляете обновлениями ОС и ПО на рабочих станциях и серверах?',
+    opts: [
+      { letter:'A', text:'Есть централизованное управление обновлениями, всё ставится по регламенту', pts:3 },
+      { letter:'B', text:'Админ периодически обновляет критичные системы вручную', pts:2 },
+      { letter:'C', text:'Сотрудники сами решают, обновлять или нет', pts:1 },
+      { letter:'D', text:'Не знаю, как это устроено', pts:0 },
+    ]
+  },
+  {
+    cat: 'Резервное копирование',
+    text: 'Как организованы бэкапы важных данных (CRM, бухгалтерия, репозитории)?',
+    opts: [
+      { letter:'A', text:'Регулярные бэкапы, проверка восстановления и изоляция копий от основного контура', pts:3 },
+      { letter:'B', text:'Бэкапы есть, но восстановление давно не проверяли', pts:2 },
+      { letter:'C', text:'Есть только разовые/ручные копии на внешние диски или в облако', pts:1 },
+      { letter:'D', text:'Бэкапов нет / не знаю', pts:0 },
+    ]
+  },
+  {
+    cat: 'Обучение и фишинг',
+    text: 'Как часто сотрудники проходят обучение по кибербезопасности и фишингу?',
+    opts: [
+      { letter:'A', text:'Регулярное обучение (1–2 раза в год) + тесты и симуляции фишинга', pts:3 },
+      { letter:'B', text:'Одноразовое обучение при онбординге', pts:2 },
+      { letter:'C', text:'Обучения нет, только иногда пересылаем статьи/новости', pts:1 },
+      { letter:'D', text:'Не знаю', pts:0 },
+    ]
+  },
+  {
+    cat: 'Устройства и удалёнка',
+    text: 'Как вы контролируете ноутбуки, телефоны и удалённый доступ к ресурсам компании?',
+    opts: [
+      { letter:'A', text:'Используем MDM/EDR, шифрование дисков и строгие правила удалённого доступа', pts:3 },
+      { letter:'B', text:'Для ключевых устройств есть базовые политики, остальное «по доверию»', pts:2 },
+      { letter:'C', text:'Сотрудники работают с любых личных устройств без требований', pts:1 },
+      { letter:'D', text:'Не знаю, нет отдельной политики', pts:0 },
+    ]
+  },
+  {
+    cat: 'Админ-доступ',
+    text: 'Как защищены администраторские учётные записи и доступ к критичным системам?',
+    opts: [
+      { letter:'A', text:'Разделены роли, отдельные админ-учётки, MFA и журналирование действий', pts:3 },
+      { letter:'B', text:'Есть отдельные админ-аккаунты, но без строгих процедур', pts:2 },
+      { letter:'C', text:'Все работают с широкими правами / общими логинами', pts:1 },
+      { letter:'D', text:'Не знаю, права выдавали «как придётся»', pts:0 },
+    ]
+  },
+  {
+    cat: 'План реагирования',
+    text: 'Есть ли план действий на случай инцидента (взлом, шифровальщик, утечка)?',
+    opts: [
+      { letter:'A', text:'Утверждённый план, роли, контакты и сценарии — периодически тестируем', pts:3 },
+      { letter:'B', text:'План есть в виде черновика/памятки, но не отработан', pts:2 },
+      { letter:'C', text:'Официального плана нет, «разберёмся по ситуации»', pts:1 },
+      { letter:'D', text:'Не знаю', pts:0 },
+    ]
+  },
+  {
+    cat: 'Аудиты и тесты',
+    text: 'Как вы оцениваете текущий уровень защищённости (аудиты, сканы, пен-тесты)?',
+    opts: [
+      { letter:'A', text:'Регулярные внешние/внутренние аудиты, автоматические сканы уязвимостей', pts:3 },
+      { letter:'B', text:'Разовые проверки после инцидентов или по запросу клиентов/регуляторов', pts:2 },
+      { letter:'C', text:'Пока не проводили формальных проверок', pts:1 },
+      { letter:'D', text:'Не знаю', pts:0 },
+    ]
+  }
+];
+
+let current = 0;
+let answers = new Array(QUESTIONS.length).fill(null); // stores {pts, letter}
+
+/* ═══ RENDER ═══ */
+function renderQuestions() {
+  const container = document.getElementById('quizContainer');
+  container.innerHTML = '';
+  QUESTIONS.forEach((q, qi) => {
+    const card = document.createElement('div');
+    card.className = 'q-card' + (qi === 0 ? ' active' : '');
+    card.id = `q-${qi}`;
+    card.innerHTML = `
+      <div class="q-number">Вопрос ${qi+1} из 8</div>
+      <div class="q-category">${q.cat}</div>
+      <div class="q-text">${q.text}</div>
+      <div class="q-options">
+        ${q.opts.map((o, oi) => `
+          <div class="q-option" id="opt-${qi}-${oi}" onclick="selectOption(${qi},${oi},${o.pts},'${o.letter}')">
+            <div class="opt-letter">${o.letter}</div>
+            <div class="opt-text">${o.text}</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function beginQuiz() {
+  document.getElementById('heroSection').style.display = 'none';
+  document.getElementById('progressWrap').style.display = '';
+  document.getElementById('quizNav').style.display = '';
+  renderQuestions();
+  updateUI();
+}
+
+function selectOption(qi, oi, pts, letter) {
+  // Clear previous selection for this question
+  QUESTIONS[qi].opts.forEach((_, i) => {
+    document.getElementById(`opt-${qi}-${i}`).classList.remove('selected');
+  });
+  document.getElementById(`opt-${qi}-${oi}`).classList.add('selected');
+  answers[qi] = { pts, letter };
+  document.getElementById(`q-${qi}`).classList.add('answered');
+  updateUI();
+
+  // Auto-advance after brief delay
+  if (current < QUESTIONS.length - 1) {
+    setTimeout(() => nextQuestion(), 400);
+  }
+}
+
+function nextQuestion() {
+  if (current >= QUESTIONS.length - 1) {
+    showResult();
+    return;
+  }
+  document.getElementById(`q-${current}`).classList.remove('active');
+  current++;
+  document.getElementById(`q-${current}`).classList.add('active');
+  updateUI();
+}
+
+function prevQuestion() {
+  if (current <= 0) return;
+  document.getElementById(`q-${current}`).classList.remove('active');
+  current--;
+  document.getElementById(`q-${current}`).classList.add('active');
+  updateUI();
+}
+
+function updateUI() {
+  const pct = Math.round(((current + (answers[current] ? 1 : 0)) / QUESTIONS.length) * 100);
+  document.getElementById('progressLabel').textContent = `Вопрос ${current+1} из 8`;
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('prevBtn').disabled = current === 0;
+  
+  const allAnswered = answers.every(a => a !== null);
+  const isLast = current === QUESTIONS.length - 1;
+  const nextBtn = document.getElementById('nextBtn');
+  if (isLast && allAnswered) {
+    nextBtn.textContent = '⚡ РЕЗУЛЬТАТ';
+  } else if (isLast) {
+    nextBtn.textContent = '⚡ РЕЗУЛЬТАТ';
+  } else {
+    nextBtn.textContent = 'ДАЛЕЕ →';
+  }
+}
+
+function showResult() {
+  // Hide quiz
+  document.getElementById('quizContainer').style.display = 'none';
+  document.getElementById('quizNav').style.display = 'none';
+  document.getElementById('progressWrap').style.display = 'none';
+
+  // Calculate
+  let total = 0;
+  answers.forEach(a => { if (a) total += a.pts; });
+
+  const scoreNum = document.getElementById('scoreNum');
+  const scoreCircle = document.getElementById('scoreCircle');
+  const scoreLabel = document.getElementById('scoreLabel');
+  const scoreDesc = document.getElementById('scoreDesc');
+  
+  scoreNum.textContent = total;
+
+  let riskClass, riskLabel, riskDesc;
+  if (total <= 8) {
+    riskClass = 'high'; riskLabel = '🔴 ВЫСОКИЙ РИСК';
+    riskDesc = 'Ваша инфраструктура серьёзно уязвима. Рекомендуем срочный аудит и внедрение базовых мер защиты: MFA, управление обновлениями, бэкапы и план реагирования на инциденты.';
+  } else if (total <= 16) {
+    riskClass = 'medium'; riskLabel = '🟡 СРЕДНИЙ РИСК';
+    riskDesc = 'Базовые меры защиты есть, но есть значительные пробелы. Обратите внимание на слабые зоны ниже — именно там может произойти инцидент.';
+  } else {
+    riskClass = 'low'; riskLabel = '🟢 НИЗКИЙ РИСК';
+    riskDesc = 'Ваша компания хорошо подготовлена. Рекомендуем регулярные проверки и автоматизацию сканирования для поддержания этого уровня.';
+  }
+  
+  scoreCircle.className = 'score-circle ' + riskClass;
+  scoreLabel.textContent = riskLabel;
+  scoreLabel.style.color = riskClass === 'high' ? 'var(--red)' : riskClass === 'medium' ? 'var(--warn)' : 'var(--green)';
+  scoreDesc.textContent = riskDesc;
+
+  // Weak zones
+  const zonesList = document.getElementById('zonesList');
+  zonesList.innerHTML = '';
+  QUESTIONS.forEach((q, i) => {
+    const pts = answers[i] ? answers[i].pts : 0;
+    const zone = document.createElement('div');
+    zone.className = 'zone-item';
+    zone.innerHTML = `
+      <div class="zone-score s${pts}">${pts}/3</div>
+      <div class="zone-name">${q.cat}</div>
+    `;
+    zonesList.appendChild(zone);
+  });
+
+  // Sort by weakest first
+  const items = [...zonesList.children];
+  items.sort((a, b) => {
+    const sa = parseInt(a.querySelector('.zone-score').textContent);
+    const sb = parseInt(b.querySelector('.zone-score').textContent);
+    return sa - sb;
+  });
+  items.forEach(item => zonesList.appendChild(item));
+
+  document.getElementById('resultSection').style.display = 'block';
+  document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
+}
+
+/* ═══ EMAILJS LEAD CAPTURE ═══ */
+// Инициализация EmailJS
+// ВАЖНО: Замените на свои реальные ID из https://dashboard.emailjs.com
+const EMAILJS_PUBLIC_KEY = 'YOUR_PUBLIC_KEY';     // Settings → API Keys → Public Key
+const EMAILJS_SERVICE_ID = 'YOUR_SERVICE_ID';     // Email Services → Service ID
+const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';   // Email Templates → Template ID
+
+(function() {
+  if (window.emailjs) {
+    emailjs.init(EMAILJS_PUBLIC_KEY);
+  }
+})();
+
+function submitLead() {
+  const company = document.getElementById('leadCompany').value.trim();
+  const name = document.getElementById('leadName').value.trim();
+  const email = document.getElementById('leadEmail').value.trim();
+  const phone = document.getElementById('leadPhone').value.trim();
+
+  // Валидация
+  if (!company || !name || !email) {
+    alert('Заполните обязательные поля: Компания, Имя, Email');
+    return;
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    alert('Некорректный email');
+    return;
+  }
+
+  const btn = document.getElementById('leadSubmitBtn');
+  btn.disabled = true;
+  btn.textContent = 'ОТПРАВКА...';
+
+  // Собираем данные квиза
+  let total = 0;
+  answers.forEach(a => { if (a) total += a.pts; });
+  let riskLevel = total <= 8 ? 'ВЫСОКИЙ РИСК' : total <= 16 ? 'СРЕДНИЙ РИСК' : 'НИЗКИЙ РИСК';
+
+  let answersDetail = '';
+  QUESTIONS.forEach((q, i) => {
+    const a = answers[i];
+    answersDetail += `${q.cat}: ${a ? a.letter + ' (' + a.pts + '/3)' : 'N/A'}\n`;
+  });
+
+  // Слабые зоны (сортировка по баллам)
+  let weakZones = QUESTIONS.map((q, i) => ({
+    cat: q.cat, pts: answers[i] ? answers[i].pts : 0
+  })).sort((a, b) => a.pts - b.pts)
+    .map(z => `${z.cat}: ${z.pts}/3`)
+    .join('\n');
+
+  const templateParams = {
+    to_email: 'vulndetector@yandex.ru',
+    from_name: name,
+    company: company,
+    email: email,
+    phone: phone || 'не указан',
+    quiz_score: `${total}/24`,
+    risk_level: riskLevel,
+    answers_detail: answersDetail,
+    weak_zones: weakZones,
+    promo_code: 'QUIZ2026',
+    timestamp: new Date().toLocaleString('ru-RU')
+  };
+
+  // Проверяем, настроен ли EmailJS
+  if (EMAILJS_PUBLIC_KEY === 'YOUR_PUBLIC_KEY') {
+    // EmailJS не настроен — фоллбек на mailto
+    const subject = encodeURIComponent(`[КиберКвиз] Новый лид: ${company}`);
+    const body = encodeURIComponent(
+      `Компания: ${company}\n` +
+      `Имя: ${name}\n` +
+      `Email: ${email}\n` +
+      `Телефон: ${phone || 'не указан'}\n\n` +
+      `Результат квиза: ${total}/24 — ${riskLevel}\n\n` +
+      `Ответы:\n${answersDetail}\n` +
+      `Слабые зоны:\n${weakZones}\n\n` +
+      `Промокод: QUIZ2026\n` +
+      `Дата: ${new Date().toLocaleString('ru-RU')}`
+    );
+    window.open(`mailto:vulndetector@yandex.ru?subject=${subject}&body=${body}`, '_blank');
+    document.getElementById('leadSuccess').style.display = 'block';
+    document.getElementById('leadSubmitBtn').style.display = 'none';
+    return;
+  }
+
+  // Отправка через EmailJS
+  emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
+    .then(function() {
+      document.getElementById('leadSuccess').style.display = 'block';
+      document.getElementById('leadSubmitBtn').style.display = 'none';
+      document.getElementById('leadError').style.display = 'none';
+    }, function(error) {
+      console.error('EmailJS error:', error);
+      document.getElementById('leadError').style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = '📧 ОТПРАВИТЬ ЗАЯВКУ';
+    });
+}
+</script>
+</body>
+</html>

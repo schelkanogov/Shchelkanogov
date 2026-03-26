@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VulnDetector · Approve Center</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    /* ═══════════════════════════════════════════
+       DESIGN TOKENS — Cyber-Brutalism
+    ═══════════════════════════════════════════ */
+    :root {
+      --neon: #39ff14; /* Hack Green terminal */
+      --neon-dim: #00cc00;
+      --neon-glow: rgba(57, 255, 20, 0.25);
+      --deep-black: #000000;
+      --surface: #0a0a0a;
+      --surface-2: #111111;
+      --surface-3: #1a1a1a;
+      --border: #1f3f1f;
+      --border-neon: rgba(57, 255, 20, 0.3);
+      --text: #e0e0e0;
+      --text-dim: #888;
+      --warn: #FFD600;
+      --error: #FF1744;
+      --error-dim: rgba(255,23,68,0.15);
+      --success: #39ff14;
+      --blue: #00B0FF;
+      --mono: 'Space Mono', monospace;
+      --sans: 'Terminal', 'Courier New', monospace; /* Hack Green style */
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      font-family: var(--sans);
+      background: var(--deep-black);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ═══════════ MATRIX RAIN CANVAS ═══════════ */
+    #matrixCanvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.5;
+    }
+    /* Dark gradient overlay to push matrix further back */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      z-index: 0;
+      background: radial-gradient(ellipse at center, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.95) 100%);
+      pointer-events: none;
+    }
+
+    /* ═══════════ LAYOUT ═══════════ */
+    .app {
+      position: relative;
+      z-index: 1;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    /* ═══════════ HEADER ═══════════ */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: rgba(5,10,5,0.92);
+      border: 1px solid var(--border-neon);
+      margin-bottom: 24px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 1px rgba(57, 255, 20, 0.2), inset 0 1px 0 rgba(255,255,255,0.03);
+    }
+
+    .logo {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .logo-mark {
+      width: 40px; height: 40px;
+      background: var(--neon);
+      color: #000;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 18px;
+      font-family: var(--mono);
+    }
+    .logo-text {
+      font-family: var(--mono);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--neon);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    .logo-sub {
+      font-size: 11px; color: var(--text-dim);
+      font-family: var(--mono);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    .header-status {
+      display: flex; align-items: center; gap: 16px;
+    }
+    .status-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--neon);
+      box-shadow: 0 0 10px var(--neon);
+      animation: pulse-dot 2s infinite;
+    }
+    @keyframes pulse-dot {
+      0%,100% { opacity:1; } 50% { opacity:0.4; }
+    }
+    .status-label {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--neon);
+      letter-spacing: 1px;
+    }
+
+    /* ═══════════ HERO BLOCK (ENG REQUESTED) ═══════════ */
+    .hero-block {
+      background: rgba(57, 255, 20, 0.04);
+      border: 1px solid var(--neon);
+      padding: 20px;
+      margin-bottom: 24px;
+      font-family: var(--mono);
+      color: var(--neon);
+      font-size: 15px;
+      line-height: 1.6;
+      text-align: center;
+      letter-spacing: 1px;
+      box-shadow: 0 0 15px rgba(57, 255, 20, 0.1) inset;
+    }
+    .hero-block span.blink {
+      display: inline-block;
+      width: 10px;
+      height: 15px;
+      background: var(--neon);
+      animation: blink 1s step-end infinite;
+      vertical-align: middle;
+      margin-left: 5px;
+    }
+
+    /* ═══════════ SLOGANS MARQUEE ═══════════ */
+    .marquee-wrap {
+      overflow: hidden;
+      background: rgba(57, 255, 20, 0.03);
+      border: 1px solid rgba(57, 255, 20, 0.15);
+      border-radius: 8px;
+      padding: 10px 0;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    }
+    .marquee-inner {
+      display: flex;
+      gap: 80px;
+      animation: marquee-scroll 40s linear infinite;
+      white-space: nowrap;
+      width: max-content;
+    }
+    @keyframes marquee-scroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .marquee-item {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--neon);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      opacity: 0.8;
+    }
+
+    /* ═══════════ MAIN GRID ═══════════ */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    @media (max-width: 900px) {
+      .main-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ═══════════ PANELS ═══════════ */
+    .panel {
+      background: transparent;
+      border: 1px solid var(--neon);
+      position: relative;
+      overflow: hidden;
+    }
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--neon);
+      background: rgba(57, 255, 20, 0.1);
+    }
+    .panel-title {
+      font-family: var(--mono);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--neon);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    .panel-badge {
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 4px 10px;
+      border: 1px dashed;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .badge-scanning { color: var(--warn); border-color: var(--warn); animation: pulse-dot 1.5s infinite; }
+    .badge-ready { color: var(--neon); border-color: var(--neon); }
+    .badge-critical { color: var(--error); border-color: var(--error); background: var(--error-dim); }
+    .panel-body { padding: 20px; }
+
+    /* ═══════════ SCANNER CONSOLE ═══════════ */
+    .console {
+      background: #000;
+      border: 1px solid var(--border);
+      padding: 16px;
+      height: 320px;
+      overflow-y: auto;
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.8;
+      color: var(--neon-dim);
+    }
+    .console::-webkit-scrollbar { width: 6px; }
+    .console::-webkit-scrollbar-track { background: #111; }
+    .console::-webkit-scrollbar-thumb { background: var(--neon-dim); }
+
+    .log-time { color: #555; }
+    .log-ok { color: var(--success); }
+    .log-warn { color: var(--warn); }
+    .log-crit { color: var(--error); font-weight: 700; background: rgba(255, 23, 68, 0.2); display: inline-block; width: 100%;}
+    .log-info { color: var(--text-dim); }
+
+    .cursor-blink::after {
+      content: '█';
+      animation: blink 0.8s step-end infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
+
+    /* ═══════════ PATCH QUEUE ═══════════ */
+    .vuln-list { display: flex; flex-direction: column; gap: 12px; }
+
+    .vuln-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      background: #050505;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .vuln-item:hover {
+      border-color: var(--neon);
+      background: rgba(57, 255, 20, 0.05);
+    }
+    .vuln-item.active {
+      border-color: var(--neon);
+      box-shadow: 0 0 15px rgba(57, 255, 20, 0.2);
+    }
+    .vuln-item.patched {
+      border-color: var(--success);
+      opacity: 0.6;
+    }
+    .vuln-item.patched .vuln-severity { background: var(--success); }
+
+    .vuln-severity {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      color: #000;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+    .sev-critical { background: var(--error); }
+    .sev-high { background: var(--warn); }
+
+    .vuln-info { flex: 1; }
+    .vuln-id {
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .vuln-component {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-top: 2px;
+    }
+    .vuln-action {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--neon);
+      border: 1px solid var(--neon);
+      padding: 6px 12px;
+      background: transparent;
+      cursor: pointer;
+      transition: 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .vuln-action:hover { background: var(--neon); color: #000; }
+
+    /* ═══════════ DIFF VIEW ═══════════ */
+    .diff-view {
+      background: #000;
+      border: 1px solid var(--border);
+      padding: 16px;
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.8;
+      min-height: 260px;
+      overflow-x: auto;
+    }
+    .diff-file {
+      color: var(--blue);
+      font-weight: 700;
+      margin-bottom: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .diff-del {
+      color: var(--error);
+      background: rgba(255,23,68,0.1);
+      display: block;
+      padding: 2px 8px;
+      margin: 2px 0;
+    }
+    .diff-add {
+      color: var(--success);
+      background: rgba(57,255,20,0.1);
+      display: block;
+      padding: 2px 8px;
+      margin: 2px 0;
+    }
+    .diff-ctx {
+      color: var(--text-dim);
+      display: block;
+      padding: 2px 8px;
+    }
+    .diff-placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 200px;
+      color: var(--text-dim);
+      font-size: 13px;
+    }
+
+    /* ═══════════ METRICS BAR ═══════════ */
+    .metrics-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      grid-column: 1 / -1;
+    }
+    @media (max-width: 700px) {
+      .metrics-bar { grid-template-columns: repeat(2, 1fr); }
+    }
+    .metric {
+      background: rgba(5,10,5,0.92);
+      border: 1px solid rgba(57, 255, 20, 0.4);
+      padding: 20px;
+      text-align: center;
+    }
+    .metric-val {
+      font-family: var(--mono);
+      font-size: 36px;
+      font-weight: 900;
+      color: var(--neon);
+      line-height: 1;
+      text-shadow: 0 0 10px var(--neon-glow);
+    }
+    .metric-val.critical { color: var(--error); text-shadow: 0 0 10px rgba(255,23,68,0.3); }
+    .metric-val.warn { color: var(--warn); }
+    .metric-val.ok { color: var(--success); }
+    .metric-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--neon-dim);
+      margin-top: 8px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    /* ═══════════ APPROVE BUTTON ═══════════ */
+    .approve-section {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      padding: 32px 0;
+    }
+
+    .approve-btn {
+      font-family: var(--mono);
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      padding: 24px 80px;
+      background: #000;
+      color: var(--neon);
+      border: 2px solid var(--neon);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .approve-btn:hover {
+      background: var(--neon);
+      color: #000;
+      box-shadow: 0 0 20px var(--neon-glow);
+    }
+    .approve-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+      border-color: #555;
+      color: #555;
+    }
+    .approve-btn:disabled:hover {
+      background: #000;
+      color: #555;
+      box-shadow: none;
+    }
+
+    /* ═══════════ START BUTTON ═══════════ */
+    .scan-start-section {
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: center;
+      padding-bottom: 8px;
+    }
+    .scan-btn {
+      font-family: var(--mono);
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      padding: 18px 60px;
+      background: transparent;
+      color: var(--neon);
+      border: 1px solid var(--neon);
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .scan-btn:hover {
+      background: var(--neon);
+      color: #000;
+      box-shadow: 0 0 20px var(--neon-glow);
+    }
+
+    /* ═══════════ SUCCESS OVERLAY ═══════════ */
+    .success-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(0,0,0,0.95);
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      gap: 24px;
+      border: 5px solid var(--neon);
+    }
+    .success-overlay.show { display: flex; }
+
+    .success-icon {
+      font-size: 100px;
+      color: var(--neon);
+      text-shadow: 0 0 40px var(--neon-glow);
+    }
+    .success-text {
+      font-family: var(--mono);
+      font-size: 36px;
+      font-weight: 900;
+      color: var(--neon);
+      letter-spacing: 6px;
+      text-transform: uppercase;
+    }
+    .success-sub { font-family: var(--mono); font-size: 16px; color: #888; }
+    .success-score {
+      font-family: var(--mono);
+      font-size: 80px;
+      font-weight: 900;
+      color: var(--neon);
+      text-shadow: 0 0 30px var(--neon-glow);
+    }
+    .success-score-label {
+      font-family: var(--mono);
+      font-size: 14px;
+      color: var(--neon);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+    .success-close {
+      margin-top: 30px;
+      padding: 15px 40px;
+      background: transparent;
+      border: 1px solid var(--neon);
+      color: var(--neon);
+      font-family: var(--mono);
+      cursor: pointer;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 2px;
+    }
+    .success-close:hover { background: var(--neon); color: #000; }
+
+    .footer {
+      text-align: center;
+      padding: 40px 20px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: #555;
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Matrix Rain Background -->
+<canvas id="matrixCanvas"></canvas>
+
+<div class="app">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo">
+      <div class="logo-mark">VD</div>
+      <div>
+        <div class="logo-text">Approve Center</div>
+        <div class="logo-sub">ПАК VulnDetector · Infrastructure Patching</div>
+      </div>
+    </div>
+    <div class="header-status" style="display:flex; gap: 30px;">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <div style="width:10px; height:10px; border-radius:50%; background:var(--blue); box-shadow:0 0 10px var(--blue);"></div>
+        <div class="status-label" style="color:var(--blue);">ПАК: ONLINE (TOR)</div>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <div class="status-dot" id="statusDot"></div>
+        <div class="status-label" id="statusLabel">BACKEND: STANDBY</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HERO BLOCK (NEW REQUIREMENT) -->
+  <div class="hero-block">
+    >_ Select the lowest-latency feasible VM for a target exchange using an algorithm that measures delay across every traffic segment, then route traffic through three independent providers with physical path diversity via dark fiber, microwave radio links, and optimized IP transit.<span class="blink"></span>
+  </div>
+
+  <!-- SLOGANS MARQUEE -->
+  <div class="marquee-wrap">
+    <div class="marquee-inner">
+      <span class="marquee-item">▸ Мы делаем вайбкодинг безупречным в части настройки инфраструктуры</span>
+      <span class="marquee-item">▸ Антихрупкость в реальном времени — управляйте инфраструктурой со скоростью мысли</span>
+      <span class="marquee-item">▸ Разрушаем магию — строим кибериммунные системы готовые к масштабированию</span>
+      <span class="marquee-item">▸ Совершенно другой уровень разработки — оценивайте состояние инфраструктуры live</span>
+      <span class="marquee-item">▸ Не ходите в лаптях, не читайте 200-страничные отчёты — доверьтесь AI</span>
+      <!-- Duplicate for seamless loop -->
+      <span class="marquee-item">▸ Мы делаем вайбкодинг безупречным в части настройки инфраструктуры</span>
+      <span class="marquee-item">▸ Антихрупкость в реальном времени — управляйте инфраструктурой со скоростью мысли</span>
+      <span class="marquee-item">▸ Разрушаем магию — строим кибериммунные системы готовые к масштабированию</span>
+      <span class="marquee-item">▸ Совершенно другой уровень разработки — оценивайте состояние инфраструктуры live</span>
+      <span class="marquee-item">▸ Не ходите в лаптях, не читайте 200-страничные отчёты — доверьтесь AI</span>
+    </div>
+  </div>
+
+    <div style="display: flex; gap: 24px;">
+      <!-- SIDEBAR MENU -->
+      <div style="width: 200px; border: 1px solid var(--border-neon); background: rgba(5,10,5,0.8); display: flex; flex-direction: column; gap: 2px;">
+        <div style="padding: 15px; color: var(--neon); font-weight: bold; border-bottom: 1px solid var(--neon); background: rgba(57, 255, 20, 0.1);">[ D - BOARD ]</div>
+        <div style="padding: 15px; color: var(--text-dim); cursor: pointer; transition: 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-dim)'">PAC INVENTORY</div>
+        <div style="padding: 15px; color: var(--text-dim); cursor: pointer; transition: 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-dim)'">SOC FEEDS (TG)</div>
+        <div style="padding: 15px; color: var(--text-dim); cursor: pointer; transition: 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-dim)'">AI MODELS (FPF)</div>
+        <div style="padding: 15px; color: var(--text-dim); cursor: pointer; transition: 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-dim)'">INCIDENTS</div>
+        <div style="padding: 15px; color: var(--text-dim); cursor: pointer; transition: 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-dim)'">REPORTS</div>
+      </div>
+
+      <!-- MAIN CONTENT WRAPPER -->
+      <div style="flex: 1; display: flex; flex-direction: column; gap: 24px;">
+        
+        <!-- SCAN START -->
+        <div class="scan-start-section" id="scanStartSection">
+          <button class="scan-btn" id="scanBtn" onclick="startScan()">▶ EXECUTE INFRA SCAN</button>
+        </div>
+
+        <!-- METRICS -->
+        <div class="metrics-bar" id="metricsBar" style="display:none;">
+          <div class="metric">
+            <div class="metric-val critical" id="metricCritical">0</div>
+            <div class="metric-label">Critical CVE</div>
+          </div>
+          <div class="metric">
+            <div class="metric-val warn" id="metricHigh">0</div>
+            <div class="metric-label">High CVE</div>
+          </div>
+          <div class="metric">
+            <div class="metric-val" id="metricPatched">0</div>
+            <div class="metric-label">Patched</div>
+          </div>
+          <div class="metric">
+            <div class="metric-val critical" id="metricImmunity">0%</div>
+            <div class="metric-label">IT-Immunity</div>
+          </div>
+        </div>
+
+    <!-- LEFT: SCANNER CONSOLE -->
+    <div class="panel" id="scanPanel" style="display:none;">
+      <div class="panel-header">
+        <div class="panel-title">Scanner Console</div>
+        <div class="panel-badge badge-scanning" id="scanBadge">Scanning...</div>
+      </div>
+      <div class="panel-body">
+        <div class="console" id="console">
+          <div class="cursor-blink"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: PATCH QUEUE -->
+    <div class="panel" id="patchPanel" style="display:none;">
+      <div class="panel-header">
+        <div class="panel-title">Patch Queue</div>
+        <div class="panel-badge badge-ready" id="patchBadge">Awaiting</div>
+      </div>
+      <div class="panel-body">
+        <div class="vuln-list" id="vulnList">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- DIFF VIEW (full width) -->
+    <div class="panel" id="diffPanel" style="display:none; grid-column: 1 / -1;">
+      <div class="panel-header">
+        <div class="panel-title">Proposed IaC Patch</div>
+        <div class="panel-badge badge-ready" id="diffBadge">Select a CVE</div>
+      </div>
+      <div class="panel-body">
+        <div class="diff-view" id="diffView">
+          <div class="diff-placeholder">← Select a vulnerability to view the auto-generated patch</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- APPROVE BUTTON -->
+    <div class="approve-section" id="approveSection" style="display:none;">
+      <button class="approve-btn" id="approveBtn" onclick="approveAll()" disabled>⚡ APPROVE & DEPLOY ⚡</button>
+      <div class="approve-disclaimer">Review all patches before approving · Changes are applied to IaC repository</div>
+    </div>
+
+      </div> <!-- End main content wrapper -->
+    </div> <!-- End flex layout -->
+
+  <!-- FOOTER -->
+  <div class="footer">
+    VulnDetector Approve Center v1.0 · SYSTEM STATUS: READY
+  </div>
+</div>
+
+<!-- SUCCESS OVERLAY -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-icon">[ OK ]</div>
+  <div class="success-text">ALL PATCHES DEPLOYED</div>
+  <div class="success-sub">Infrastructure remediation complete</div>
+  <div class="success-score" id="successScore">87%</div>
+  <div class="success-score-label">New IT-Immunity Score</div>
+  <button class="success-close" onclick="closeSuccess()">← SYSTEM HIBERNATION</button>
+</div>
+
+<script>
+/* MATRIX RAIN SCRIPT */
+(function() {
+  const canvas = document.getElementById('matrixCanvas');
+  const ctx = canvas.getContext('2d');
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+  const chars = '01#$<>*ABCDEF123456789'.split('');
+  const fontSize = 14;
+  let columns = Math.floor(canvas.width / fontSize);
+  let drops = [];
+  function initDrops() {
+    columns = Math.floor(canvas.width / fontSize);
+    drops = [];
+    for (let i = 0; i < columns; i++) drops[i] = Math.floor(Math.random() * -50);
+  }
+  initDrops();
+  function draw() {
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    const neonColor = '#39ff14';
+    for (let i = 0; i < drops.length; i++) {
+      const char = chars[Math.floor(Math.random() * chars.length)];
+      const x = i * fontSize, y = drops[i] * fontSize;
+      if (drops[i] > 0) {
+        ctx.fillStyle = '#fff';
+        ctx.font = `${fontSize}px monospace`;
+        ctx.fillText(char, x, y);
+        ctx.fillStyle = neonColor;
+        if (y - fontSize * 2 > 0) { ctx.globalAlpha = 0.5; ctx.fillText(char, x, y - fontSize * 2); }
+        if (y - fontSize * 5 > 0) { ctx.globalAlpha = 0.15; ctx.fillText(char, x, y - fontSize * 5); }
+        ctx.globalAlpha = 1.0;
+      }
+      if (y > canvas.height && Math.random() > 0.975) drops[i] = 0;
+      drops[i] += 0.5 + Math.random() * 0.8;
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+const VULNS = [
+  {
+    id: 'CVE-2019-15846', component: 'Exim smtpd 4.89', severity: 'CRITICAL', cvss: '10.0', port: '25, 465, 587',
+    desc: 'Heap-based buffer overflow in Exim TLS handshake — RCE',
+    diff: {
+      file: 'ansible/roles/mailserver/tasks/main.yml',
+      old: ['  - name: Install Exim MTA', '    apt:', '      name: exim4=4.89-2'],
+      new: ['  - name: Install Exim MTA (PATCHED by AI)', '    apt:', '      name: exim4=4.97-1']
+    }
+  },
+  {
+    id: 'CVE-2023-38408', component: 'OpenSSH 7.4p1', severity: 'CRITICAL', cvss: '9.8', port: '22',
+    desc: 'PKCS#11 provider remote code execution via ssh-agent forwarding',
+    diff: {
+      file: 'terraform/modules/ssh/main.tf',
+      old: ['  ami = "ami-0123ef" # Debian 9', '  instance_type = "t3.medium"'],
+      new: ['  ami = "ami-0fedcba" # Debian 12 (AI Patched)', '  instance_type = "t3.medium"']
+    }
+  },
+  {
+    id: 'TG-0DAY-KII', component: 'NGINX Ingress (KII Zone)', severity: 'CRITICAL', cvss: '9.9', port: '443',
+    desc: 'Zero-day parsed from Telegram SOC Feed: Ingress path traversal',
+    diff: {
+      file: 'kubernetes/ingress-kii-control.yaml',
+      old: ['    nginx.ingress.kubernetes.io/rewrite-target: /'],
+      new: ['    nginx.ingress.kubernetes.io/rewrite-target: /', '    nginx.ingress.kubernetes.io/server-snippet: |', '      location ~* \\.\\./ { deny all; } # FPF Guard']
+    }
+  },
+  {
+    id: 'DNS-SPOOF-WARN', component: 'DNS53 Core Module', severity: 'HIGH', cvss: '7.5', port: '53',
+    desc: 'Predictive What-If Model expects imminent cache poisoning attack',
+    diff: {
+      file: 'bind/named.conf.options',
+      old: ['        dnssec-validation auto;'],
+      new: ['        dnssec-validation yes; # Forced by Watchdog', '        rate-limit { responses-per-second 10; };']
+    }
+  }
+];
+
+const SCAN_LOGS = [
+  { t: 300,  cls: 'log-info', msg: '[INIT] ПАК VulnDetector Engine starting...' },
+  { t: 1000, cls: 'log-ok',   msg: '[OK] 287,431 vulnerability signatures loaded from local AI storage' },
+  { t: 2000, cls: 'log-info', msg: '[SCAN] Target: enterprise-network & KII-control' },
+  { t: 3500, cls: 'log-warn', msg: '[WARN] Sub-optimal routes detected in DNS53 node' },
+  { t: 4500, cls: 'log-crit', msg: '[CRITICAL] CVE-2019-15846 — Exim RCE (CVSS 10.0)' },
+  { t: 5500, cls: 'log-crit', msg: '[CRITICAL] CVE-2023-38408 — OpenSSH RCE (CVSS 9.8)' },
+  { t: 6500, cls: 'log-crit', msg: '[CRITICAL] TG-0DAY-KII — Telegram SOC Context Parsed (CVSS 9.9)' },
+  { t: 7500, cls: 'log-warn', msg: '[HIGH] DNS-SPOOF-WARN — Model What-If Prediction Alert' },
+  { t: 8500, cls: 'log-info', msg: '[AI] FPF_Agent Generating unified IaC auto-patches...' },
+  { t: 9500, cls: 'log-ok',   msg: '[DONE] Validated. Patches ready for CISO approval.' },
+];
+
+let scanRunning = false; let patchedCount = 0;
+
+async function startScan() {
+  if (scanRunning) return; scanRunning = true;
+  document.getElementById('scanBtn').disabled = true;
+  document.getElementById('metricsBar').style.display = '';
+  document.getElementById('scanPanel').style.display = '';
+  document.getElementById('patchPanel').style.display = '';
+  document.getElementById('diffPanel').style.display = '';
+  document.getElementById('approveSection').style.display = '';
+  document.getElementById('scanStartSection').style.display = 'none';
+
+  const consoleEl = document.getElementById('console');
+  document.getElementById('statusLabel').textContent = 'BACKEND: SCANNING...';
+
+  // ПАК/Backend Integration Attempt
+  try {
+    const response = await fetch('http://localhost:5000/api/v1/scan', { method: 'POST', mode: 'no-cors' });
+    consoleEl.innerHTML += `<div class="log-info" style="color: var(--blue)">[ПАК-API] Sent scan request to hardware node...</div>`;
+    consoleEl.innerHTML += `<div class="log-warn" style="color: var(--warn)">[ПАК-API] Awaiting hardware telemetry... Timeout. Using demo cache.</div>`;
+  } catch(e) {
+    consoleEl.innerHTML += `<div class="log-error" style="color: var(--error)">[ПАК-API] Backend connection failed. Initializing Demo Local Cache...</div>`;
+  }
+
+  SCAN_LOGS.forEach((log, i) => {
+    setTimeout(() => {
+      const line = document.createElement('div');
+      line.innerHTML = `<span class="log-time">[${new Date().toTimeString().slice(0,8)}]</span> <span class="${log.cls}">${log.msg}</span>`;
+      consoleEl.appendChild(line);
+      consoleEl.scrollTop = consoleEl.scrollHeight;
+      if (log.msg.includes('CRITICAL')) document.getElementById('metricCritical').textContent = parseInt(document.getElementById('metricCritical').textContent) + 1;
+      if (i === SCAN_LOGS.length - 1) onScanComplete();
+    }, log.t);
+  });
+}
+
+function onScanComplete() {
+  document.getElementById('scanBadge').textContent = 'Complete';
+  document.getElementById('scanBadge').className = 'panel-badge badge-ready';
+  document.getElementById('patchBadge').textContent = '2 Patches Ready';
+  document.getElementById('patchBadge').className = 'panel-badge badge-critical';
+  document.getElementById('metricImmunity').textContent = '12%';
+
+  const list = document.getElementById('vulnList');
+  VULNS.forEach((v, i) => {
+    const item = document.createElement('div');
+    item.className = 'vuln-item'; item.id = `vuln-${i}`;
+    item.innerHTML = `
+      <div class="vuln-severity sev-critical">${v.cvss}</div>
+      <div class="vuln-info"><div class="vuln-id">${v.id}</div><div class="vuln-component">${v.component}</div></div>
+      <button class="vuln-action" onclick="selectVuln(${i})">View Patch</button>
+    `;
+    list.appendChild(item);
+  });
+  document.getElementById('approveBtn').disabled = false;
+}
+
+function selectVuln(idx) {
+  const v = VULNS[idx];
+  document.querySelectorAll('.vuln-item').forEach(el => el.classList.remove('active'));
+  document.getElementById(`vuln-${idx}`).classList.add('active');
+
+  const diffView = document.getElementById('diffView');
+  document.getElementById('diffBadge').textContent = v.id;
+  document.getElementById('diffBadge').className = 'panel-badge badge-critical';
+
+  let html = `<div class="diff-file">--- a/${v.diff.file}\n+++ b/${v.diff.file}</div>`;
+  v.diff.old.forEach(line => html += `<span class="diff-del">- ${line}</span>`);
+  v.diff.new.forEach(line => html += `<span class="diff-add">+ ${line}</span>`);
+  diffView.innerHTML = html;
+}
+
+function approveAll() {
+  const btn = document.getElementById('approveBtn');
+  btn.textContent = 'DEPLOYING...'; btn.disabled = true;
+  VULNS.forEach((v, i) => {
+    setTimeout(() => {
+      const item = document.getElementById(`vuln-${i}`);
+      item.classList.add('patched');
+      item.querySelector('.vuln-action').textContent = 'PATCHED ✓';
+      patchedCount++; document.getElementById('metricPatched').textContent = patchedCount;
+      if (i === VULNS.length - 1) setTimeout(showSuccess, 800);
+    }, (i + 1) * 1200);
+  });
+}
+
+function showSuccess() {
+  document.getElementById('metricImmunity').textContent = '98%';
+  document.getElementById('metricImmunity').className = 'metric-val ok';
+  document.getElementById('metricCritical').textContent = '0';
+  document.getElementById('successOverlay').classList.add('show');
+}
+
+function closeSuccess() {
+  document.getElementById('successOverlay').classList.remove('show');
+  document.getElementById('approveBtn').textContent = '✓ SECURED';
+}
+</script>
+
+</body>
+</html>
