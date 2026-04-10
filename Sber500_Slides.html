@@ -3,382 +3,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ПАК «Детектор Уязвимостей» · Sber500 Pitch (3D Edition)</title>
+    <title>VulnDetector Sber500 Pitch</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #030a05;
-            --primary-color: #00ff66;
-            --secondary-color: #00d4ff;
-            --text-main: #e0ffe8;
-            --glass-bg: rgba(5, 15, 10, 0.6);
-            --glass-border: rgba(0, 255, 102, 0.3);
+            --bg-color: #f8fafc;
+            --primary-color: #4f46e5;
+            --accent-color: #3b82f6;
+            --text-color: #334155;
+            --border-style: 1px solid #e2e8f0;
+            --slide-bg: #ffffff;
         }
-        
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            perspective: 1500px; /* For 3D effects */
+        * { box-sizing: border-box; margin: 0; padding: 0; cursor: default; }
+        body { 
+            background-color: var(--bg-color); 
+            color: var(--text-color); 
+            font-family: 'Inter', sans-serif; 
+            overflow: hidden; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
         }
-
-        /* Modern Matrix Rain Canvas */
-        #matrixCanvas {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -2;
-            opacity: 0.6;
-        }
-
-        /* Radial gradient overlay for depth */
-        .vignette {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at center, transparent 30%, var(--bg-color) 100%);
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        /* 3D Slide Container */
-        .slide-wrapper {
-            position: relative;
-            width: 85vw;
-            height: 80vh;
-            transform-style: preserve-3d;
-            transition: transform 0.1s ease-out;
-            z-index: 10;
-        }
-
+        .slide-container { width: 85vw; height: 80vh; position: relative; }
         .slide {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 4rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            opacity: 0;
-            transform: translateZ(-100px) scale(0.9);
-            transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
-            pointer-events: none;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.8), inset 0 0 40px rgba(0,255,102,0.05);
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            border: var(--border-style); border-radius: 24px; padding: 5rem;
+            background: var(--slide-bg); display: flex; flex-direction: column; justify-content: center;
+            opacity: 0; transition: all 0.5s ease; pointer-events: none;
+            transform: translateY(20px); box-shadow: 0 20px 40px rgba(0,0,0,0.05);
         }
-
-        .slide.active { 
-            opacity: 1; 
-            transform: translateZ(0) scale(1);
-            pointer-events: all; 
-        }
-
-        /* Typography */
-        h1, h2 { 
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-transform: uppercase; 
-            letter-spacing: 2px; 
-            margin-bottom: 1.5rem; 
-            font-weight: 800;
-            text-shadow: 0 0 30px rgba(0, 255, 102, 0.3);
-        }
-        
-        h1 { font-size: 3rem; text-align: center; border-bottom: 2px solid rgba(0,255,102,0.2); padding-bottom: 1rem; }
-        h2 { font-size: 2.2rem; display: flex; align-items: center; gap: 15px; }
-        h2::before { content: ''; display: block; width: 8px; height: 40px; background: var(--secondary-color); border-radius: 4px; box-shadow: 0 0 10px var(--secondary-color); }
-
-        p, li { font-size: 1.3rem; line-height: 1.6; margin-bottom: 1rem; font-weight: 300; }
-        ul { padding-left: 2rem; list-style-type: none; }
-        ul li { position: relative; margin-bottom: 1.2rem; }
-        ul li::before { 
-            content: '▹'; 
-            position: absolute; left: -25px; color: var(--primary-color);
-            text-shadow: 0 0 10px var(--primary-color);
-        }
-
-        .highlight { 
-            color: #fff;
-            text-shadow: 0 0 10px var(--primary-color);
-            font-weight: 600;
-        }
-        
-        .badge {
-            display: inline-block;
-            background: rgba(0, 212, 255, 0.15);
-            border: 1px solid var(--secondary-color);
-            color: var(--secondary-color);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            vertical-align: middle;
-            margin-left: 10px;
-            box-shadow: 0 0 15px rgba(0,212,255,0.2);
-        }
-
-        .footer { position: absolute; bottom: 2rem; right: 3rem; font-size: 0.9rem; opacity: 0.6; font-family: monospace; letter-spacing: 2px; }
-        
-        .nav-hints {
-            position: fixed; bottom: 20px; width: 100%; text-align: center;
-            color: rgba(255,255,255,0.4); font-size: 0.8rem; z-index: 20;
-            font-family: monospace; letter-spacing: 1px;
-        }
-
-        .caret {
-            display: inline-block; width: 10px; height: 1.2rem;
-            background-color: var(--primary-color); animation: blink 1s step-end infinite;
-            vertical-align: text-bottom;
-            box-shadow: 0 0 10px var(--primary-color);
-        }
-        @keyframes blink { 50% { opacity: 0; } }
-
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; height: 100%; }
-        
-        .stat-box { 
-            background: rgba(0,0,0,0.4);
-            border: 1px solid rgba(0,255,102,0.2); 
-            border-radius: 16px;
-            padding: 2.5rem; 
-            text-align: center; 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-            position: relative;
-            overflow: hidden;
-        }
-        .stat-box::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent); transform: skewX(-20deg); animation: shine 4s infinite; }
-        @keyframes shine { 100% { left: 200%; } }
-
-        .stat-value { font-size: 4rem; font-weight: 800; color: var(--primary-color); display: block; text-shadow: 0 0 20px rgba(0,255,102,0.4); }
-        .stat-label { font-size: 1rem; opacity: 0.7; letter-spacing: 2px; text-transform: uppercase; margin-top: 10px; display: block; }
-
-        /* SVG Lame Camel */
-        .lame-camel-container {
-            width: 100%; height: 250px;
-            display: flex; justify-content: center; align-items: center;
-            opacity: 0.8;
-            filter: drop-shadow(0 0 20px rgba(0,212,255,0.3));
-        }
-
-        /* 3D Click Ripple */
-        .ripple {
-            position: fixed;
-            border-radius: 50%;
-            border: 2px solid var(--secondary-color);
-            pointer-events: none;
-            transform: translate(-50%, -50%) scale(0);
-            animation: ripple-anim 0.6s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
-            z-index: 9999;
-            box-shadow: 0 0 20px var(--secondary-color), inset 0 0 20px var(--secondary-color);
-        }
-        @keyframes ripple-anim {
-            to { transform: translate(-50%, -50%) scale(3); opacity: 0; border-width: 0; }
-        }
+        .slide.active { opacity: 1; pointer-events: all; transform: translateY(0); }
+        h1, h2 { color: #0f172a; margin-bottom: 2rem; font-weight: 800; letter-spacing: -0.02em; }
+        h1 { font-size: 3.5rem; text-align: center; }
+        h2 { font-size: 2.2rem; display: flex; align-items: center; gap: 16px; margin-top: 1rem;}
+        h2::before { content: ""; display: block; width: 6px; height: 32px; background: var(--primary-color); border-radius: 4px; }
+        p, li { font-size: 1.4rem; line-height: 1.6; margin-bottom: 1.5rem; }
+        ul { padding-left: 2rem; margin-bottom: 2rem; }
+        li { margin-bottom: 1rem; }
+        .highlight { background-color: #eef2ff; color: var(--primary-color); padding: 4px 10px; border-radius: 6px; font-weight: 600; border: 1px solid #c7d2fe; }
+        .footer { position: absolute; bottom: 2.5rem; right: 4rem; font-size: 1rem; color: #94a3b8; font-weight: 600; letter-spacing: 0.1em; }
+        .nav-hints { position: fixed; bottom: 20px; width: 100%; text-align: center; color: #94a3b8; font-size: 0.85rem; font-weight: 500; }
+        .center-text { text-align: center; }
     </style>
 </head>
 <body>
-    <canvas id="matrixCanvas"></canvas>
-    <div class="vignette"></div>
-
-    <div class="slide-wrapper" id="sliderWrapper">
-        
-        <!-- Слайд 1: Проблема -->
+    <div class="slide-container" id="slider">
+        <!-- Slide 1 -->
         <div class="slide active">
-            <h1>БЮРОКРАТИЯ В ИТ И «ХРОМОЙ ВЕРБЛЮД» <span class="caret"></span></h1>
-            <div class="grid">
-                <div>
-                    <p style="font-style: italic; color: var(--text-main); opacity: 0.8; margin-bottom: 2rem;">
-                        "Если процесс безопасности тормозит релизы, ИТ-инфраструктура становится похожа на Хромого Верблюда — медленного, уязвимого и отстающего."
-                    </p>
-                    <ul>
-                        <li><span class="highlight">87% компаний</span> находятся в состоянии кибер-слепоты.</li>
-                        <li>MTTR (время устранения): <span class="highlight">7-14 дней</span> ручной работы.</li>
-                        <li>Знания уходят вместе с инженерами (Критический Bus Factor).</li>
-                    </ul>
-                </div>
-                <div class="stat-box" style="transform: translateZ(30px);">
-                    <!-- Хромой Верблюд SVG -->
-                    <div class="lame-camel-container">
-                        <svg viewBox="0 0 200 150" width="100%" height="100%">
-                            <!-- Futuristic neon camel wireframe -->
-                            <path d="M40,110 L45,60 L55,40 L70,30 L80,45 L100,20 L120,40 L130,50 L160,50 L170,40 L180,45 L180,60 L165,70 L160,110 M165,70 L140,80 L145,115 M110,60 L110,120" stroke="#00d4ff" stroke-width="2" fill="none" class="camel-path" style="stroke-dasharray: 400; animation: dash 4s linear infinite alternate;" />
-                            <circle cx="170" cy="50" r="3" fill="#00ff66" />
-                            <path d="M30,120 L180,120" stroke="rgba(0,255,102,0.4)" stroke-width="1" stroke-dasharray="5,5" />
-                            <!-- Warning sign on the lame leg -->
-                            <text x="135" y="140" fill="#ff3355" font-family="monospace" font-size="12" font-weight="bold">[ERROR: LAG]</text>
-                        </svg>
-                    </div>
-                </div>
+            <div style="text-align: center; margin-bottom: 1.5rem;">
+                <span style="background: rgba(79, 70, 229, 0.1); color: var(--primary-color); padding: 8px 20px; border-radius: 20px; font-size: 1rem; font-weight: 800; letter-spacing: 1px;">SBER500 × GIGACHAT ACCELERATOR</span>
             </div>
-            <div class="footer">01 / ПРОБЛЕМА</div>
+            <h1>VULNDETECTOR</h1>
+            <p class="center-text" style="font-size: 1.5rem; font-weight: 600; color: var(--primary-color); text-transform: uppercase; letter-spacing: 2px;">Интеллектуальная оркестрация безопасности</p>
+            <p class="center-text" style="font-size: 1.25rem; max-width: 80%; margin: 2rem auto; color: #64748b;">Многоагентная Enterprise-платформа для непрерывного сканирования корпоративной инфраструктуры и автоматической постановки задач инженерам без преград.</p>
+            <div class="footer">01 / VULNDETECTOR</div>
         </div>
 
-        <!-- Слайд 2: Решение -->
+        <!-- Slide 2 -->
         <div class="slide">
-            <h2>РЕШЕНИЕ: P.A.K. VULN-DETECTOR <span class="badge">Zero-UI Edition</span></h2>
-            <p>Суверенная ITSM-платформа с ИИ-оркестрацией на базе <span class="highlight">GigaChat MAX</span>.</p>
-            <div class="grid" style="grid-template-columns: 3fr 2fr;">
-                <ul>
-                    <li><strong>No App needed:</strong> Инженер пишет в корпоративный мессенджер (VK Teams/MAX).</li>
-                    <li><strong>GigaChat Core:</strong> Автоматический семантический разбор Root Cause.</li>
-                    <li><strong>Ultra-Fast:</strong> ИИ сокращает время реакции с 14 дней до <span class="highlight"><10 секунд</span>.</li>
-                    <li><strong>Action-Oriented:</strong> Мгновенная генерация IaC конфигураций (Ansible/Terraform).</li>
-                </ul>
-                <div class="stat-box" style="transform: translateZ(40px); background: rgba(0,212,255,0.05); border-color: var(--secondary-color);">
-                    <span class="stat-value" style="color: var(--secondary-color);">< 10s</span>
-                    <span class="stat-label">ВРЕМЯ РЕАКЦИИ (MTTR)</span>
-                </div>
-            </div>
-            <div class="footer">02 / РЕШЕНИЕ</div>
-        </div>
-
-        <!-- Слайд 3: Технология -->
-        <div class="slide">
-            <h2>ТЕХНОЛОГИЯ: MCP & РЕЗЕРВНЫЙ МОЗГ</h2>
-            <div class="grid">
-                <div>
-                    <p>Архитектура «Последней мили» для корпоративного ИИ:</p>
-                    <ul>
-                        <li><span class="highlight">Model Context Protocol (MCP):</span> Подключение агентов к любой защищенной инфраструктуре без написания кода.</li>
-                        <li><span class="highlight">RAG-индекс:</span> Сохранение знаний уходящих сеньоров (снижение Bus Factor).</li>
-                        <li><span class="highlight">GigaChat Pro:</span> Безупречная работа с русскими техническими ГОСТами и терминами.</li>
-                    </ul>
-                </div>
-                <div style="transform: translateZ(50px); text-align: center;">
-                    <!-- Анимация MCP узлов -->
-                    <svg viewBox="0 0 200 200" width="80%" height="auto">
-                        <circle cx="100" cy="100" r="40" fill="rgba(0,255,102,0.1)" stroke="#00ff66" stroke-width="2"/>
-                        <text x="100" y="105" text-anchor="middle" font-family="monospace" fill="#fff" font-size="14">GigaChat</text>
-                        <!-- Nodes -->
-                        <line x1="100" y1="60" x2="100" y2="20" stroke="#00d4ff" stroke-width="2" stroke-dasharray="4" />
-                        <line x1="100" y1="140" x2="100" y2="180" stroke="#00d4ff" stroke-width="2" stroke-dasharray="4" />
-                        <line x1="60" y1="100" x2="20" y2="100" stroke="#00d4ff" stroke-width="2" stroke-dasharray="4" />
-                        <line x1="140" y1="100" x2="180" y2="100" stroke="#00d4ff" stroke-width="2" stroke-dasharray="4" />
-                        <circle cx="100" cy="20" r="15" fill="rgba(0,212,255,0.2)" stroke="#00d4ff"/>
-                        <circle cx="100" cy="180" r="15" fill="rgba(0,212,255,0.2)" stroke="#00d4ff"/>
-                        <circle cx="20" cy="100" r="15" fill="rgba(0,212,255,0.2)" stroke="#00d4ff"/>
-                        <circle cx="180" cy="100" r="15" fill="rgba(0,212,255,0.2)" stroke="#00d4ff"/>
-                    </svg>
-                </div>
-            </div>
-            <div class="footer">03 / ТЕХНОЛОГИИ</div>
-        </div>
-
-        <!-- Слайд 4: Тракшн и РИД -->
-        <div class="slide">
-            <h2>ТРАКШН И ЗАЩИТА АКТИВОВ <span class="badge" style="color:var(--primary-color); border-color:var(--primary-color);">GTM Ready</span></h2>
-            <div class="grid">
-                <div>
-                    <ul>
-                        <li><span class="highlight">Инт. Собственность:</span> 2 Свидетельства Роспатента (ПО и БД).</li>
-                        <li><span class="highlight">Минцифры:</span> Пакет документации по ГОСТ 19.404 готов к подаче.</li>
-                        <li><span class="highlight">Экосистема:</span> 10 MCP-модулей, 7 работающих продуктов кластера.</li>
-                        <li><span class="highlight">Клиенты:</span> Пилоты в инфраструктуре HFTCloud.</li>
-                    </ul>
-                </div>
-                <div class="stat-box" style="transform: translateZ(30px); background: rgba(0,255,102,0.05);">
-                    <div style="font-size: 1.5rem; color: #fff; margin-bottom: 20px;">ПАТЕНТЫ РФ</div>
-                    <p style="font-family: monospace; color: var(--secondary-color); font-size: 1.2rem;">RU 2025617162 (Soft)</p>
-                    <p style="font-family: monospace; color: var(--secondary-color); font-size: 1.2rem;">RU 2025622617 (Data)</p>
-                </div>
-            </div>
-            <div class="footer">04 / ТРАКШН</div>
-        </div>
-
-        <!-- Слайд 5: Бизнес-модель -->
-        <div class="slide">
-            <h2>БИЗНЕС-МОДЕЛЬ И ДИСТРИБУЦИЯ</h2>
-            <div class="grid">
-                <ul>
-                    <li><span class="highlight">LeadGen:</span> B2B-КиберКвиз «Узнай свой Bus Factor».</li>
-                    <li><span class="highlight">Онбординг:</span> 14-дневный триал, встраиваемый прямо в мессенджер.</li>
-                    <li><span class="highlight">SaaS:</span> 150 000 ₽ / год для SMB.</li>
-                    <li><span class="highlight">On-Premise:</span> от 500 000 ₽ / год для Enterprise-контуров.</li>
-                </ul>
-                <div style="transform: translateZ(60px);">
-                    <div style="padding: 2rem; background: rgba(0,0,0,0.6); border-radius: 12px; border-left: 5px solid var(--secondary-color);">
-                        <p style="font-style: italic; opacity: 0.8;">"Виральность достигается за счет простоты: руководители видят как инженеры решают проблемы в один клик прямо в чате."</p>
-                    </div>
-                </div>
-            </div>
-            <div class="footer">05 / БИЗНЕС</div>
-        </div>
-
-        <!-- Слайд 6: Почему СБЕР? -->
-        <div class="slide">
-            <h2>ПОЧЕМУ SBER500 И GIGACHAT?</h2>
-            <p>Мы — идеальный партнер для экспансии GigaChat в корпорации:</p>
+            <h2>СМЕНА ПАРАДИГМЫ: ИТ-ИММУНИТЕТ</h2>
             <ul>
-                <li><strong>Импортозамещение:</strong> Заменяем ServiceNow и Jira на связку Российская ОС + GigaChat.</li>
-                <li><strong>Secured Enclave:</strong> GigaChat не отправляет данные за рубеж (в отличие от OpenAI).</li>
-                <li><strong>Специфика РФ:</strong> Идеальное знание ГОСТов, БДУ ФСТЭК и отечественной "боли".</li>
-                <li><strong>Синергия:</strong> Готовы запускать внутренние пилоты в экосистеме Сбера.</li>
+                <li><strong>Проблема:</strong> ИБ-отделы и DevSecOps инженеры тонут в рутине. Отчеты сканеров сложно применять.</li>
+                <li><strong>Последствия:</strong> Огромный TTR (Time To Remediate). Уязвимости критического уровня исправляются неделями вместо минут.</li>
+                <li><strong>Наше решение:</strong> Непрерывный автоматизированный ИТ-Иммунитет с использованием LLM (GigaChat).</li>
             </ul>
-            <div class="footer">06 / ПАРТНЕРСТВО</div>
+            <div class="footer">02 / ПРОБЛЕМА И РЕШЕНИЕ</div>
         </div>
 
-        <!-- Слайд 7: Дорожная карта -->
+        <!-- Slide 3 -->
         <div class="slide">
-            <h2>ROADMAP 2026: ОТ ИННОВАЦИИ К СТАНДАРТУ</h2>
-            <div style="margin-top: 2rem; position: relative;">
-                <div style="position: absolute; left: 10px; top: 0; bottom: 0; width: 4px; background: rgba(0,255,102,0.3);"></div>
-                
-                <div style="margin-left: 40px; margin-bottom: 1.5rem; position: relative;">
-                    <div style="position: absolute; left: -36px; top: 5px; width: 12px; height: 12px; border-radius: 50%; background: var(--primary-color); box-shadow: 0 0 10px var(--primary-color);"></div>
-                    <h3 style="color: #fff;">Апрель 2026: Реестр Минцифры</h3>
-                    <p style="opacity: 0.7; font-size: 1rem;">Подача ГОСТ-документации на включение в класс 02.09.</p>
-                </div>
-                
-                <div style="margin-left: 40px; margin-bottom: 1.5rem; position: relative;">
-                    <div style="position: absolute; left: -36px; top: 5px; width: 12px; height: 12px; border-radius: 50%; background: var(--secondary-color); box-shadow: 0 0 10px var(--secondary-color);"></div>
-                    <h3 style="color: #fff;">Май-Июнь 2026: Запуск Пилотов</h3>
-                    <p style="opacity: 0.7; font-size: 1rem;">Первые 3 контракта с Enterprise клиентами (через воронку Квиза).</p>
-                </div>
-                
-                <div style="margin-left: 40px; position: relative;">
-                    <div style="position: absolute; left: -36px; top: 5px; width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--secondary-color); background: #000;"></div>
-                    <h3 style="color: #fff;">Q3 2026: Smithery & MCP Global</h3>
-                    <p style="opacity: 0.7; font-size: 1rem;">Выход на глобальный рынок MCP-плагинов.</p>
-                </div>
-            </div>
-            
-            <div style="text-align: center; margin-top: 3rem; transform: translateZ(50px);">
-                <h1 style="font-size: 2.2rem; border: none; text-shadow: 0 0 40px var(--secondary-color);">ГОТОВЫ К МАСШТАБИРОВАНИЮ</h1>
-            </div>
-            <div class="footer">07 / БУДУЩЕЕ</div>
+            <h2>ПАК «VULNDETECTOR»</h2>
+            <p>Программно-аппаратный комплекс и интеллектуальный веб-интерфейс:</p>
+            <ul>
+                <li><span class="highlight">Zero-UI Архитектура:</span> Роботы работают в фоне, не отвлекая команду от бизнеса.</li>
+                <li><span class="highlight">Непрерывный мониторинг:</span> Мгновенный перехват почтовых алертов и серверных логов.</li>
+                <li><span class="highlight">Enterprise-ready:</span> ГОСТ-документация и полная готовность к Реестру Минцифры РФ.</li>
+            </ul>
+            <div class="footer">03 / РЕАЛИЗАЦИЯ</div>
         </div>
 
+        <!-- Slide 4 -->
+        <div class="slide">
+            <h2>ЭКОСИСТЕМА И ИНТЕГРАЦИИ</h2>
+            <p>Гибкая инфраструктура и многоагентный оркестратор:</p>
+            <ul>
+                <li><span class="highlight">GigaChat Core:</span> Синтаксический разбор уязвимостей на лету на русском языке.</li>
+                <li><span class="highlight">Kanban Bridge:</span> Перевод технических логов в конкретные задачи для программистов (Jira/Kanboard).</li>
+                <li><span class="highlight">Janitor-Надзиратель:</span> Telegram-система соблюдения SLA по критическим багам.</li>
+            </ul>
+            <div class="footer">04 / ЭКОСИСТЕМА</div>
+        </div>
+
+        <!-- Slide 5 -->
+        <div class="slide">
+            <h2>МОНЕТИЗАЦИЯ И РЫНОК</h2>
+            <ul>
+                <li><strong>Рынок:</strong> B2B, Enterprise-сегмент, FinTech, E-Commerce, Заказная разработка.</li>
+                <li><strong>SaaS подписка:</strong> Облачная оркестрация для небольших IT-компаний.</li>
+                <li><strong>On-Premise:</strong> Установка в закрытый контур корпораций с использованием корпоративного GigaChat API.</li>
+            </ul>
+            <div class="footer">05 / БИЗНЕС-МОДЕЛЬ</div>
+        </div>
+
+        <!-- Slide 6 -->
+        <div class="slide">
+            <h2 style="justify-content: center; border: none; font-size: 2.8rem; margin-top: 2rem;">ГОТОВЫ К ЗАПУСКУ ПИЛОТОВ <span style="color:var(--primary-color)">⚡</span></h2>
+            <p class="center-text" style="font-size: 1.5rem; max-width: 80%; margin: 2rem auto;">
+                <strong>ЦЕЛЬ В АКСЕЛЕРАТОРЕ:</strong> Финансирование масштабирования, плотная техническая интеграция с GigaChat и продукты Сбера, первые крупные Enterprise-клиенты.
+            </p>
+            <div style="text-align: center; margin-top: 3rem;">
+                <span class="highlight" style="font-size: 1.2rem; padding: 12px 30px; border-radius: 30px; border:none; background: #0f172a; color:#fff;">Спасибо за внимание!</span>
+            </div>
+            <div class="footer">06 / ФИНАЛ</div>
+        </div>
     </div>
 
     <div class="nav-hints">
-        [КЛИК MOUSE] ИЛИ [ПРОБЕЛ]: ВПЕРЕД | [СТРЕЛКА ВЛЕВО]: НАЗАД | СЛАЙД <span id="slideCounter">01</span> / 07
+        <span>[ПРОБЕЛ / КЛИК / СТРЕЛКА ВПРАВО]: ВПЕРЕД &nbsp;&nbsp;|&nbsp;&nbsp; [СТРЕЛКА ВЛЕВО]: НАЗАД</span>
     </div>
 
-    <!-- Scripts -->
     <script>
-        // --- 1. SLIDE NAVIGATION ---
         const slides = document.querySelectorAll('.slide');
-        const counter = document.getElementById('slideCounter');
         let currentSlide = 0;
-
         function showSlide(index) {
             slides.forEach((slide, i) => {
                 slide.classList.remove('active');
                 if (i === index) slide.classList.add('active');
             });
-            counter.textContent = String(index + 1).padStart(2, '0');
         }
-
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
                 currentSlide = (currentSlide + 1) % slides.length;
                 showSlide(currentSlide);
             } else if (e.key === 'ArrowLeft') {
@@ -386,106 +141,11 @@
                 showSlide(currentSlide);
             }
         });
-        
-        document.body.addEventListener('click', (e) => {
-             if(e.target.tagName !== 'A' && e.target.tagName !== 'BUTTON') {
-                 currentSlide = (currentSlide + 1) % slides.length;
-                 showSlide(currentSlide);
-             }
+        document.body.addEventListener('click', () => {
+             currentSlide = (currentSlide + 1) % slides.length;
+             showSlide(currentSlide);
         });
-
-        // --- 2. 3D MOUSE PARALLAX EFFECT ---
-        const wrapper = document.getElementById('sliderWrapper');
-        document.addEventListener('mousemove', (e) => {
-            const x = (window.innerWidth / 2 - e.clientX) / 40; // Sensitivity X
-            const y = (window.innerHeight / 2 - e.clientY) / 40; // Sensitivity Y
-            wrapper.style.transform = `rotateY(${-x}deg) rotateX(${y}deg)`;
-        });
-        
-        // Reset transform on mouse leave
-        document.addEventListener('mouseleave', () => {
-            wrapper.style.transform = `rotateY(0deg) rotateX(0deg)`;
-        });
-
-        // --- 3. CLICK RIPPLE EFFECT ---
-        document.addEventListener('mousedown', function(e) {
-            let ripple = document.createElement('div');
-            ripple.className = 'ripple';
-            ripple.style.left = e.clientX + 'px';
-            ripple.style.top = e.clientY + 'px';
-            document.body.appendChild(ripple);
-            
-            setTimeout(() => {
-                ripple.remove();
-            }, 600);
-        });
-
-        // --- 4. MODERN MATRIX RAIN CANVAS ---
-        const canvas = document.getElementById('matrixCanvas');
-        const ctx = canvas.getContext('2d');
-
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        // Modern character set including katakana and tech symbols
-        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレゲゼデベペオォコソトノホモヨョロゴゾドボポヴッン<>/\\{}[]#*+~=".split("");
-
-        const fontSize = 16;
-        const columns = canvas.width / fontSize;
-        const drops = [];
-        
-        // Glowing colors
-        const colors = ['#00ff66', '#00d4ff', '#1aff00', '#ffffff'];
-
-        for (let x = 0; x < columns; x++) {
-            drops[x] = Math.random() * -100; // Start at random negative heights
-        }
-
-        function drawMatrix() {
-            // Semi-transparent black to create fading trails
-            ctx.fillStyle = "rgba(3, 10, 5, 0.1)"; 
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.font = fontSize + "px monospace";
-
-            for (let i = 0; i < drops.length; i++) {
-                // Randomly select character and color
-                const text = letters[Math.floor(Math.random() * letters.length)];
-                
-                // 10% chance for a bright white or cyan character (modern feel)
-                const isHighlight = Math.random() > 0.9;
-                ctx.fillStyle = isHighlight ? colors[Math.floor(Math.random() * colors.length)] : "#005522";
-                
-                // Add glow to highlights
-                if(isHighlight) {
-                    ctx.shadowBlur = 10;
-                    ctx.shadowColor = ctx.fillStyle;
-                } else {
-                    ctx.shadowBlur = 0;
-                }
-
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-                // Reset drop to top randomly
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                    drops[i] = 0;
-                }
-                // Move drop down
-                drops[i] += (Math.random() * 0.5 + 0.5); // Varying speeds
-            }
-            requestAnimationFrame(drawMatrix);
-        }
-
-        // Handle resize
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
-
-        // Initialize
         showSlide(0);
-        drawMatrix();
-
     </script>
 </body>
 </html>
