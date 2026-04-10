@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VulnDetector Orchestrator | Командный центр</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg: #fdfdfc;
+            --sidebar: #ffffff;
+            --panel: #ffffff;
+            --border: #e2e8f0;
+            --txt-main: #1a202c;
+            --txt-muted: #718096;
+            --txt-light: #a0aec0;
+            --accent: #4f46e5;
+            --accent-soft: #eef2ff;
+            --green: #10b981;
+            --red: #ef4444;
+            --yellow: #f59e0b;
+            --font-sans: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            margin: 0; padding: 0;
+            background-color: var(--bg);
+            color: var(--txt-main);
+            font-family: var(--font-sans);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* SIDEBAR (LEFT) */
+        .sidebar-left {
+            width: 260px;
+            background: var(--sidebar);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 24px 16px;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            margin-bottom: 32px;
+            color: var(--txt-main);
+        }
+        .logo svg { width: 28px; height: 28px; }
+
+        .sidebar-label {
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--txt-light);
+            margin: 20px 0 12px 0;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--txt-main);
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 4px;
+        }
+        .nav-item:hover { background: #f8fafc; }
+        .nav-item.active { background: var(--accent-soft); color: var(--accent); }
+        .nav-item svg { width: 18px; color: var(--txt-muted); }
+        .nav-item.active svg { color: var(--accent); }
+
+        .chat-list-item {
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: var(--txt-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .chat-list-item:hover { background: #f8fafc; color: var(--txt-main); }
+        .chat-list-item .time { font-size: 0.7rem; color: var(--txt-light); display: block; margin-top: 2px; }
+
+        /* MAIN CONTENT */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background: #fcfcfc;
+        }
+
+        .main-header {
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid var(--border);
+            padding: 0 24px;
+            background: rgba(255,255,255,0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .tab-switcher {
+            display: flex;
+            background: #f1f5f9;
+            padding: 4px;
+            border-radius: 10px;
+            gap: 4px;
+        }
+        .tab {
+            padding: 6px 16px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--txt-muted);
+            cursor: pointer;
+        }
+        .tab.active { background: #fff; color: var(--txt-main); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+
+        .content-body {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-y: auto;
+        }
+
+        .hero-section {
+            text-align: center;
+            max-width: 600px;
+            margin-top: 80px;
+        }
+        .hero-logo {
+            width: 80px; height: 80px;
+            margin: 0 auto 24px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .hero-section h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin: 0 0 12px 0;
+            letter-spacing: -0.02em;
+        }
+        .hero-section p {
+            font-size: 1rem;
+            color: var(--txt-muted);
+            line-height: 1.6;
+        }
+
+        .chat-input-container {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 80px);
+            max-width: 700px;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .chat-input-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--txt-light);
+            font-family: var(--font-mono);
+        }
+        .chat-input-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .chat-input-row input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 1.05rem;
+            font-family: var(--font-sans);
+        }
+        .send-btn {
+            background: var(--accent);
+            color: #fff;
+            width: 40px; height: 40px;
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .send-btn:hover { background: #4338ca; transform: translateY(-1px); }
+
+        /* SETTINGS PANEL (RIGHT) */
+        .sidebar-right {
+            width: 320px;
+            background: var(--sidebar);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+            overflow-y: auto;
+        }
+        .sidebar-right-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 32px;
+        }
+        .sidebar-right-header h2 { font-size: 1.1rem; font-weight: 700; margin: 0; }
+        .close-btn { color: var(--txt-light); cursor: pointer; }
+
+        .setting-group { margin-bottom: 32px; }
+        .setting-label { font-size: 0.75rem; font-weight: 700; color: var(--txt-light); text-transform: uppercase; margin-bottom: 16px; letter-spacing: 0.05em; }
+        
+        .field { margin-bottom: 16px; }
+        .field-label { font-size: 0.85rem; font-weight: 600; color: var(--txt-muted); margin-bottom: 8px; display: block; }
+        .select-input, .text-input {
+            width: 100%;
+            padding: 10px 12px;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: var(--txt-main);
+            outline: none;
+            cursor: pointer;
+        }
+        .select-input:hover { border-color: var(--txt-light); }
+
+        .model-status-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            padding: 8px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .status-dot { width: 6px; height: 6px; border-radius: 50%; margin-right: 8px; }
+        .dot-green { background: var(--green); box-shadow: 0 0 8px rgba(16,185,129,0.4); }
+        .dot-red { background: var(--red); box-shadow: 0 0 8px rgba(239,68,218,0.4); }
+        .dot-yellow { background: var(--yellow); }
+
+        /* DASHBOARD CARDS */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            width: 100%;
+            max-width: 800px;
+            margin-top: 40px;
+        }
+        .card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: var(--card-shadow);
+        }
+        .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+        .card-title { font-size: 0.85rem; font-weight: 700; color: var(--txt-muted); text-transform: uppercase; }
+        
+        .immunity-val { font-size: 2.5rem; font-weight: 900; family: var(--font-mono); color: var(--red); }
+        .immunity-desc { font-size: 0.85rem; color: var(--txt-muted); margin-top: 8px; }
+
+        .console-mini {
+            background: #0f172a;
+            border-radius: 12px;
+            padding: 16px;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: #94a3b8;
+            height: 180px;
+            overflow-y: auto;
+            line-height: 1.6;
+        }
+        .log-line { margin-bottom: 4px; }
+        .log-accent { color: var(--accent); }
+        .log-crit { color: var(--red); }
+        .log-ok { color: var(--green); }
+
+        /* CHAT BUBBLES */
+        .message-container { width: 100%; max-width: 700px; display: flex; flex-direction: column; gap: 24px; margin-top: 40px; padding-bottom: 150px; }
+        .message { display: flex; gap: 16px; }
+        .avatar { width: 36px; height: 36px; border-radius: 8px; background: #eee; flex-shrink: 0; }
+        .msg-body { flex: 1; }
+        .msg-name { font-weight: 700; font-size: 0.9rem; margin-bottom: 6px; }
+        .msg-text { font-size: 0.95rem; line-height: 1.6; color: var(--txt-main); }
+
+        .vuln-badge-pill {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+        .pill-danger { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <!-- LEFT SIDEBAR -->
+    <aside class="sidebar-left">
+        <div class="logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+            </svg>
+            VulnDetector
+        </div>
+
+        <div class="nav-item active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+            Command Center
+        </div>
+        <div class="nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            Analytics
+        </div>
+
+        <div class="sidebar-label">Folders</div>
+        <div class="nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+            Sber500 Cases
+        </div>
+
+        <div class="sidebar-label">Recent Audits</div>
+        <div class="chat-list-item">
+            REST API Security Audit
+            <span class="time">2m ago • Critical</span>
+        </div>
+        <div class="chat-list-item">
+            Infrastrusture K8s Scan
+            <span class="time">15m ago • Solved</span>
+        </div>
+        <div class="chat-list-item">
+            Config Leak Analysis
+            <span class="time">1h ago • Verified</span>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <header class="main-header">
+            <div class="tab-switcher">
+                <div class="tab active" id="tabManager">Agent Manager</div>
+                <div class="tab" id="tabEditor">Editor</div>
+            </div>
+        </header>
+
+        <div class="content-body" id="managerIn">
+            <!-- INITIAL STATE -->
+            <div class="hero-section" id="initialHero">
+                <div class="hero-logo">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 100%; height: 100%;">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                </div>
+                <h1>VulnDetector Orchestrator</h1>
+                <p>Единая ИИ-платформа оркестрации кибербезопасности. Подключите любую инфраструктуру для сканирования, патчинга и автоматизированной отчетности.</p>
+            </div>
+
+            <!-- DASHBOARD VIEW -->
+            <div class="stats-grid hidden" id="dashboardView">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Индекс ИТ-Иммунитета</div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 24px;">
+                        <div class="immunity-val" id="scoreVal">12%</div>
+                        <div class="immunity-desc" id="scoreDesc">Критический уровень. Замечено 4 активных угрозы.</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">AI Radar Logs</div>
+                    </div>
+                    <div class="console-mini" id="miniConsole">
+                        <div class="log-line">> Инициализация...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHAT / LOGS -->
+            <div class="message-container hidden" id="messageContainer">
+                <div class="message">
+                    <div class="avatar" style="background: var(--accent); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800;">VD</div>
+                    <div class="msg-body">
+                        <div class="msg-name">Orchestrator Agent</div>
+                        <div class="msg-text">
+                            Я провел глубокое сканирование вашего периметра. Обнаружено несколько критических уязвимостей в конфигурации K8s и утечка секретов.
+                            <br><br>
+                            <span class="vuln-badge-pill pill-danger">CVE-2023-38408</span>
+                            <span class="vuln-badge-pill pill-danger">TG-0DAY-KII</span>
+                            <br>
+                            Рекомендуется немедленное внедрение патчей и обновление политик доступа.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- INPUT BOX -->
+        <div class="chat-input-container">
+            <div class="chat-input-label">nano</div>
+            <div class="chat-input-row">
+                <input type="text" id="userInput" placeholder="Введите команду или запрос на аудит...">
+                <div class="send-btn" onclick="startFlow()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- SETTINGS PANEL (RIGHT) -->
+    <aside class="sidebar-right">
+        <div class="sidebar-right-header">
+            <h2>Settings</h2>
+            <div class="close-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </div>
+        </div>
+
+        <div class="setting-group">
+            <div class="setting-label">Orchestration Engine</div>
+            <div class="field">
+                <span class="field-label">Default AI Profile</span>
+                <select class="select-input">
+                    <option>Sber GigaChat V3.5 (Expert)</option>
+                    <option>Local Ollama (Llama 3)</option>
+                </select>
+            </div>
+            <div class="field">
+                <span class="field-label">LiteLLM Proxy Endpoint</span>
+                <input type="text" class="text-input" value="http://localhost:4000">
+            </div>
+        </div>
+
+        <div class="setting-group">
+            <div class="setting-label">Sber500 Status</div>
+            <div class="model-status-item">
+                <div style="display:flex; align-items:center;">
+                    <div class="status-dot dot-green"></div>
+                    Scan Engine Alpha
+                </div>
+                <span style="color:var(--txt-light)">Online</span>
+            </div>
+            <div class="model-status-item">
+                <div style="display:flex; align-items:center;">
+                    <div class="status-dot dot-green"></div>
+                    KanbanBridge Sync
+                </div>
+                <span style="color:var(--txt-light)">Active</span>
+            </div>
+            <div class="model-status-item">
+                <div style="display:flex; align-items:center;">
+                    <div class="status-dot dot-yellow"></div>
+                    AutoPatch Module
+                </div>
+                <span style="color:var(--txt-light)">Ready</span>
+            </div>
+            <div class="model-status-item">
+                <div style="display:flex; align-items:center;">
+                    <div class="status-dot dot-red"></div>
+                    Registry Reporter
+                </div>
+                <span style="color:var(--txt-light)">Offline</span>
+            </div>
+        </div>
+
+        <div class="setting-group">
+            <div class="setting-label">Infrastructure Health</div>
+            <canvas id="healthMiniChart" height="100"></canvas>
+        </div>
+    </aside>
+
+    <script>
+        function startFlow() {
+            const val = document.getElementById('userInput').value;
+            if (!val) return;
+
+            document.getElementById('initialHero').classList.add('hidden');
+            document.getElementById('dashboardView').classList.remove('hidden');
+            document.getElementById('messageContainer').classList.remove('hidden');
+            
+            runLogs();
+            updateMiniChart();
+        }
+
+        const logs = [
+            "Connecting to cluster node-01...",
+            "Authenticating via LDAP/SSO...",
+            "Scanning network stack...",
+            "CRITICAL: Found SSH CVE-2023-38408",
+            "CRITICAL: Token leak in logs detected",
+            "Sending data to GigaChat for analysis...",
+            "GigaChat: Analysis complete. 2 risks found."
+        ];
+
+        function runLogs() {
+            const console = document.getElementById('miniConsole');
+            let i = 0;
+            const interval = setInterval(() => {
+                const line = document.createElement('div');
+                line.className = 'log-line';
+                if (logs[i].includes('CRITICAL')) line.className += ' log-crit';
+                if (logs[i].includes('GigaChat')) line.className += ' log-accent';
+                line.textContent = `> ${logs[i]}`;
+                console.appendChild(line);
+                console.scrollTop = console.scrollHeight;
+                i++;
+                if (i >= logs.length) clearInterval(interval);
+            }, 800);
+        }
+
+        function updateMiniChart() {
+            const ctx = document.getElementById('healthMiniChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['1', '2', '3', '4', '5'],
+                    datasets: [{
+                        label: 'Risk level',
+                        data: [10, 25, 60, 85, 90],
+                        borderColor: '#ef4444',
+                        tension: 0.4,
+                        borderWidth: 2,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    plugins: { legend: { display: false } },
+                    scales: { 
+                        x: { display: false },
+                        y: { display: false }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

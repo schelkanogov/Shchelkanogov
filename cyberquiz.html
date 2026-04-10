@@ -3,713 +3,473 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>КиберКвиз для бизнеса · Оцените уровень защищённости</title>
-  <meta name="description" content="8 вопросов — и вы узнаете реальный уровень кибербезопасности вашей компании. Бесплатная экспресс-оценка за 3 минуты.">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <title>КиберКвиз | VulnDetector</title>
+  <meta name="description" content="Оцените уровень защищённости вашей компании за 3 минуты.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      /* ═══ UNIFIED DESIGN SYSTEM ═══ */
-      --bg: #050508;
-      --surface: rgba(12, 13, 18, 0.7);
-      --surface-solid: #0c0d12;
-      --border: rgba(255, 255, 255, 0.08);
-      --border-hover: rgba(0, 212, 255, 0.4);
-      --txt: #f0f2f5;
-      --txt2: #8f9bb3;
-      --txt3: #4a5068;
-      --accent: #00d4ff;
-      --accent-dim: rgba(0, 212, 255, 0.1);
-      --accent-glow: rgba(0, 212, 255, 0.2);
-      --green: #00ff9f;
-      --warn: #ffb703;
-      --red: #ff3355;
-      --cyan: #00d4ff;
-      --mono: 'JetBrains Mono', monospace;
-      --sans: 'Inter', -apple-system, sans-serif;
-      --glass-blur: blur(16px);
-      --radius: 12px;
+      --bg: #fdfdfc;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --txt: #1a202c;
+      --txt-muted: #718096;
+      --txt-light: #a0aec0;
+      --accent: #4f46e5;
+      --accent-soft: #eef2ff;
+      --green: #10b981;
+      --warn: #f59e0b;
+      --red: #ef4444;
+      --radius: 16px;
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.03), 0 2px 4px rgba(0, 0, 0, 0.02);
     }
+
     * { margin:0; padding:0; box-sizing:border-box; }
     body {
-      font-family: var(--sans); background: var(--bg); color: var(--txt);
-      min-height: 100vh; overflow-x: hidden;
-    }
-    body::before {
-      content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: radial-gradient(ellipse at 50% 0%, rgba(0, 255, 159, 0.04) 0%, transparent 60%);
-      pointer-events: none; z-index: 0;
-    }
-
-    /* ═══ MATRIX CANVAS ═══ */
-    #matrixBg { position:fixed; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none; opacity:0.3; }
-
-    .page { position:relative; z-index:1; max-width:820px; margin:0 auto; padding:20px; }
-
-    /* ═══ NAV ═══ */
-    .top-bar {
-      display:flex; justify-content:space-between; align-items:center;
-      padding:14px 20px; background:var(--surface); border:1px solid var(--border);
-      margin-bottom:32px; backdrop-filter:var(--glass-blur); border-radius:var(--radius);
-    }
-    .top-bar a { color:var(--accent); text-decoration:none; font-size:13px; font-weight:600; font-family:var(--mono); transition: color 0.2s; }
-    .top-bar a:hover { color:#fff; }
-    .top-bar .brand { font-family:var(--mono); font-size:14px; color:var(--txt2); letter-spacing:1px; }
-
-    /* ═══ HERO ═══ */
-    .hero {
-      text-align:center; padding:48px 24px 56px;
-      background:var(--surface); border:1px solid var(--border);
-      margin-bottom:32px; backdrop-filter:var(--glass-blur); border-radius:var(--radius);
-    }
-    .hero h1 {
-      font-family:var(--sans); font-size:clamp(1.8rem,4vw,2.8rem);
-      font-weight:900; color:#fff; letter-spacing:-0.5px; margin-bottom:12px;
-    }
-    .hero-accent { color:var(--accent); text-shadow: 0 0 20px var(--accent-glow); }
-    .hero p { color:var(--txt2); font-size:16px; max-width:560px; margin:0 auto 24px; line-height:1.7; }
-    .hero-tags { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; }
-    .hero-tag {
-      font-family:var(--mono); font-size:11px; padding:6px 16px;
-      border:1px solid var(--border); color:var(--txt2); border-radius:8px;
-      letter-spacing:0.5px; text-transform:uppercase; background:rgba(255,255,255,0.02);
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--txt);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 40px 20px;
     }
 
-    /* ═══ PROGRESS ═══ */
-    .progress-wrap {
-      background:var(--surface); border:1px solid var(--border); padding:16px 20px;
-      margin-bottom:24px; backdrop-filter:var(--glass-blur); border-radius:var(--radius);
+    .container {
+      width: 100%;
+      max-width: 680px;
+      position: relative;
     }
-    .progress-top { display:flex; justify-content:space-between; margin-bottom:8px; font-family:var(--mono); font-size:12px; color:var(--txt2); }
-    .progress-bar { height:4px; background:rgba(255,255,255,0.04); border-radius:4px; overflow:hidden; }
-    .progress-fill { height:100%; width:0%; background:linear-gradient(90deg,var(--accent),var(--cyan)); transition:width 0.4s; box-shadow:0 0 12px var(--accent-glow); }
 
-    /* ═══ QUESTION CARD ═══ */
-    .q-card {
-      background:var(--surface); border:1px solid var(--border);
-      padding:28px 24px; margin-bottom:20px;
-      backdrop-filter:var(--glass-blur); transition:border-color 0.3s;
-      display:none; border-radius:var(--radius);
+    /* HEADER */
+    .header {
+      text-align: center;
+      margin-bottom: 48px;
     }
-    .q-card.active { display:block; animation:fadeIn 0.4s ease; }
-    .q-card.answered { border-color:var(--border-hover); box-shadow:0 0 16px var(--accent-glow); }
-    @keyframes fadeIn { from{opacity:0;transform:translateY(12px);} to{opacity:1;transform:none;} }
-
-    .q-number { font-family:var(--mono); font-size:12px; color:var(--accent); letter-spacing:2px; margin-bottom:8px; text-transform:uppercase; }
-    .q-category { font-family:var(--mono); font-size:11px; color:var(--txt3); letter-spacing:1px; margin-bottom:16px; text-transform:uppercase; }
-    .q-text { font-size:17px; font-weight:700; color:#fff; line-height:1.5; margin-bottom:20px; }
-
-    .q-options { display:flex; flex-direction:column; gap:10px; }
-    .q-option {
-      display:flex; align-items:flex-start; gap:14px;
-      padding:14px 16px; background:rgba(255,255,255,0.02);
-      border:1px solid var(--border); cursor:pointer; transition:all 0.2s; border-radius:10px;
+    .header .logo {
+      font-weight: 800;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--txt-light);
+      margin-bottom: 12px;
     }
-    .q-option:hover { border-color:var(--border-hover); background:var(--accent-dim); transform:translateX(4px); }
-    .q-option.selected { border-color:var(--accent); background:var(--accent-dim); box-shadow:0 0 12px var(--accent-glow); }
-    .q-option.selected .opt-letter { background:var(--accent); color:#050508; }
+    .header h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+    .header p {
+      color: var(--txt-muted);
+      font-size: 1.05rem;
+      max-width: 480px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
 
-    .opt-letter {
-      font-family:var(--mono); font-size:13px; font-weight:700;
-      width:28px; height:28px; display:flex; align-items:center; justify-content:center;
-      border:1px solid var(--accent); color:var(--accent); flex-shrink:0; border-radius:6px;
+    /* CARDS */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 40px;
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    /* PROGRESS */
+    .progress-container {
+      margin-bottom: 32px;
+    }
+    .progress-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--txt-light);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      letter-spacing: 0.05em;
+    }
+    .progress-bar {
+      height: 6px;
+      background: #f1f5f9;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      width: 0%;
+      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* QUESTIONS */
+    .q-step { display: none; }
+    .q-step.active { display: block; animation: slideIn 0.4s ease-out; }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .q-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+    }
+    .q-text {
+      font-size: 1.35rem;
+      font-weight: 700;
+      line-height: 1.4;
+      margin-bottom: 32px;
+    }
+
+    .options {
+      display: grid;
+      gap: 12px;
+    }
+    .opt {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      cursor: pointer;
       transition: all 0.2s;
+      background: #fcfcfc;
     }
-    .opt-text { font-size:14px; color:var(--txt); line-height:1.5; }
+    .opt:hover { border-color: var(--txt-light); background: #fff; }
+    .opt.selected { border-color: var(--accent); background: var(--accent-soft); box-shadow: 0 0 0 1px var(--accent); }
+    
+    .opt-key {
+      width: 28px; height: 28px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; font-weight: 700;
+      color: var(--txt-muted);
+      background: #fff;
+    }
+    .opt.selected .opt-key { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .opt-val { font-size: 0.95rem; font-weight: 500; color: var(--txt); }
 
-    /* ═══ NAVIGATION ═══ */
-    .nav-btns { display:flex; gap:12px; justify-content:center; margin:24px 0; }
-    .nav-btn {
-      font-family:var(--mono); font-size:13px; font-weight:700;
-      padding:14px 36px; border:1px solid var(--border); background:transparent;
-      color:var(--txt); cursor:pointer; letter-spacing:1px; text-transform:uppercase;
-      transition:all 0.2s; border-radius:10px;
+    /* FOOTER NAV */
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 24px;
     }
-    .nav-btn:hover { border-color:var(--accent); color:var(--accent); }
-    .nav-btn.primary { border-color:var(--accent); color:var(--accent); }
-    .nav-btn.primary:hover { background:var(--accent); color:#050508; box-shadow:0 0 20px var(--accent-glow); }
-    .nav-btn:disabled { opacity:0.3; cursor:not-allowed; }
+    .btn {
+      padding: 12px 28px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--txt);
+      outline: none;
+    }
+    .btn:hover:not(:disabled) { border-color: var(--txt-light); }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn.primary {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.2);
+    }
+    .btn.primary:hover:not(:disabled) { background: #4338ca; transform: translateY(-1px); }
 
-    /* ═══ RESULT ═══ */
-    .result { display:none; background:var(--surface); border:1px solid var(--border); padding:36px 28px; margin-bottom:24px; backdrop-filter:var(--glass-blur); text-align:center; animation:fadeIn 0.5s; border-radius:var(--radius); }
-    .result h2 { font-family:var(--sans); font-size:clamp(1.5rem,3vw,2rem); font-weight:800; color:#fff; margin-bottom:8px; }
+    /* RESULTS */
+    .result-view { display: none; text-align: center; }
+    .score-badge {
+      display: inline-block;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .badge-red { background: #fee2e2; color: #991b1b; }
+    .badge-yellow { background: #fef3c7; color: #92400e; }
+    .badge-green { background: #dcfce7; color: #166534; }
 
-    .score-circle {
-      width:160px; height:160px; margin:24px auto;
-      border-radius:50%; display:flex; flex-direction:column; align-items:center; justify-content:center;
-      font-family:var(--mono); background:rgba(0,0,0,0.3);
-    }
-    .score-circle.high { border:3px solid var(--red); box-shadow:0 0 40px rgba(255,51,85,0.25); }
-    .score-circle.medium { border:3px solid var(--warn); box-shadow:0 0 40px rgba(255,183,3,0.25); }
-    .score-circle.low { border:3px solid var(--green); box-shadow:0 0 40px var(--accent-glow); }
-    .score-num { font-size:48px; font-weight:900; color:#fff; }
-    .score-max { font-size:14px; color:var(--txt2); }
-    .score-label { font-family:var(--mono); font-size:18px; font-weight:700; margin:8px 0 24px; letter-spacing:2px; }
+    .score-val { font-size: 4rem; font-weight: 900; family: 'JetBrains Mono'; margin-bottom: 8px; }
+    .score-max { font-size: 1rem; color: var(--txt-light); margin-bottom: 32px; }
 
-    /* ═══ WEAK ZONES ═══ */
-    .weak-zones { text-align:left; margin:24px 0; }
-    .weak-zones h3 { font-family:var(--mono); font-size:13px; color:var(--accent); letter-spacing:2px; margin-bottom:12px; text-transform:uppercase; }
-    .zone-item {
-      display:flex; align-items:center; gap:12px;
-      padding:12px 16px; border:1px solid var(--border); margin-bottom:8px;
-      background:rgba(0,0,0,0.2); border-radius:8px;
+    .weak-list { text-align: left; margin-top: 40px; }
+    .weak-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px; border-bottom: 1px solid #f1f5f9;
     }
-    .zone-score {
-      font-family:var(--mono); font-size:13px; font-weight:700;
-      padding:4px 10px; flex-shrink:0; border-radius:6px;
-    }
-    .zone-score.s0 { color:var(--red); border:1px solid var(--red); background:var(--red-dim); }
-    .zone-score.s1 { color:var(--warn); border:1px solid var(--warn); background:var(--warn-dim); }
-    .zone-score.s2 { color:var(--cyan); border:1px solid var(--cyan); background:rgba(0,212,255,0.1); }
-    .zone-score.s3 { color:var(--green); border:1px solid var(--green); background:var(--green-dim); }
-    .zone-name { font-size:13px; color:var(--txt); }
+    .weak-cat { font-size: 0.9rem; font-weight: 600; }
+    .weak-score { font-family: 'JetBrains Mono'; font-size: 0.85rem; font-weight: 700; padding: 4px 8px; border-radius: 6px; }
+    .s0 { color: var(--red); background: #fee2e2; }
+    .s1 { color: var(--warn); background: #fef3c7; }
+    .s2 { color: var(--accent); background: var(--accent-soft); }
+    .s3 { color: var(--green); background: #dcfce7; }
 
-    /* ═══ PROMO ═══ */
-    .promo {
-      background:var(--accent-dim); border:1px solid var(--border-hover);
-      padding:24px; margin-top:24px; text-align:center; border-radius:var(--radius);
+    /* LEAD FORM */
+    .lead-box { margin-top: 48px; padding-top: 40px; border-top: 1px solid var(--border); }
+    .f-row { margin-bottom: 20px; text-align: left; }
+    .f-row label { display: block; font-size: 0.8rem; font-weight: 700; color: var(--txt-light); text-transform: uppercase; margin-bottom: 8px; }
+    .f-row input {
+      width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 12px;
+      font-size: 0.95rem; outline: none; transition: border-color 0.2s;
+      background: #f8fafc;
     }
-    .promo h3 { font-family:var(--mono); color:var(--accent); font-size:16px; margin-bottom:8px; letter-spacing:1px; }
-    .promo p { font-size:14px; color:var(--txt2); line-height:1.6; margin-bottom:16px; }
-    .promo-code {
-      font-family:var(--mono); font-size:24px; font-weight:900;
-      color:var(--accent); letter-spacing:4px;
-      padding:12px 32px; border:2px dashed var(--accent);
-      display:inline-block; margin-bottom:16px; border-radius:8px;
-      text-shadow:0 0 10px var(--accent-glow);
-    }
-    .promo .nav-btn { display:inline-block; margin-top:8px; }
+    .f-row input:focus { border-color: var(--accent); background: #fff; }
 
-    /* ═══ LEAD FORM ═══ */
-    .lead-form {
-      background:var(--surface); border:1px solid var(--border-hover);
-      padding:28px 24px; margin-top:24px; text-align:left;
-      backdrop-filter:var(--glass-blur); border-radius:var(--radius);
-    }
-    .lead-form h3 {
-      font-family:var(--mono); font-size:15px; color:var(--accent);
-      letter-spacing:1px; margin-bottom:6px; text-align:center;
-    }
-    .lead-form .lead-subtitle {
-      font-size:13px; color:var(--txt2); text-align:center;
-      margin-bottom:20px; line-height:1.5;
-    }
-    .lead-field { margin-bottom:14px; }
-    .lead-field label {
-      font-family:var(--mono); font-size:11px; color:var(--txt2);
-      letter-spacing:1px; text-transform:uppercase; display:block; margin-bottom:4px;
-    }
-    .lead-field input {
-      width:100%; padding:12px 14px; font-family:var(--sans); font-size:14px;
-      background:rgba(0,0,0,0.4); border:1px solid var(--border); color:var(--txt);
-      outline:none; transition:border-color 0.2s; border-radius:8px;
-    }
-    .lead-field input:focus { border-color:var(--accent); box-shadow:0 0 8px var(--accent-glow); }
-    .lead-field input::placeholder { color:var(--txt3); }
-    .lead-submit {
-      width:100%; padding:14px; font-family:var(--mono); font-size:14px;
-      font-weight:700; letter-spacing:2px; text-transform:uppercase;
-      background:var(--accent); color:#050508; border:none; cursor:pointer;
-      transition:all 0.2s; margin-top:4px; border-radius:10px;
-    }
-    .lead-submit:hover { background:#33ffb3; box-shadow:0 0 24px var(--accent-glow); }
-    .lead-submit:disabled { opacity:0.5; cursor:not-allowed; }
-    .lead-success {
-      display:none; text-align:center; padding:20px;
-      font-family:var(--mono); color:var(--green); font-size:14px;
-    }
-    .lead-error {
-      display:none; text-align:center; padding:12px;
-      font-family:var(--mono); color:var(--red); font-size:12px;
-    }
-    .lead-skip {
-      display:block; text-align:center; margin-top:12px;
-      font-family:var(--mono); font-size:11px; color:var(--txt3);
-      cursor:pointer; text-decoration:underline;
-    }
-    .lead-skip:hover { color:var(--txt2); }
+    .lead-success { display: none; padding: 40px; text-align: center; }
+    .lead-success h3 { color: var(--green); font-size: 1.5rem; margin-bottom: 12px; }
 
-    .footer-q { text-align:center; padding:32px 0; font-size:12px; color:var(--txt3); font-family:var(--mono); }
-    .footer-q a { color:var(--accent); text-decoration:none; }
+    .hidden { display: none !important; }
 
-    @media (max-width:600px) {
-      .hero { padding:28px 16px 36px; }
-      .q-card { padding:20px 16px; }
-      .result { padding:24px 16px; }
+    @media (max-width: 600px) {
+      .card { padding: 24px; }
+      .header h1 { font-size: 1.8rem; }
     }
   </style>
 </head>
 <body>
 
-<canvas id="matrixBg"></canvas>
-
-<div class="page">
-
-  <!-- NAV -->
-  <div class="top-bar">
-    <a href="index.html">← На главную</a>
-    <span class="brand">КИБЕРКВИЗ</span>
-    <a href="https://vulndetector.ru" target="_blank">vulndetector.ru</a>
-  </div>
-
-  <!-- HERO -->
-  <div class="hero" id="heroSection">
-    <h1>КИБЕР<span class="hero-accent">КВИЗ</span></h1>
-    <p>Экспресс-оценка кибербезопасности вашей компании за 3 минуты. 8 вопросов — и вы узнаете реальный уровень защищённости.</p>
-    <div class="hero-tags">
-      <span class="hero-tag">8 вопросов</span>
-      <span class="hero-tag">3 минуты</span>
-      <span class="hero-tag">0–24 баллов</span>
-      <span class="hero-tag">бесплатно</span>
-    </div>
-    <div class="nav-btns" style="margin-top:28px;">
-      <button class="nav-btn primary" onclick="beginQuiz()">▶ НАЧАТЬ ОЦЕНКУ</button>
-    </div>
-  </div>
-
-  <!-- PROGRESS -->
-  <div class="progress-wrap" id="progressWrap" style="display:none;">
-    <div class="progress-top">
-      <span id="progressLabel">Вопрос 1 из 8</span>
-      <span id="progressPct">0%</span>
-    </div>
-    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-  </div>
-
-  <!-- QUESTIONS (8 cards, shown one at a time) -->
-  <div id="quizContainer"></div>
-
-  <!-- NAV BUTTONS -->
-  <div class="nav-btns" id="quizNav" style="display:none;">
-    <button class="nav-btn" id="prevBtn" onclick="prevQuestion()" disabled>← НАЗАД</button>
-    <button class="nav-btn primary" id="nextBtn" onclick="nextQuestion()">ДАЛЕЕ →</button>
-  </div>
-
-  <!-- RESULT -->
-  <div class="result" id="resultSection">
-    <h2>РЕЗУЛЬТАТ ОЦЕНКИ</h2>
-    <div class="score-circle" id="scoreCircle">
-      <div class="score-num" id="scoreNum">0</div>
-      <div class="score-max">из 24</div>
-    </div>
-    <div class="score-label" id="scoreLabel"></div>
-    <p id="scoreDesc" style="color:var(--txt2); font-size:15px; line-height:1.7; max-width:500px; margin:0 auto;"></p>
-
-    <div class="weak-zones" id="weakZones">
-      <h3>Разбор по категориям</h3>
-      <div id="zonesList"></div>
+  <div class="container">
+    <div class="header" id="startHeader">
+      <div class="logo">Secure Diagnostic</div>
+      <h1>CyberQuiz for Business</h1>
+      <p>Оцените уровень защищённости вашей компании за 3 минуты. 8 вопросов — и вы узнаете реальный уровень защиты.</p>
     </div>
 
-    <div class="promo">
-      <h3>🔍 Хотите детальный аудит?</h3>
-      <p>VulnDetector — автоматическое сканирование уязвимостей инфраструктуры с AI-патчингом. Используйте промокод для бесплатного первого аудита:</p>
-      <div class="promo-code">QUIZ2026</div>
-      <br>
-      <a href="https://vulndetector.ru" target="_blank" class="nav-btn primary" style="display:inline-block; text-decoration:none; margin-top:12px;">Записаться на консультацию →</a>
-    </div>
-
-    <!-- LEAD CAPTURE FORM -->
-    <div class="lead-form" id="leadForm">
-      <h3>📩 Получить детальный отчёт</h3>
-      <div class="lead-subtitle">Оставьте контакты — мы пришлём персональные рекомендации по усилению защиты вашей компании</div>
-      <div class="lead-field">
-        <label>Компания *</label>
-        <input type="text" id="leadCompany" placeholder="Название вашей компании" required>
+    <!-- CARDS -->
+    <div class="card" id="quizCard">
+      <!-- PROGRESS -->
+      <div class="progress-container" id="pBar">
+        <div class="progress-info">
+          <span id="pStep">Вопрос 1 из 8</span>
+          <span id="pPct">0%</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="pFill"></div></div>
       </div>
-      <div class="lead-field">
-        <label>Имя *</label>
-        <input type="text" id="leadName" placeholder="Ваше имя"required>
-      </div>
-      <div class="lead-field">
-        <label>Email *</label>
-        <input type="email" id="leadEmail" placeholder="email@company.ru" required>
-      </div>
-      <div class="lead-field">
-        <label>Телефон (необязательно)</label>
-        <input type="tel" id="leadPhone" placeholder="+7 (___) ___-__-__">
-      </div>
-      <button class="lead-submit" id="leadSubmitBtn" onclick="submitLead()">📧 ОТПРАВИТЬ ЗАЯВКУ</button>
-      <div class="lead-success" id="leadSuccess">
-        ✅ Заявка отправлена! <br><br>
-        <a href="CyberSec_Simulator/index.html?quiz=loaded" class="nav-btn primary" style="display:inline-block; text-decoration:none; margin-top:12px; width: 100%;">🎮 ПЕРЕЙТИ В СОВЕЩАТЕЛЬНУЮ КОМНАТУ →</a>
-      </div>
-      <div class="lead-error" id="leadError">⚠️ Ошибка отправки. Попробуйте ещё раз или напишите на vulndetector@yandex.ru</div>
-      <span class="lead-skip" onclick="document.getElementById('leadForm').style.display='none'">Пропустить</span>
-    </div>
-  </div>
 
-  <div class="footer-q">
-    v5.0 B2B · <a href="index.html">Павел Щелканогов</a> · <a href="https://vulndetector.ru" target="_blank">vulndetector.ru</a>
-  </div>
-</div>
+      <div id="qWrap"></div>
 
-<script>
-/* ═══ MATRIX RAIN ═══ */
-(function(){
-  const c=document.getElementById('matrixBg'),x=c.getContext('2d');
-  function r(){c.width=innerWidth;c.height=innerHeight;}
-  r();addEventListener('resize',r);
-  const ch='アイウエオカキクケコАБВГДЕ0123456789@#≡±∞∇'.split('');
-  const fs=14;let cols,dr;
-  function id(){cols=Math.floor(c.width/fs);dr=Array.from({length:cols},()=>Math.floor(Math.random()*-40));}
-  id();addEventListener('resize',id);
-  function d(){
-    x.fillStyle='rgba(0,0,0,0.06)';x.fillRect(0,0,c.width,c.height);
-    for(let i=0;i<dr.length;i++){
-      const s=ch[Math.floor(Math.random()*ch.length)];
-      const px=i*fs,py=dr[i]*fs;
-      if(dr[i]>0){x.fillStyle='#00FF00';x.font=`bold ${fs}px monospace`;x.fillText(s,px,py);
-        x.fillStyle='rgba(0,180,0,0.25)';if(py-fs*4>0)x.fillText(s,px,py-fs*4);}
-      if(py>c.height&&Math.random()>0.975)dr[i]=0;
-      dr[i]+=0.4+Math.random()*0.6;
-    }
-    requestAnimationFrame(d);
-  }
-  d();
-})();
+      <div class="result-view" id="resWrap">
+        <div id="resBadge" class="score-badge"></div>
+        <div class="score-val" id="resScore">0</div>
+        <div class="score-max">из 24 баллов</div>
+        <p id="resDesc" style="color: var(--txt-muted); line-height: 1.6;"></p>
 
-/* ═══ QUIZ DATA ═══ */
-const QUESTIONS = [
-  {
-    cat: 'Доступ и пароли',
-    text: 'Насколько в вашей компании формализованы правила по паролям и MFA?',
-    opts: [
-      { letter:'A', text:'У всех включена MFA, используются менеджеры паролей и политики сложности', pts:3 },
-      { letter:'B', text:'MFA включена только для критичных сервисов, остальное на усмотрение сотрудников', pts:2 },
-      { letter:'C', text:'Нет общих правил, каждый придумывает пароли сам', pts:1 },
-      { letter:'D', text:'Не знаю / этим занимается подрядчик', pts:0 },
-    ]
-  },
-  {
-    cat: 'Обновления и патчи',
-    text: 'Как вы управляете обновлениями ОС и ПО на рабочих станциях и серверах?',
-    opts: [
-      { letter:'A', text:'Есть централизованное управление обновлениями, всё ставится по регламенту', pts:3 },
-      { letter:'B', text:'Админ периодически обновляет критичные системы вручную', pts:2 },
-      { letter:'C', text:'Сотрудники сами решают, обновлять или нет', pts:1 },
-      { letter:'D', text:'Не знаю, как это устроено', pts:0 },
-    ]
-  },
-  {
-    cat: 'Резервное копирование',
-    text: 'Как организованы бэкапы важных данных (CRM, бухгалтерия, репозитории)?',
-    opts: [
-      { letter:'A', text:'Регулярные бэкапы, проверка восстановления и изоляция копий от основного контура', pts:3 },
-      { letter:'B', text:'Бэкапы есть, но восстановление давно не проверяли', pts:2 },
-      { letter:'C', text:'Есть только разовые/ручные копии на внешние диски или в облако', pts:1 },
-      { letter:'D', text:'Бэкапов нет / не знаю', pts:0 },
-    ]
-  },
-  {
-    cat: 'Обучение и фишинг',
-    text: 'Как часто сотрудники проходят обучение по кибербезопасности и фишингу?',
-    opts: [
-      { letter:'A', text:'Регулярное обучение (1–2 раза в год) + тесты и симуляции фишинга', pts:3 },
-      { letter:'B', text:'Одноразовое обучение при онбординге', pts:2 },
-      { letter:'C', text:'Обучения нет, только иногда пересылаем статьи/новости', pts:1 },
-      { letter:'D', text:'Не знаю', pts:0 },
-    ]
-  },
-  {
-    cat: 'Устройства и удалёнка',
-    text: 'Как вы контролируете ноутбуки, телефоны и удалённый доступ к ресурсам компании?',
-    opts: [
-      { letter:'A', text:'Используем MDM/EDR, шифрование дисков и строгие правила удалённого доступа', pts:3 },
-      { letter:'B', text:'Для ключевых устройств есть базовые политики, остальное «по доверию»', pts:2 },
-      { letter:'C', text:'Сотрудники работают с любых личных устройств без требований', pts:1 },
-      { letter:'D', text:'Не знаю, нет отдельной политики', pts:0 },
-    ]
-  },
-  {
-    cat: 'Админ-доступ',
-    text: 'Как защищены администраторские учётные записи и доступ к критичным системам?',
-    opts: [
-      { letter:'A', text:'Разделены роли, отдельные админ-учётки, MFA и журналирование действий', pts:3 },
-      { letter:'B', text:'Есть отдельные админ-аккаунты, но без строгих процедур', pts:2 },
-      { letter:'C', text:'Все работают с широкими правами / общими логинами', pts:1 },
-      { letter:'D', text:'Не знаю, права выдавали «как придётся»', pts:0 },
-    ]
-  },
-  {
-    cat: 'План реагирования',
-    text: 'Есть ли план действий на случай инцидента (взлом, шифровальщик, утечка)?',
-    opts: [
-      { letter:'A', text:'Утверждённый план, роли, контакты и сценарии — периодически тестируем', pts:3 },
-      { letter:'B', text:'План есть в виде черновика/памятки, но не отработан', pts:2 },
-      { letter:'C', text:'Официального плана нет, «разберёмся по ситуации»', pts:1 },
-      { letter:'D', text:'Не знаю', pts:0 },
-    ]
-  },
-  {
-    cat: 'Аудиты и тесты',
-    text: 'Как вы оцениваете текущий уровень защищённости (аудиты, сканы, пен-тесты)?',
-    opts: [
-      { letter:'A', text:'Регулярные внешние/внутренние аудиты, автоматические сканы уязвимостей', pts:3 },
-      { letter:'B', text:'Разовые проверки после инцидентов или по запросу клиентов/регуляторов', pts:2 },
-      { letter:'C', text:'Пока не проводили формальных проверок', pts:1 },
-      { letter:'D', text:'Не знаю', pts:0 },
-    ]
-  }
-];
+        <div class="weak-list" id="resList"></div>
 
-let current = 0;
-let answers = new Array(QUESTIONS.length).fill(null); // stores {pts, letter}
-
-/* ═══ RENDER ═══ */
-function renderQuestions() {
-  const container = document.getElementById('quizContainer');
-  container.innerHTML = '';
-  QUESTIONS.forEach((q, qi) => {
-    const card = document.createElement('div');
-    card.className = 'q-card' + (qi === 0 ? ' active' : '');
-    card.id = `q-${qi}`;
-    card.innerHTML = `
-      <div class="q-number">Вопрос ${qi+1} из 8</div>
-      <div class="q-category">${q.cat}</div>
-      <div class="q-text">${q.text}</div>
-      <div class="q-options">
-        ${q.opts.map((o, oi) => `
-          <div class="q-option" id="opt-${qi}-${oi}" onclick="selectOption(${qi},${oi},${o.pts},'${o.letter}')">
-            <div class="opt-letter">${o.letter}</div>
-            <div class="opt-text">${o.text}</div>
+        <div class="lead-box" id="leadForm">
+          <h2 style="font-size: 1.5rem; margin-bottom: 8px;">Получить экспресс-аудит</h2>
+          <p style="color: var(--txt-muted); font-size: 0.95rem; margin-bottom: 32px;">Оставьте контакты, чтобы получить персональные рекомендации и доступ в виртуальную переговорную.</p>
+          
+          <div class="f-row">
+            <label>Компания</label>
+            <input type="text" id="leadCompany" placeholder="Название компании" required>
           </div>
-        `).join('')}
+          <div class="f-row">
+            <label>Имя</label>
+            <input type="text" id="leadName" placeholder="Ваше имя" required>
+          </div>
+          <div class="f-row">
+            <label>Email</label>
+            <input type="email" id="leadEmail" placeholder="email@company.ru" required>
+          </div>
+          
+          <button class="btn primary" style="width: 100%; padding: 18px;" id="leadBtn" onclick="submitLead()">Отправить и продолжить</button>
+        </div>
+
+        <div class="lead-success" id="leadOk">
+          <h3>✅ Готово!</h3>
+          <p style="margin-bottom: 24px; color: var(--txt-muted);">Ваш отчет сформирован. Ждем вас в совете директоров.</p>
+          <a href="CyberSec_Simulator/index.html?quiz=loaded" class="btn primary">Войти в Boardroom →</a>
+        </div>
       </div>
-    `;
-    container.appendChild(card);
-  });
-}
+    </div>
 
-function beginQuiz() {
-  document.getElementById('heroSection').style.display = 'none';
-  document.getElementById('progressWrap').style.display = '';
-  document.getElementById('quizNav').style.display = '';
-  renderQuestions();
-  updateUI();
-}
+    <div class="nav" id="quizNav">
+      <button class="btn" id="btnPrev" onclick="prevQ()" disabled>Назад</button>
+      <button class="btn primary" id="btnNext" onclick="nextQ()">Начать</button>
+    </div>
 
-function selectOption(qi, oi, pts, letter) {
-  // Clear previous selection for this question
-  QUESTIONS[qi].opts.forEach((_, i) => {
-    document.getElementById(`opt-${qi}-${i}`).classList.remove('selected');
-  });
-  document.getElementById(`opt-${qi}-${oi}`).classList.add('selected');
-  answers[qi] = { pts, letter };
-  document.getElementById(`q-${qi}`).classList.add('answered');
-  updateUI();
+    <div class="header" style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee;">
+      <p style="font-size: 0.8rem;">Powered by <b>VulnDetector</b> Orchestration Engine · Sber500</p>
+    </div>
+  </div>
 
-  // Auto-advance after brief delay
-  if (current < QUESTIONS.length - 1) {
-    setTimeout(() => nextQuestion(), 400);
-  }
-}
+  <script>
+    const QUESTIONS = [
+      { cat: 'Доступ и пароли', text: 'Насколько в вашей компании формализованы правила по паролям и MFA?', opts: [{ l:'A', t:'У всех включена MFA, используются менеджеры паролей', pts:3 }, { l:'B', t:'MFA включена только для критичных сервисов', pts:2 }, { l:'C', t:'Нет общих правил, каждый сам придумывает', pts:1 }, { l:'D', t:'Не знаю', pts:0 }] },
+      { cat: 'Обновления и патчи', text: 'Как вы управляете обновлениями ОС и ПО на рабочих станциях?', opts: [{ l:'A', t:'Централизованное управление, всё по регламенту', pts:3 }, { l:'B', t:'Админ периодически обновляет системы вручную', pts:2 }, { l:'C', t:'Сотрудники сами решают, обновлять или нет', pts:1 }, { l:'D', t:'Не знаю', pts:0 }] },
+      { cat: 'Резервное копирование', text: 'Как организованы бэкапы важных данных (CRM, бухгалтерия)?', opts: [{ l:'A', t:'Регулярные бэкапы с проверкой и изоляцией', pts:3 }, { l:'B', t:'Бэкапы есть, но восстановление не проверяли', pts:2 }, { l:'C', t:'Разовые ручные копии на диски или в облако', pts:1 }, { l:'D', t:'Не знаю / нет бэкапов', pts:0 }] },
+      { cat: 'Обучение и фишинг', text: 'Как часто сотрудники проходят обучение по кибербезопасности?', opts: [{ l:'A', t:'Регулярное обучение + тесты и симуляции фишинга', pts:3 }, { l:'B', t:'Обучение только при приёме на работу', pts:2 }, { l:'C', t:'Обучения нет, только иногда новости', pts:1 }, { l:'D', t:'Не знаю', pts:0 }] },
+      { cat: 'Устройства и удалёнка', text: 'Как вы контролируете ноутбуки и удалённый доступ?', opts: [{ l:'A', t:'Используем MDM/EDR и шифрование дисков', pts:3 }, { l:'B', t:'Базовые политики для ключевых устройств', pts:2 }, { l:'C', t:'Сотрудники работают с личных устройств', pts:1 }, { l:'D', t:'Нет отдельной политики', pts:0 }] },
+      { cat: 'Админ-доступ', text: 'Как защищены администраторские учётные записи?', opts: [{ l:'A', t:'Разделены роли, отдельные учётки, MFA и логи', pts:3 }, { l:'B', t:'Отдельные админ-аккаунты без строгих процедур', pts:2 }, { l:'C', t:'Все работают с широкими правами / общими логинами', pts:1 }, { l:'D', t:'Не знаю', pts:0 }] },
+      { cat: 'План реагирования', text: 'Есть ли план действий на случай инцидента (взлом, шифровальщик)?', opts: [{ l:'A', t:'Утверждённый план и сценарии — тестируем', pts:3 }, { l:'B', t:'План есть в виде черновика, но не отработан', pts:2 }, { l:'C', t:'Официального плана нет, по ситуации', pts:1 }, { l:'D', t:'Не знаю', pts:0 }] },
+      { cat: 'Аудиты и тесты', text: 'Как вы оцениваете текущий уровень защищённости?', opts: [{ l:'A', t:'Регулярные аудиты, сканы уязвимостей', pts:3 }, { l:'B', t:'Разовые проверки после инцидентов', pts:2 }, { l:'C', t:'Пока не проводили формальных проверок', pts:1 }, { l:'D', t:'Не знаю', pts:0 }] }
+    ];
 
-function nextQuestion() {
-  if (current >= QUESTIONS.length - 1) {
-    showResult();
-    return;
-  }
-  document.getElementById(`q-${current}`).classList.remove('active');
-  current++;
-  document.getElementById(`q-${current}`).classList.add('active');
-  updateUI();
-}
+    let current = -1; // -1 is start
+    let answers = new Array(QUESTIONS.length).fill(null);
 
-function prevQuestion() {
-  if (current <= 0) return;
-  document.getElementById(`q-${current}`).classList.remove('active');
-  current--;
-  document.getElementById(`q-${current}`).classList.add('active');
-  updateUI();
-}
-
-function updateUI() {
-  const pct = Math.round(((current + (answers[current] ? 1 : 0)) / QUESTIONS.length) * 100);
-  document.getElementById('progressLabel').textContent = `Вопрос ${current+1} из 8`;
-  document.getElementById('progressPct').textContent = pct + '%';
-  document.getElementById('progressFill').style.width = pct + '%';
-  document.getElementById('prevBtn').disabled = current === 0;
-  
-  const allAnswered = answers.every(a => a !== null);
-  const isLast = current === QUESTIONS.length - 1;
-  const nextBtn = document.getElementById('nextBtn');
-  if (isLast && allAnswered) {
-    nextBtn.textContent = '⚡ РЕЗУЛЬТАТ';
-  } else if (isLast) {
-    nextBtn.textContent = '⚡ РЕЗУЛЬТАТ';
-  } else {
-    nextBtn.textContent = 'ДАЛЕЕ →';
-  }
-}
-
-function showResult() {
-  // Hide quiz
-  document.getElementById('quizContainer').style.display = 'none';
-  document.getElementById('quizNav').style.display = 'none';
-  document.getElementById('progressWrap').style.display = 'none';
-
-  // Calculate
-  let total = 0;
-  answers.forEach(a => { if (a) total += a.pts; });
-
-  const scoreNum = document.getElementById('scoreNum');
-  const scoreCircle = document.getElementById('scoreCircle');
-  const scoreLabel = document.getElementById('scoreLabel');
-  const scoreDesc = document.getElementById('scoreDesc');
-  
-  scoreNum.textContent = total;
-
-  let riskClass, riskLabel, riskDesc;
-  if (total <= 8) {
-    riskClass = 'high'; riskLabel = '🔴 ВЫСОКИЙ РИСК';
-    riskDesc = 'Ваша инфраструктура серьёзно уязвима. Рекомендуем срочный аудит и внедрение базовых мер защиты: MFA, управление обновлениями, бэкапы и план реагирования на инциденты.';
-  } else if (total <= 16) {
-    riskClass = 'medium'; riskLabel = '🟡 СРЕДНИЙ РИСК';
-    riskDesc = 'Базовые меры защиты есть, но есть значительные пробелы. Обратите внимание на слабые зоны ниже — именно там может произойти инцидент.';
-  } else {
-    riskClass = 'low'; riskLabel = '🟢 НИЗКИЙ РИСК';
-    riskDesc = 'Ваша компания хорошо подготовлена. Рекомендуем регулярные проверки и автоматизацию сканирования для поддержания этого уровня.';
-  }
-  
-  scoreCircle.className = 'score-circle ' + riskClass;
-  scoreLabel.textContent = riskLabel;
-  scoreLabel.style.color = riskClass === 'high' ? 'var(--red)' : riskClass === 'medium' ? 'var(--warn)' : 'var(--green)';
-  scoreDesc.textContent = riskDesc;
-
-  // Weak zones
-  const zonesList = document.getElementById('zonesList');
-  zonesList.innerHTML = '';
-  QUESTIONS.forEach((q, i) => {
-    const pts = answers[i] ? answers[i].pts : 0;
-    const zone = document.createElement('div');
-    zone.className = 'zone-item';
-    zone.innerHTML = `
-      <div class="zone-score s${pts}">${pts}/3</div>
-      <div class="zone-name">${q.cat}</div>
-    `;
-    zonesList.appendChild(zone);
-  });
-
-  // Save quiz data for boardroom simulator
-  const maxScore = 24;
-  const pct = Math.round((total / maxScore) * 100);
-  
-  // Format weak areas
-  const weakAreas = [];
-  QUESTIONS.forEach((q, i) => {
-    const pts = answers[i] ? answers[i].pts : 0;
-    weakAreas.push({ score: pts, category: q.cat, icon: '⚠️' });
-  });
-  weakAreas.sort((a, b) => a.score - b.score);
-
-  const quizData = {
-    score: pct,
-    totalScore: total,
-    maxScore: maxScore,
-    level: riskLabel,
-    answers: answers,
-    weakAreas: weakAreas.slice(0, 3), // top 3 weakest
-    timestamp: new Date().toISOString(),
-    elapsed: 180 // placeholder
-  };
-  localStorage.setItem('vulndetector_quiz', JSON.stringify(quizData));
-
-  // Sort by weakest first for UI
-  const items = [...zonesList.children];
-  items.sort((a, b) => {
-    const sa = parseInt(a.querySelector('.zone-score').textContent);
-    const sb = parseInt(b.querySelector('.zone-score').textContent);
-    return sa - sb;
-  });
-  items.forEach(item => zonesList.appendChild(item));
-
-  document.getElementById('resultSection').style.display = 'block';
-  document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
-}
-
-/* ═══ TELEGRAM KANBAN BRIDGE ═══ */
-const TELEGRAM_BOT_TOKEN = "8679275398:AAHZVxcb7HNE1VPTkdbveu6MxZB4zvqN8E0";
-const CHAT_ID = "-1002032017542";
-
-async function submitLead() {
-  const company = document.getElementById('leadCompany').value.trim();
-  const name = document.getElementById('leadName').value.trim();
-  const email = document.getElementById('leadEmail').value.trim();
-  const phone = document.getElementById('leadPhone').value.trim();
-
-  // Валидация
-  if (!company || !name || !email) {
-    alert('Заполните обязательные поля: Компания, Имя, Email');
-    return;
-  }
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    alert('Некорректный email');
-    return;
-  }
-
-  const btn = document.getElementById('leadSubmitBtn');
-  btn.disabled = true;
-  btn.textContent = 'ОТПРАВКА...';
-
-  // Собираем данные квиза
-  let total = 0;
-  answers.forEach(a => { if (a) total += a.pts; });
-  let riskLevel = total <= 8 ? 'ВЫСОКИЙ РИСК' : total <= 16 ? 'СРЕДНИЙ РИСК' : 'НИЗКИЙ РИСК';
-
-  let answersDetail = '';
-  QUESTIONS.forEach((q, i) => {
-    const a = answers[i];
-    answersDetail += `• ${q.cat}: ${a ? a.letter + ' (' + a.pts + '/3)' : 'N/A'}\n`;
-  });
-
-  // Восклицательный знак '!' в начале триггерит kanban_bridge.py на создание задачи
-  const messageText = `! НОВЫЙ ЛИД (КиберКвиз)
-Компания: ${company}
-Имя: ${name}
-Email: ${email}
-Телефон: ${phone || 'не указан'}
-
-Результат квиза: ${total}/24 — ${riskLevel}
-
-Детали ответов:
-${answersDetail}
-Запрос на аудит VulnDetector. Промокод: QUIZ2026`;
-
-  try {
-    const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            chat_id: CHAT_ID,
-            text: messageText
-        })
-    });
-
-    if (response.ok) {
-        document.getElementById('leadSuccess').style.display = 'block';
-        document.getElementById('leadSubmitBtn').style.display = 'none';
-        document.getElementById('leadError').style.display = 'none';
-    } else {
-        throw new Error("HTTP " + response.status);
+    function renderQ() {
+      const qWrap = document.getElementById('qWrap');
+      qWrap.innerHTML = '';
+      QUESTIONS.forEach((q, i) => {
+        const step = document.createElement('div');
+        step.className = `q-step ${i === current ? 'active' : ''}`;
+        step.id = `step-${i}`;
+        step.innerHTML = `
+          <div class="q-meta">Категория: ${q.cat}</div>
+          <div class="q-text">${q.text}</div>
+          <div class="options">
+            ${q.opts.map((o, oi) => `
+              <div class="opt ${answers[i] && answers[i].oi === oi ? 'selected' : ''}" onclick="select(${i}, ${oi}, ${o.pts})">
+                <div class="opt-key">${o.l}</div>
+                <div class="opt-val">${o.t}</div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+        qWrap.appendChild(step);
+      });
     }
-  } catch (error) {
-    console.error('Telegram API error:', error);
-    document.getElementById('leadError').style.display = 'block';
-    btn.disabled = false;
-    btn.textContent = '📧 ОТПРАВИТЬ ЗАЯВКУ';
-  }
-}
-</script>
 
-<!-- FOOTER -->
-<footer style="position:relative; z-index:2; text-align:center; padding:32px 16px 24px; border-top:1px solid rgba(0,255,159,0.08); margin-top:48px;">
-  <a href="https://max.ru/join/3z8g9YR9JSZn3qhEnz9UfqVtPPsKKzbH9Gf2VlWXfXs" target="_blank" rel="noopener"
-     style="display:inline-block; padding:12px 28px; background:rgba(0,255,159,0.06); border:1px solid rgba(0,255,159,0.2); border-radius:10px; color:#00ff9f; font-weight:700; text-decoration:none; font-family:'JetBrains Mono',monospace; font-size:13px; transition:all .2s;">
-    💬 Сообщество в MAX
-  </a>
-  <p style="margin-top:16px; font-size:0.75rem; color:#4a5068; font-family:'Inter',sans-serif;">
-    © 2026 Детектор Уязвимостей · Sber CyberSecurity
-  </p>
-</footer>
+    function select(qi, oi, pts) {
+      answers[qi] = { oi, pts };
+      const opts = document.querySelectorAll(`#step-${qi} .opt`);
+      opts.forEach((el, index) => {
+        el.classList.toggle('selected', index === oi);
+      });
+      setTimeout(() => nextQ(), 300);
+    }
+
+    function nextQ() {
+      if (current === -1) {
+        current = 0;
+        document.getElementById('startHeader').classList.add('hidden');
+        document.getElementById('btnNext').textContent = 'Далее';
+        renderQ();
+      } else if (current < QUESTIONS.length - 1) {
+        current++;
+        renderQ();
+      } else {
+        showResult();
+      }
+      updateUI();
+    }
+
+    function prevQ() {
+      if (current > 0) {
+        current--;
+        renderQ();
+        updateUI();
+      }
+    }
+
+    function updateUI() {
+      const pct = Math.round(((current + 1) / QUESTIONS.length) * 100);
+      document.getElementById('pStep').textContent = `Вопрос ${current + 1} из 8`;
+      document.getElementById('pPct').textContent = pct + '%';
+      document.getElementById('pFill').style.width = pct + '%';
+      document.getElementById('btnPrev').disabled = current <= 0;
+      if (current === QUESTIONS.length - 1) {
+        document.getElementById('btnNext').textContent = 'Завершить';
+      }
+    }
+
+    function showResult() {
+      document.getElementById('pBar').style.display = 'none';
+      document.getElementById('qWrap').style.display = 'none';
+      document.getElementById('quizNav').style.display = 'none';
+      document.getElementById('resWrap').style.display = 'block';
+
+      let total = 0;
+      answers.forEach(a => { if(a) total += a.pts; });
+
+      const badge = document.getElementById('resBadge');
+      const score = document.getElementById('resScore');
+      const desc = document.getElementById('resDesc');
+      const list = document.getElementById('resList');
+
+      score.textContent = total;
+      list.innerHTML = '';
+      
+      let level = '';
+      if (total <= 8) {
+        badge.className = 'score-badge badge-red'; badge.textContent = 'Критический риск';
+        desc.textContent = 'Ваша инфраструктура серьёзно уязвима. Рекомендуем срочный аудит и автоматизацию защиты.';
+        level = 'ВЫСОКИЙ';
+      } else if (total <= 16) {
+        badge.className = 'score-badge badge-yellow'; badge.textContent = 'Средний риск';
+        desc.textContent = 'Базовые меры защиты есть, но обнаружены критические пробелы в процессах.';
+        level = 'СРЕДНИЙ';
+      } else {
+        badge.className = 'score-badge badge-green'; badge.textContent = 'Низкий риск';
+        desc.textContent = 'Ваша компания хорошо подготовлена. Рекомендуем поддерживать уровень через AI-мониторинг.';
+        level = 'НИЗКИЙ';
+      }
+
+      QUESTIONS.forEach((q, i) => {
+        const a = answers[i];
+        const pts = a ? a.pts : 0;
+        const row = document.createElement('div');
+        row.className = 'weak-item';
+        row.innerHTML = `<span class="weak-cat">${q.cat}</span><span class="weak-score s${pts}">${pts}/3</span>`;
+        list.appendChild(row);
+      });
+
+      // Save to localStorage
+      const weakAreas = QUESTIONS.map((q, i) => ({ score: answers[i]?answers[i].pts:0, category: q.cat }))
+                        .sort((a,b) => a.score - b.score).slice(0,3);
+      const quizData = { score: Math.round((total/24)*100), totalScore: total, maxScore: 24, level, weakAreas };
+      localStorage.setItem('vulndetector_quiz', JSON.stringify(quizData));
+    }
+
+    async function submitLead() {
+      const company = document.getElementById('leadCompany').value;
+      const name = document.getElementById('leadName').value;
+      const email = document.getElementById('leadEmail').value;
+      if (!company || !name || !email) return alert('Пожалуйста, заполните все поля');
+
+      const btn = document.getElementById('leadBtn');
+      btn.disabled = true; btn.textContent = 'Отправка...';
+
+      // Update localStorage with lead info
+      const quiz = JSON.parse(localStorage.getItem('vulndetector_quiz'));
+      quiz.company = company; quiz.name = name; quiz.email = email;
+      localStorage.setItem('vulndetector_quiz', JSON.stringify(quiz));
+
+      // TG Notification (Trigger logic same as before)
+      const TELEGRAM_BOT_TOKEN = "8679275398:AAHZVxcb7HNE1VPTkdbveu6MxZB4zvqN8E0";
+      const CHAT_ID = "-1002032017542";
+      const msg = `! НОВЫЙ ЛИД (КВИЗ-ПРЕМИУМ)\nКомпания: ${company}\nИмя: ${name}\nEmail: ${email}\nРезультат: ${quiz.totalScore}/24 (${quiz.level})`;
+
+      try {
+        await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chat_id: CHAT_ID, text: msg })
+        });
+        document.getElementById('leadForm').style.display = 'none';
+        document.getElementById('leadOk').style.display = 'block';
+      } catch (e) {
+        alert('Ошибка связи. Попробуйте еще раз.');
+        btn.disabled = false; btn.textContent = 'Отправить и продолжить';
+      }
+    }
+  </script>
 
 </body>
 </html>

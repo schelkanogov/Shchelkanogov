@@ -25,20 +25,20 @@
         select.form-input { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238f9bb3' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; }
         textarea.form-input { resize: vertical; min-height: 100px; }
         :root {
-            /* ═══ OBSIDIAN PROTOCOL ═══ */
-            --bg-primary: #050508;
-            --bg-secondary: #0c0d12;
-            --bg-card: rgba(12, 13, 18, 0.75);
-            --text-primary: #f0f2f5;
-            --text-secondary: #8f9bb3;
-            --text-muted: #4a5068;
-            --border-light: rgba(255, 255, 255, 0.06);
-            --border-accent: rgba(0, 255, 159, 0.2);
-            --accent: #00ff9f;
-            --accent-dark: #00cc7f;
-            --accent-glow: 0 0 20px rgba(0, 255, 159, 0.2);
-            --glass-blur: blur(16px);
-            --radius: 12px;
+            /* ═══ PREMIUM LIGHT PROTOCOL ═══ */
+            --bg-primary: #fcfcfc;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --text-primary: #111827;
+            --text-secondary: #4b5563;
+            --text-muted: #9ca3af;
+            --border-light: #e5e7eb;
+            --border-accent: #4f46e5;
+            --accent: #4f46e5;
+            --accent-dark: #3730a3;
+            --accent-glow: 0 4px 15px rgba(79, 70, 229, 0.1);
+            --radius: 16px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
             --mono: 'JetBrains Mono', monospace;
         }
         
@@ -88,8 +88,8 @@
             left: 0;
             width: 100%;
             z-index: 1000;
-            background: rgba(5, 5, 8, 0.92);
-            backdrop-filter: var(--glass-blur);
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--border-light);
             padding: 15px 0;
         }
@@ -114,12 +114,12 @@
             width: 32px;
             height: 32px;
             background: var(--accent);
-            border-radius: 6px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 900;
-            color: var(--bg-primary);
+            color: #fff;
         }
         
         .nav {
@@ -143,6 +143,7 @@
         
         .nav-link.active {
             color: var(--accent);
+            font-weight: 700;
         }
         
         .cluster-nav {
@@ -208,7 +209,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at 20% 50%, rgba(0, 255, 159, 0.1) 0%, transparent 50%);
+            background: radial-gradient(circle at 20% 50%, rgba(79, 70, 229, 0.05) 0%, transparent 50%);
             z-index: -1;
         }
         
@@ -220,13 +221,11 @@
         
         .hero h1 {
             font-size: 48px;
-            font-weight: 700;
-            line-height: 1.2;
+            font-weight: 800;
+            line-height: 1.1;
             margin-bottom: 20px;
-            background: linear-gradient(135deg, var(--accent) 0%, #00cc7f 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: var(--text-primary);
+            letter-spacing: -0.03em;
         }
         
         .hero-subtitle {
@@ -254,13 +253,14 @@
         }
         
         .hero-tag {
-            padding: 8px 20px;
-            background: rgba(0, 255, 159, 0.1);
-            color: var(--accent);
+            padding: 8px 16px;
+            background: #fff;
+            color: var(--txt-muted);
             border-radius: 20px;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
-            border: 1px solid rgba(0, 255, 159, 0.3);
+            border: 1px solid var(--border-light);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
         
         .cta-btn {
@@ -328,23 +328,22 @@
             width: 220px;
             height: 220px;
             border-radius: 50%;
-            background: linear-gradient(135deg, rgba(0, 255, 159, 0.15), rgba(0, 212, 255, 0.15));
-            border: 2px solid rgba(0, 255, 159, 0.4);
+            background: #fff;
+            border: 1px solid var(--border-light);
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
-            box-shadow: 0 0 60px rgba(0, 255, 159, 0.2), 0 0 120px rgba(0, 212, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
         }
 
         .avatar-img {
-            width: 100%;
-            height: 100%;
+            width: calc(100% - 12px);
+            height: calc(100% - 12px);
             object-fit: cover;
             border-radius: 50%;
             position: relative;
             z-index: 2;
-            border: 2px solid rgba(0, 255, 159, 0.3);
         }
 
         .avatar-badge {
@@ -377,16 +376,16 @@
             border: 1px solid var(--border-light);
             border-radius: var(--radius);
             padding: 30px;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
-            backdrop-filter: var(--glass-blur);
+            box-shadow: var(--shadow);
         }
         
         .expertise-card:hover {
             border-color: var(--accent);
-            transform: translateY(-5px);
-            box-shadow: var(--accent-glow);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
         }
         
         .expertise-card::before {
@@ -600,6 +599,7 @@
             color: var(--accent);
             text-decoration: none;
             transition: color 0.3s ease;
+            font-weight: 600;
         }
         
         .contact-link:hover {
@@ -877,14 +877,14 @@
     </section>
     
     <!-- Sber500 Demo Stand Section -->
-    <section class="section" id="boardroom" style="background: linear-gradient(160deg, var(--bg-primary) 0%, #0a1f10 100%); border-top: 1px solid var(--border-accent); border-bottom: 1px solid var(--border-accent);">
+    <section class="section" id="boardroom" style="background: linear-gradient(160deg, #f8fafc 0%, #eef2ff 100%); border-top: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light);">
         <div class="container">
             
             <div style="text-align: center; margin-bottom: 50px;">
-                <div style="display:inline-block; background: rgba(233,30,99,0.12); border: 1px solid rgba(233,30,99,0.4); color: #e91e63; font-size: 11px; font-weight: 800; letter-spacing: 2px; padding: 5px 18px; border-radius: 20px; margin-bottom: 18px;">
+                <div style="display:inline-block; background: rgba(79, 70, 229, 0.1); border: 1px solid rgba(79, 70, 229, 0.2); color: var(--accent); font-size: 11px; font-weight: 800; letter-spacing: 1px; padding: 6px 16px; border-radius: 20px; margin-bottom: 16px;">
                     🏆 TOP-50 · SBER500 × GIGACHAT ACCELERATOR
                 </div>
-                <h2 class="section-title">ApproveCenter — демо-стенд проекта</h2>
+                <h2 class="section-title">VulnDetector ОРКЕСТРАТОР</h2>
             </div>
 
             <div class="expertise-card" style="max-width: 1100px; margin: 0 auto; padding: 40px; border-color: var(--accent);">
@@ -922,8 +922,8 @@
 
                 <!-- Main Actions -->
                 <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; margin-bottom: 40px;">
-                    <a href="ApproveCenter_Demo.html" target="_blank" class="cta-btn" style="min-width: 220px; text-align: center;">
-                        ⚡ Запустить демо-пульт
+                    <a href="VulnDetector_Orchestrator.html" target="_blank" class="cta-btn" style="min-width: 220px; text-align: center;">
+                        ⚡ Запустить оркестратор
                     </a>
                     <a href="Sber500_Slides.html" target="_blank" class="cta-btn secondary-btn" style="min-width: 220px; text-align: center;">
                         📊 Презентация Sber500
