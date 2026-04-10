@@ -321,6 +321,57 @@
         }
         .pill-danger { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
 
+        /* VS CODE SYTLE MODAL (CONTINUE EXTENSION REPLICA) */
+        .vsc-overlay {
+            position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5);
+            display: flex; align-items: center; justify-content: center; z-index: 9999;
+            backdrop-filter: blur(2px);
+        }
+        .vsc-modal {
+            background: #252526; border: 1px solid #3e3e42; border-radius: 8px;
+            width: 320px; padding: 24px; color: #cccccc;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5); 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            position: relative;
+        }
+        .vsc-close {
+            position: absolute; top: 12px; right: 16px; cursor: pointer; color: #8b949e; transition: color 0.2s;
+        }
+        .vsc-close:hover { color: #fff; }
+        .vsc-title { font-size: 1.15rem; font-weight: 600; text-align: center; margin-bottom: 24px; color: #ffffff; }
+        .vsc-label { font-size: 0.75rem; font-weight: 600; margin-bottom: 8px; display: block; color: #cccccc; }
+        .vsc-select {
+            display: flex; align-items: center; justify-content: space-between;
+            background: #3c3c3c; border: 1px solid #3c3c3c; border-radius: 4px;
+            padding: 8px 10px; font-size: 0.85rem; cursor: pointer; margin-bottom: 12px; color: #ffffff;
+            transition: border 0.1s;
+        }
+        .vsc-select:hover { border-color: #007fd4; }
+        .vsc-select svg { width: 14px; fill: currentColor; }
+        
+        .vsc-dropdown {
+            position: absolute; top: 110px; left: 24px; width: calc(100% - 48px);
+            background: #252526; border: 1px solid #3e3e42; border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5); z-index: 10; padding-bottom: 6px;
+        }
+        .vsc-search {
+            width: 100%; background: transparent; border: none; border-bottom: 1px solid #3e3e42;
+            padding: 10px 12px 10px 32px; color: #fff; font-size: 0.85rem; outline: none; border-radius: 6px 6px 0 0;
+        }
+        .vsc-search-icon { position: absolute; left: 10px; top: 10px; width: 14px; color: #8b949e; }
+        .vsc-list-label { font-size: 0.65rem; font-weight: 700; color: #6e7681; padding: 8px 12px; letter-spacing: 0.05em; text-transform: uppercase; }
+        .vsc-list-item { padding: 8px 12px; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; cursor: pointer; color: #cccccc; }
+        .vsc-list-item:hover, .vsc-list-item.selected { background: #04395e; color: #ffffff; }
+        .vsc-icon { width: 16px; height: 16px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800; color: white; }
+
+        .vsc-link { font-size: 0.75rem; color: #3794ff; text-decoration: underline; text-align: left; display: block; margin-bottom: 24px; cursor: pointer; margin-top:-4px;}
+        .vsc-btn {
+            width: 100%; background: #4d4d4d; color: #ffffff; border: none; padding: 8px; border-radius: 4px;
+            font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: background 0.2s;
+        }
+        .vsc-btn:hover { background: #5a5a5a; }
+        .vsc-footer { text-align: center; font-size: 0.7rem; color: #8b949e; margin-top: 12px; display: block; }
+
         .hidden { display: none !important; }
     </style>
 </head>
@@ -456,10 +507,10 @@
             <div class="setting-label">Orchestration Engine</div>
             <div class="field">
                 <span class="field-label">Default AI Profile</span>
-                <select class="select-input">
-                    <option>Sber GigaChat V3.5 (Expert)</option>
-                    <option>Local Ollama (Llama 3)</option>
-                </select>
+                <div class="select-input" style="display:flex; justify-content:space-between; align-items:center;" onclick="openModelModal()">
+                    <span id="activeAiProfile">OpenAI (GPT-4)</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"></path></svg>
+                </div>
             </div>
             <div class="field">
                 <span class="field-label">LiteLLM Proxy Endpoint</span>
@@ -505,6 +556,46 @@
         </div>
     </aside>
 
+    <!-- VS CODE CUSTOM MODAL overlay -->
+    <div class="vsc-overlay hidden" id="modelModal">
+        <div class="vsc-modal">
+            <svg class="vsc-close" onclick="closeModelModal()" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            <div class="vsc-title">Add Chat model</div>
+            
+            <label class="vsc-label">Provider</label>
+            <div class="vsc-select" onclick="toggleDropdown()">
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <div class="vsc-icon" style="background: #ffffff; color: #000000; font-size: 10px;">O</div>
+                    <span id="selectedProviderHtml">OpenAI</span>
+                </div>
+                <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+            </div>
+
+            <!-- Dropdown Popup -->
+            <div class="vsc-dropdown hidden" id="providerDropdown">
+                <div style="position:relative;">
+                    <svg class="vsc-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" class="vsc-search" placeholder="Search providers...">
+                </div>
+                <div class="vsc-list-label">POPULAR</div>
+                <div class="vsc-list-item" onclick="selectProvider('Anthropic', '#d97757', 'A')"><div class="vsc-icon" style="background:#d97757;">A</div>Anthropic</div>
+                <div class="vsc-list-item" onclick="selectProvider('Azure OpenAI', '#0078d4', 'Az')"><div class="vsc-icon" style="background:#0078d4;">Az</div>Azure OpenAI</div>
+                <div class="vsc-list-item" onclick="selectProvider('Google Gemini API', '#4285f4', 'G')"><div class="vsc-icon" style="background:#4285f4;">G</div>Google Gemini API</div>
+                <div class="vsc-list-item" onclick="selectProvider('Mistral', '#f5a623', 'M')"><div class="vsc-icon" style="background:#f5a623;">M</div>Mistral</div>
+                <div class="vsc-list-item" onclick="selectProvider('Ollama', '#e5e7eb', 'O', '#000')"><div class="vsc-icon" style="background:#e5e7eb; color:#000;">O</div>Ollama</div>
+                <div class="vsc-list-item selected" onclick="selectProvider('OpenAI', '#ffffff', 'O', '#000')">
+                    <div class="vsc-icon" style="background:#ffffff; color:#000;">O</div>OpenAI
+                    <svg style="margin-left:auto; width:14px; color:#fff;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </div>
+            </div>
+
+            <a class="vsc-link">Click here to create a OpenAI API key</a>
+
+            <button class="vsc-btn" onclick="saveModelConnection()">Connect</button>
+            <span class="vsc-footer">This will update your config file</span>
+        </div>
+    </div>
+
     <script>
         function startFlow() {
             const val = document.getElementById('userInput').value;
@@ -516,6 +607,37 @@
             
             runLogs();
             updateMiniChart();
+        }
+
+        /* MODAL LOGIC */
+        function openModelModal() {
+            document.getElementById('modelModal').classList.remove('hidden');
+        }
+        function closeModelModal() {
+            document.getElementById('modelModal').classList.add('hidden');
+            document.getElementById('providerDropdown').classList.add('hidden');
+        }
+        function toggleDropdown() {
+            document.getElementById('providerDropdown').classList.toggle('hidden');
+        }
+        function selectProvider(name, bgColor, letter, fgColor = '#fff') {
+            document.getElementById('selectedProviderHtml').innerText = name;
+            const linkTag = document.querySelector('.vsc-link');
+            if (name === "Ollama") {
+                linkTag.innerText = "Click here to read Ollama documentation";
+            } else {
+                linkTag.innerText = `Click here to create a ${name} API key`;
+            }
+            
+            // visually update list items
+            document.querySelectorAll('.vsc-list-item').forEach(el => el.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+            document.getElementById('providerDropdown').classList.add('hidden');
+        }
+        function saveModelConnection() {
+            const provider = document.getElementById('selectedProviderHtml').innerText;
+            document.getElementById('activeAiProfile').innerText = provider + " (Active)";
+            closeModelModal();
         }
 
         const logs = [
