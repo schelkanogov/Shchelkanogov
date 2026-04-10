@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Павел Щелканогов - Cybersecurity & AI Systems Expert</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         /* Scroll Reveal */
         .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
@@ -24,17 +24,21 @@
         select.form-input { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238f9bb3' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; }
         textarea.form-input { resize: vertical; min-height: 100px; }
         :root {
-            --bg-primary: #0a0e27;
-            --bg-secondary: #111633;
-            --bg-card: #151a3a;
-            --text-primary: #ffffff;
-            --text-secondary: #a0a9c9;
-            --text-muted: #6b7280;
-            --border-light: rgba(255, 255, 255, 0.1);
-            --border-accent: rgba(0, 255, 159, 0.3);
+            /* ═══ OBSIDIAN PROTOCOL ═══ */
+            --bg-primary: #050508;
+            --bg-secondary: #0c0d12;
+            --bg-card: rgba(12, 13, 18, 0.75);
+            --text-primary: #f0f2f5;
+            --text-secondary: #8f9bb3;
+            --text-muted: #4a5068;
+            --border-light: rgba(255, 255, 255, 0.06);
+            --border-accent: rgba(0, 255, 159, 0.2);
             --accent: #00ff9f;
             --accent-dark: #00cc7f;
-            --accent-glow: 0 0 20px rgba(0, 255, 159, 0.3);
+            --accent-glow: 0 0 20px rgba(0, 255, 159, 0.2);
+            --glass-blur: blur(16px);
+            --radius: 12px;
+            --mono: 'JetBrains Mono', monospace;
         }
         
         * {
@@ -83,8 +87,8 @@
             left: 0;
             width: 100%;
             z-index: 1000;
-            background: rgba(10, 14, 39, 0.95);
-            backdrop-filter: blur(10px);
+            background: rgba(5, 5, 8, 0.92);
+            backdrop-filter: var(--glass-blur);
             border-bottom: 1px solid var(--border-light);
             padding: 15px 0;
         }
@@ -396,11 +400,12 @@
         .expertise-card {
             background: var(--bg-card);
             border: 1px solid var(--border-light);
-            border-radius: 12px;
+            border-radius: var(--radius);
             padding: 30px;
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            backdrop-filter: var(--glass-blur);
         }
         
         .expertise-card:hover {
@@ -465,9 +470,10 @@
         .project-card {
             background: var(--bg-card);
             border: 1px solid var(--border-light);
-            border-radius: 12px;
+            border-radius: var(--radius);
             padding: 30px;
             transition: all 0.3s ease;
+            backdrop-filter: var(--glass-blur);
         }
         
         .project-card:hover {
@@ -524,9 +530,10 @@
         .publication-card {
             background: var(--bg-card);
             border: 1px solid var(--border-light);
-            border-radius: 12px;
+            border-radius: var(--radius);
             padding: 30px;
             transition: all 0.3s ease;
+            backdrop-filter: var(--glass-blur);
         }
         
         .publication-card:hover {
@@ -589,9 +596,10 @@
         .contact-card {
             background: var(--bg-card);
             border: 1px solid var(--border-light);
-            border-radius: 12px;
+            border-radius: var(--radius);
             padding: 30px;
             text-align: center;
+            backdrop-filter: var(--glass-blur);
         }
         
         .contact-icon {
@@ -950,50 +958,18 @@
         </div>
     </section>
     
-    <!-- CyberSec Boardroom Section -->
+    <!-- Sber500 Demo Stand Section -->
     <section class="section" id="boardroom" style="background: linear-gradient(135deg, var(--bg-primary) 0%, #0a1f10 100%); border-top: 1px solid var(--border-accent); border-bottom: 1px solid var(--border-accent);">
         <div class="container">
-            <div class="expertise-card" style="max-width: 1000px; margin: 0 auto; border-color: var(--accent); background: rgba(0, 255, 159, 0.03);">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+            <div class="expertise-card" style="max-width: 1000px; margin: 0 auto; border-color: var(--accent); background: rgba(0, 255, 159, 0.03); position: relative;">
+                
+                <!-- Badge and Ribbon -->
+                <div style="position: absolute; top: -15px; right: 20px; background: #e91e63; color: #fff; padding: 4px 15px; border-radius: 4px; font-weight: 800; font-size: 13px; transform: rotate(3deg); box-shadow: 0 4px 15px rgba(233, 30, 99, 0.4); z-index: 10;">
+                    TOP-50 SBER500
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px;">
                     <div>
-                        <h2 style="color: var(--accent); font-size: 24px; margin-bottom: 8px;">🎮 CyberSec Boardroom — AI-Симулятор Угроз</h2>
-                        <p class="lang-content active" data-lang="ru">Интерактивная кибер-переговорка: 4 стейкхолдера, AI-диалоги, реальные CVE</p>
-                        <p class="lang-content" data-lang="en">Interactive Cyber Boardroom: 4 stakeholders, AI dialogs, real CVEs</p>
-                    </div>
-                    <span class="expertise-tag" style="background: var(--accent); color: var(--bg-primary); font-weight: 800;">TOP DEMO</span>
-                </div>
-                
-                <p class="expertise-desc lang-content active" data-lang="ru" style="margin-bottom: 24px;">
-                    <strong style="color: #fff;">Виртуальная переговорная комната</strong> — смоделируйте кибер-кризис с участием
-                    <strong style="color: var(--accent);">Регулятора ФСТЭК, APT-хакера, CFO и Агента Сбера</strong>.
-                    AI генерирует персонализированные диалоги на основе вашего инфраструктурного отчёта.
-                </p>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px;">
-                    <div style="background: rgba(0, 212, 255, 0.05); border: 1px solid rgba(0, 212, 255, 0.2); border-radius: 12px; padding: 20px;">
-                        <div style="font-size: 24px; margin-bottom: 10px;">📩</div>
-                        <div style="font-size: 15px; font-weight: 700; color: #00d4ff; margin-bottom: 6px;">Путь А: Отчёт из почты</div>
-                        <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.5;">
-                            Загрузите HTML-отчёт VulnDetector → AI расшифрует CVE → персональное КП
-                        </p>
-                    </div>
-                    <div style="background: rgba(0, 255, 159, 0.05); border: 1px solid rgba(0, 255, 159, 0.2); border-radius: 12px; padding: 20px;">
-                        <div style="font-size: 24px; margin-bottom: 10px;">⚡</div>
-                        <div style="font-size: 15px; font-weight: 700; color: var(--accent); margin-bottom: 6px;">Путь Б: Sber Cloud</div>
-                        <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.5;">
-                            Мгновенная регистрация → GigaChat + RAG → отчёт «на лету» → КП
-                        </p>
-                    </div>
-                </div>
-                
-                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                    <a href="CyberSec_Simulator/index.html" class="cta-btn" style="flex: 1; text-align: center; min-width: 250px;">
-                        <span class="lang-content active" data-lang="ru">Запустить Boardroom</span>
-                        <span class="lang-content" data-lang="en">Launch Boardroom</span>
-                    </a>
-                    <a href="CyberSec_Simulator/quiz.html" class="cta-btn secondary-btn" style="flex: 1; text-align: center; min-width: 250px;">
-                        <span class="lang-content active" data-lang="ru">Пройти КиберКвиз</span>
-                        <span class="lang-content" data-lang="en">Take CyberQuiz</span>
                     </a>
                 </div>
                 
@@ -1485,7 +1461,13 @@
             </div>
             
             <div class="footer-bottom">
-                <p>© 2025 Павел Щелканогов. 
+                <div style="margin-bottom: 20px;">
+                    <a href="https://max.ru/join/3z8g9YR9JSZn3qhEnz9UfqVtPPsKKzbH9Gf2VlWXfXs" target="_blank" rel="noopener"
+                       style="display:inline-block; padding:12px 28px; background:rgba(0,255,159,0.06); border:1px solid rgba(0,255,159,0.2); border-radius:10px; color:#00ff9f; font-weight:700; text-decoration:none; font-family:'JetBrains Mono',monospace; font-size:13px; transition:all .2s;">
+                        💬 Сообщество в MAX
+                    </a>
+                </div>
+                <p>© 2026 Павел Щелканогов. 
                     <span class="lang-content active" data-lang="ru">Сооснователь VulnDetector Cluster.</span>
                     <span class="lang-content" data-lang="en">Co-founder of VulnDetector Cluster.</span>
                 </p>
