@@ -3,191 +3,235 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VulnDetector: ITSM Orchestration Pitch</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <title>VulnDetector // ITSM Orchestrator // Sber500</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #ffffff;
-            --primary-color: #00c805; /* Sber Green */
-            --accent-color: #000000;
-            --text-color: #1a1a1b;
-            --secondary-text: #636e72;
-            --border-style: 1px solid #dfe6e9;
+            --sber-green: #21a038;
+            --text-dark: #000000;
+            --text-gray: #64748b;
+            --bg-light: #ffffff;
+            --accent-red: #ff4d4f;
         }
-        
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
-            background-color: #f7f9fb; 
-            color: var(--text-color); 
             font-family: 'Inter', sans-serif; 
+            background: var(--bg-light); 
+            color: var(--text-dark); 
             overflow: hidden; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
             height: 100vh;
         }
 
-        .slide-container { 
-            width: 100vw; 
-            height: 100vh; 
-            position: relative;
-        }
+        .slide-wrapper { width: 100vw; height: 100vh; position: relative; }
 
         .slide {
-            position: absolute; 
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-color);
-            padding: 0;
-            display: flex;
-            opacity: 0;
-            transition: opacity 0.8s ease-in-out;
+            position: absolute; width: 100%; height: 100%;
+            padding: 8% 10%;
+            display: flex; flex-direction: column; justify-content: center;
+            opacity: 0; transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1);
             pointer-events: none;
+            background: var(--bg-light);
+            transform: translateX(50px);
         }
 
-        .slide.active { 
-            opacity: 1; 
-            pointer-events: all;
+        .slide.active { opacity: 1; pointer-events: all; transform: translateX(0); z-index: 10; }
+
+        h1 { 
+            font-size: 7rem; 
+            font-weight: 900; 
+            line-height: 0.85; 
+            margin-bottom: 2rem; 
+            letter-spacing: -4px; 
+            text-transform: uppercase;
         }
 
-        /* Layouts */
-        .content-half { width: 50%; padding: 6rem; display: flex; flex-direction: column; justify-content: center; }
-        .image-half { width: 50%; background-size: cover; background-position: center; position: relative; }
-        .image-half::after { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(90deg, #fff 0%, transparent 100%); opacity: 0.1; }
-
-        /* Typography */
-        h1 { font-size: 3.5rem; font-weight: 800; letter-spacing: -0.04em; line-height: 1.1; margin-bottom: 2rem; color: #000; }
-        h2 { font-size: 2.2rem; font-weight: 800; margin-bottom: 2rem; display: flex; align-items: center; gap: 15px; }
-        h2::before { content: ""; width: 8px; height: 40px; background: var(--primary-color); border-radius: 4px; display: block; }
-        p { font-size: 1.4rem; line-height: 1.6; color: var(--secondary-text); margin-bottom: 2rem; }
-        
-        .highlight { color: var(--primary-color); font-weight: 700; }
-        .code-tag { font-family: 'JetBrains Mono', monospace; background: #f1f2f6; padding: 4px 10px; border-radius: 6px; font-size: 0.9em; font-weight: 700; color: #2f3542; }
-        
-        .logo-bar { position: absolute; top: 3rem; left: 6rem; display: flex; align-items: center; gap: 15px; z-index: 10; }
-        .logo-img { height: 40px; }
-        .logo-text { font-weight: 800; font-size: 1.2rem; letter-spacing: 1px; text-transform: uppercase; }
-
-        .footer { 
-            position: absolute; bottom: 3rem; left: 6rem; 
-            font-size: 0.8rem; color: #95a5a6; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em;
+        h2 { 
+            font-size: 3.5rem; 
+            font-weight: 900; 
+            color: var(--sber-green); 
+            margin-bottom: 2rem; 
+            letter-spacing: -2px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
         }
+        h2::after { content: ""; flex: 1; height: 2px; background: #e2e8f0; }
 
-        .nav-hints {
-            position: fixed; bottom: 3rem; right: 4rem; color: #95a5a6; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
-            background: rgba(255,255,255,0.8); padding: 8px 15px; border-radius: 20px; border: 1px solid #eee; backdrop-filter: blur(5px);
+        p { font-size: 2rem; font-weight: 400; color: var(--text-gray); line-height: 1.2; max-width: 1200px; }
+        b { color: var(--text-dark); font-weight: 900; }
+
+        .comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 3rem; }
+        .comp-card { padding: 40px; border-radius: 20px; border: 2px solid #f1f5f9; }
+        .comp-card.old { border-left: 10px solid #cbd5e1; }
+        .comp-card.new { border-left: 10px solid var(--sber-green); background: #f0fdf4; }
+        .comp-card h4 { font-size: 1.2rem; text-transform: uppercase; color: var(--text-gray); margin-bottom: 10px; }
+        .comp-card .time { font-size: 4rem; font-weight: 900; color: var(--text-dark); }
+
+        .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-top: 3rem; }
+        .feature-item { border-top: 4px solid var(--sber-green); padding-top: 20px; }
+        .feature-item h3 { font-size: 1.8rem; font-weight: 900; margin-bottom: 10px; }
+        .feature-item p { font-size: 1rem; color: var(--text-gray); }
+
+        .nav-dots { position: fixed; bottom: 40px; right: 80px; display: flex; gap: 15px; z-index: 100; }
+        .dot { width: 10px; height: 10px; background: #e2e8f0; border-radius: 50%; cursor: pointer; transition: 0.3s; }
+        .dot.active { background: var(--sber-green); transform: scale(1.5); }
+
+        .header { position: fixed; top: 40px; left: 80px; display: flex; align-items: center; gap: 20px; z-index: 100; }
+        .logo { font-weight: 900; font-size: 1.2rem; }
+        .logo span { color: var(--sber-green); }
+        .tag { font-weight: 700; color: #94a3b8; font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; }
+
+        .cta-btn {
+            display: inline-block; padding: 25px 60px; background: var(--sber-green);
+            color: #fff; text-decoration: none; border-radius: 50px; font-weight: 900; font-size: 1.8rem;
+            margin-top: 3rem; transition: 0.3s;
         }
+        .cta-btn:hover { background: #000; }
 
-        /* Animations */
-        @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .slide.active h1, .slide.active p, .slide.active ul { animation: slideUp 0.8s ease-out forwards; }
+        .fact-badge { display: inline-block; padding: 5px 15px; background: #fee2e2; color: var(--accent-red); border-radius: 5px; font-weight: 800; font-size: 0.9rem; margin-bottom: 15px; }
+
     </style>
 </head>
 <body>
-    <div class="nav-hints">Space / Click to Advance</div>
-
-    <div class="logo-bar">
-        <img src="logo.png" class="logo-img">
-        <span class="logo-text">VulnDetector</span>
+    <div class="header">
+        <div class="logo">VULN<span>DETECTOR</span></div>
+        <div class="tag">ITSM ORCHESTRATOR // SBER500</div>
     </div>
 
-    <div class="slide-container" id="slider">
-        
-        <!-- Slide 1: The Pain -->
+    <div class="slide-wrapper">
+        <!-- 1: TITLE -->
         <div class="slide active">
-            <div class="content-half">
-                <h1>Синдром <span class="highlight">«Хромого верблюда»</span> в вашем DevOps.</h1>
-                <p>
-                    Инженеры сжигают до <b>30% времени</b> на бюрократию. Пока профи пишут отчёты вручную, ИТ-караван стоит, а риски растут.
-                </p>
-                <div style="margin-top: 1rem;">
-                    <span class="code-tag">Time to Resolution: Weeks</span>
-                </div>
+            <h1>ОРКЕСТРАЦИЯ <br>ИТ-ИММУНИТЕТА</h1>
+            <p>Интеллектуальный управление инфраструктурой на базе <b>GigaChat</b> и стандарта <b>MCP</b>. Автоматизация DevOps без лишних интерфейсов.</p>
+            <div class="feature-grid">
+                <div class="feature-item"><h3>Zero-UI</h3><p>Интеграция в мессенджеры и рабочие чаты.</p></div>
+                <div class="feature-item"><h3>Smart RAG</h3><p>Использование накопленного опыта компании.</p></div>
+                <div class="feature-item"><h3>On-Premise</h3><p>100% суверенность данных в контуре Сбера.</p></div>
             </div>
-            <div class="image-half" style="background-image: url('pain.png');"></div>
-            <div class="footer">01 / ПРОБЛЕМА</div>
         </div>
 
-        <!-- Slide 2: The Logic (MCP/Zero-UI) -->
+        <!-- 2: PROBLEM -->
         <div class="slide">
-            <div class="content-half">
-                <h2>VULNDETECTOR: ВАШ ИТ-ИММУНИТЕТ</h2>
-                <p>Безынтерфейсный подход (<b>Zero-UI</b>) и мост <b>MCP</b> между ИИ и вашей инфраструктурой.</p>
-                <ul style="list-style: none;">
-                    <li style="margin-bottom: 1rem; font-size: 1.2rem;">🔹 <b>AI-секретарь</b> в Telegram и VK Teams.</li>
-                    <li style="margin-bottom: 1rem; font-size: 1.2rem;">🔹 <b>GigaChat</b> переводит диалоги в задачи.</li>
-                    <li style="margin-bottom: 1rem; font-size: 1.2rem;">🔹 <b>Автоматизация рутины</b> на 100%.</li>
-                </ul>
+            <div class="fact-badge">БЮРОКРАТИЯ СЖИГАЕТ ПРИБЫЛЬ</div>
+            <h2>СИНДРОМ «ХРОМОГО ВЕРБЛЮДА»</h2>
+            <p>Бюрократия — самый медленный верблюд в вашем караване. Инженеры тратят <b>30% времени</b> не на задачи, а на отчеты. Миллионы рублей сгорают в ручном заполнении логов.</p>
+            <div class="feature-grid" style="margin-top: 2rem;">
+                <div class="feature-item"><h3>Manual Fail</h3><p>Низкая скорость реакции SLA.</p></div>
+                <div class="feature-item"><h3>Bus Factor</h3><p>Потеря контекста при увольнении.</p></div>
+                <div class="feature-item"><h3>Grey Zones</h3><p>Попытки сокрытия инцидентов.</p></div>
             </div>
-            <div class="image-half" style="background-image: url('solution.png');"></div>
-            <div class="footer">02 / РЕШЕНИЕ</div>
         </div>
 
-        <!-- Slide 3: GigaChat & Security -->
+        <!-- 3: COMPARISON -->
         <div class="slide">
-            <div class="content-half">
-                <h2>РЕЗЕРВНЫЙ МОЗГ КОМПАНИИ</h2>
-                <p>GigaChat гарантирует суверенитет. Логи не покидают закрытый контур <b>Enterprise РФ</b>.</p>
-                <div style="background: #f8f9fa; padding: 2rem; border-radius: 16px; border-left: 5px solid var(--primary-color);">
-                    <p style="font-size: 1.1rem; margin: 0; color: #2d3436;"><i>"Мы сохраняем техническую экспертизу компании навсегда, предотвращая риски увольнения сотрудников (Bus Factor)."</i></p>
+            <h2>РЕВОЛЮЦИЯ СКОРОСТИ</h2>
+            <p>Мы сокращаем MTTR (время восстановления) в <b>10 000 раз</b> за счет прямого проброса данных от сканера к ЛПР.</p>
+            <div class="comparison-grid">
+                <div class="comp-card old">
+                    <h4>Традиционный процесс</h4>
+                    <div class="time">14 ДНЕЙ</div>
+                    <p>Трактовка логов, ручные тикеты, совещания и бюрократия.</p>
                 </div>
-                <div style="margin-top: 2rem;">
-                    <span class="code-tag">100% ФЗ-152</span>
-                    <span class="code-tag">On-Premise GigaChat</span>
-                </div>
-            </div>
-            <div class="image-half" style="background-image: url('future.png');"></div>
-            <div class="footer">03 / ТЕХНОЛОГИИ</div>
-        </div>
-
-        <!-- Slide 4: Business Traction -->
-        <div class="slide" style="flex-direction: column; align-items: center; justify-content: center; text-align: center;">
-            <div style="max-width: 800px;">
-                <h1 style="font-size: 3rem;">ЭКСПЛУАТАЦИЯ <span class="highlight">НЕВИДИМА</span></h1>
-                <p style="font-size: 1.5rem; margin-bottom: 3rem;">Сокращаем время создания задачи с часов до <b>10 секунд</b>. Мы готовы к пилотам в экосистеме Сбера.</p>
-                <div style="display: flex; gap: 2rem; justify-content: center;">
-                    <div style="background: #fff; border: 1px solid #eee; padding: 2rem; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
-                        <div style="color: var(--primary-color); font-size: 3rem; font-weight: 800;">-30%</div>
-                        <div style="text-transform: uppercase; font-size: 0.7rem; font-weight: 700; letter-spacing: 1px;">Расходов на FTE</div>
-                    </div>
-                    <div style="background: #fff; border: 1px solid #eee; padding: 2rem; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
-                        <div style="color: var(--primary-color); font-size: 3rem; font-weight: 800;">0 сек</div>
-                        <div style="text-transform: uppercase; font-size: 0.7rem; font-weight: 700; letter-spacing: 1px;">Задержка IaaS</div>
-                    </div>
+                <div class="comp-card new">
+                    <h4>VulnDetector Logic</h4>
+                    <div class="time">10 СЕКУНД</div>
+                    <p>Анализ GigaChat, расчет <b>ИТ-Иммунитета</b> и Immutable Ticket.</p>
                 </div>
             </div>
-            <div class="footer" style="width: 100%; text-align: center; left: 0;">SBER500 • BATCH 2026 • VulnDetector</div>
         </div>
 
+        <!-- 4: SOLUTION -->
+        <div class="slide">
+            <h2>ИТ-ИММУНИТЕТ (BFI)</h2>
+            <p>Это не антивирус. Это <b>интеллектуальный маршрутизатор задач</b>. Он детектирует уязвимости в самих бизнес-процессах и исправляет их.</p>
+            <div class="feature-grid">
+                <div class="feature-item"><h3>MCP Protocol</h3><p>Бесшовное управление IaaS-инфраструктурой.</p></div>
+                <div class="feature-item"><h3>Anti-Tamper</h3><p>Защита от подмены логов и удаления тикетов.</p></div>
+                <div class="feature-item"><h3>B2B Ready</h3><p>Интеграция с ЭДО СБИС и Диадок.</p></div>
+            </div>
+        </div>
+
+        <!-- 5: SYNERGY -->
+        <div class="slide">
+            <h2>СИНЕРГИЯ СО СБЕРОМ</h2>
+            <p>Драйвер потребления <b>токенов GigaChat</b> и облачных ресурсов SberCloud. Идеально ложится в стратегию технологического лидерства.</p>
+            <div class="feature-grid">
+                <div class="feature-item"><h3>BFI Metric</h3><p>Конкретный бизнес-риск вместо абстрактных CVE.</p></div>
+                <div class="feature-item"><h3>Unit Economics</h3><p>10 000+ токенов на цикл сканирования.</p></div>
+                <div class="feature-item"><h3>Safe AI</h3><p>ИИ не пишет код, он управляет бюрократией.</p></div>
+            </div>
+        </div>
+
+        <!-- 6: MARKET -->
+        <div class="slide">
+            <h2>РЫНОК И ПОЗИЦИЯ</h2>
+            <p>Объем рынка управления инфраструктурой — <b>128 млрд ₽</b>. Мы — ITSM нового поколения, не требующий сертификатов ФСТЭК.</p>
+            <div class="feature-grid">
+                <div class="feature-item"><h3>Enterprise</h3><p>Фокус на компании с критической ИТ-базой.</p></div>
+                <div class="feature-item"><h3>GovTech</h3><p>Соответствие всем стандартам Минцифры.</p></div>
+                <div class="feature-item"><h3>Import Sub</h3><p>Замена зарубежных систем оркестрации.</p></div>
+            </div>
+        </div>
+
+        <!-- 7: TRACTION -->
+        <div class="slide">
+            <h2>РЕЗУЛЬТАТЫ</h2>
+            <p>Пилоты в <b>Aqvalife</b> и <b>Orskemi</b> подтвердили гипотезу. Система готова к масштабированию на весь Enterprise Сбера.</p>
+            <div class="feature-grid">
+                <div class="feature-item"><h3>250+ Leads</h3><p>Сформированный спрос на платформу.</p></div>
+                <div class="feature-item"><h3>Real MTTR</h3><p>Реальные замеры скорости в песочнице.</p></div>
+                <div class="feature-item"><h3>B2B Flow</h3><p>Готовый биллинг через СБИС и Mandarin.</p></div>
+            </div>
+        </div>
+
+        <!-- 8: CTA -->
+        <div class="slide" style="text-align: center; align-items: center;">
+            <h1>ЗАПУСК <br>ИТ-ИММУНИТЕТА</h1>
+            <p>Превратите бюрократию в оцифрованный процесс одним кликом.</p>
+            <a href="#" class="cta-btn">ЗАПУСТИТЬ ДЕМО</a>
+            <p style="margin-top: 40px; color: var(--sber-green); font-weight: 900; font-size: 1.5rem;">
+                <a href="https://t.me/max_group_placeholder" target="_blank" style="color: inherit; text-decoration: none;">Подписаться на группу «Макс»</a>
+            </p>
+        </div>
     </div>
+
+    <div class="nav-dots" id="dots"></div>
 
     <script>
-        const slides = document.querySelectorAll('.slide');
-        let currentSlide = 0;
+        const s = document.querySelectorAll('.slide');
+        const d = document.getElementById('dots');
+        let c = 0;
+        let moving = false;
 
-        function showSlide(index) {
-            slides.forEach((slide, i) => {
-                slide.classList.remove('active');
-                if (i === index) slide.classList.add('active');
-            });
+        s.forEach((_, i) => {
+            const di = document.createElement('div');
+            di.className = `dot ${i === 0 ? 'active' : ''}`;
+            di.onclick = () => show(i);
+            d.appendChild(di);
+        });
+
+        function show(n) {
+            if (n === c || n < 0 || n >= s.length) return;
+            s[c].classList.remove('active');
+            document.querySelectorAll('.dot')[c].classList.remove('active');
+            c = n;
+            s[c].classList.add('active');
+            document.querySelectorAll('.dot')[c].classList.add('active');
         }
 
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') {
-                currentSlide = (currentSlide + 1) % slides.length;
-                showSlide(currentSlide);
-            } else if (e.key === 'ArrowLeft') {
-                currentSlide = (currentSlide - 1 + slides.length) % slides.length;
-                showSlide(currentSlide);
-            }
-        });
-        
-        document.body.addEventListener('click', () => {
-             currentSlide = (currentSlide + 1) % slides.length;
-             showSlide(currentSlide);
-        });
+        window.addEventListener('wheel', (e) => {
+            if (moving) return;
+            moving = true;
+            if (e.deltaY > 0) show(c + 1);
+            else show(c - 1);
+            setTimeout(() => moving = false, 700);
+        }, { passive: true });
 
-        showSlide(0);
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') show(c + 1);
+            if (e.key === 'ArrowLeft') show(c - 1);
+        });
     </script>
 </body>
 </html>
