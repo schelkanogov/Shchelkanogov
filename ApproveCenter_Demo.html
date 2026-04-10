@@ -385,6 +385,41 @@
                         Критический уровень защищенности. Высокий риск остановки систем. Требуется полный скан периметра.
                     </p>
                 </div>
+            </div> <!-- start of grid-layout -->
+
+            <div style="margin-top: 30px; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.1);">
+                <button class="btn-action" style="background: rgba(0, 240, 255, 0.1); color: var(--accent); border: 1px solid rgba(0, 240, 255, 0.2); width: 100%; display: flex; justify-content: center; align-items: center; gap: 10px;" onclick="document.getElementById('schemasPanel').classList.toggle('hidden')">
+                    <span>ПРОСМОТР АРХИТЕКТУРЫ И СХЕМ ПО ГОСТ</span>
+                    <span style="font-size: 10px;">▼</span>
+                </button>
+                
+                <div id="schemasPanel" class="hidden" style="margin-top: 20px; display: grid; grid-template-columns: 1fr; gap: 20px; transform-origin: top; transition: all 0.3s; animation: fadeIn 0.5s ease-out;">
+                    <style>
+                        .schema-img { width: 100%; height: auto; display: block; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 30px rgba(0,0,0,0.5); cursor: pointer; transition: 0.3s; }
+                        .schema-img:hover { border-color: var(--accent); transform: scale(1.01); box-shadow: 0 10px 40px rgba(0,240,255,0.15); }
+                    </style>
+
+                    <div class="panel">
+                        <div class="panel-header"><span>Архитектура системы по ГОСТ (ПО «Детектор Уязвимостей» v2.1)</span></div>
+                        <a href="images/architecture_v21.png" target="_blank">
+                            <img src="images/architecture_v21.png" alt="Архитектура" class="schema-img">
+                        </a>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-header"><span>Жизненный цикл обработки инцидентов (Enterprise Workflow)</span></div>
+                        <a href="images/lifecycle_v21.png" target="_blank">
+                            <img src="images/lifecycle_v21.png" alt="Жизненный цикл" class="schema-img">
+                        </a>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-header"><span>Интеллектуальная Оркестрация (Нейро-Агент)</span></div>
+                        <a href="images/ai_orchestration_v21.png" target="_blank">
+                            <img src="images/ai_orchestration_v21.png" alt="ИИ Оркестрация" class="schema-img">
+                        </a>
+                    </div>
+                </div>
             </div>
 
         </div>
