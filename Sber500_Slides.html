@@ -3,137 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VulnDetector Sber500 Pitch</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>VulnDetector: ITSM Orchestration Pitch</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #f8fafc;
-            --primary-color: #4f46e5;
-            --accent-color: #3b82f6;
-            --text-color: #334155;
-            --border-style: 1px solid #e2e8f0;
-            --slide-bg: #ffffff;
+            --bg-color: #ffffff;
+            --primary-color: #00c805; /* Sber Green */
+            --accent-color: #000000;
+            --text-color: #1a1a1b;
+            --secondary-text: #636e72;
+            --border-style: 1px solid #dfe6e9;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; cursor: default; }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
         body { 
-            background-color: var(--bg-color); 
+            background-color: #f7f9fb; 
             color: var(--text-color); 
             font-family: 'Inter', sans-serif; 
             overflow: hidden; 
             display: flex; 
             justify-content: center; 
             align-items: center; 
+            height: 100vh;
+        }
+
+        .slide-container { 
+            width: 100vw; 
             height: 100vh; 
+            position: relative;
         }
-        .slide-container { width: 85vw; height: 80vh; position: relative; }
+
         .slide {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            border: var(--border-style); border-radius: 24px; padding: 5rem;
-            background: var(--slide-bg); display: flex; flex-direction: column; justify-content: center;
-            opacity: 0; transition: all 0.5s ease; pointer-events: none;
-            transform: translateY(20px); box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+            position: absolute; 
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-color);
+            padding: 0;
+            display: flex;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+            pointer-events: none;
         }
-        .slide.active { opacity: 1; pointer-events: all; transform: translateY(0); }
-        h1, h2 { color: #0f172a; margin-bottom: 2rem; font-weight: 800; letter-spacing: -0.02em; }
-        h1 { font-size: 3.5rem; text-align: center; }
-        h2 { font-size: 2.2rem; display: flex; align-items: center; gap: 16px; margin-top: 1rem;}
-        h2::before { content: ""; display: block; width: 6px; height: 32px; background: var(--primary-color); border-radius: 4px; }
-        p, li { font-size: 1.4rem; line-height: 1.6; margin-bottom: 1.5rem; }
-        ul { padding-left: 2rem; margin-bottom: 2rem; }
-        li { margin-bottom: 1rem; }
-        .highlight { background-color: #eef2ff; color: var(--primary-color); padding: 4px 10px; border-radius: 6px; font-weight: 600; border: 1px solid #c7d2fe; }
-        .footer { position: absolute; bottom: 2.5rem; right: 4rem; font-size: 1rem; color: #94a3b8; font-weight: 600; letter-spacing: 0.1em; }
-        .nav-hints { position: fixed; bottom: 20px; width: 100%; text-align: center; color: #94a3b8; font-size: 0.85rem; font-weight: 500; }
-        .center-text { text-align: center; }
+
+        .slide.active { 
+            opacity: 1; 
+            pointer-events: all;
+        }
+
+        /* Layouts */
+        .content-half { width: 50%; padding: 6rem; display: flex; flex-direction: column; justify-content: center; }
+        .image-half { width: 50%; background-size: cover; background-position: center; position: relative; }
+        .image-half::after { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(90deg, #fff 0%, transparent 100%); opacity: 0.1; }
+
+        /* Typography */
+        h1 { font-size: 3.5rem; font-weight: 800; letter-spacing: -0.04em; line-height: 1.1; margin-bottom: 2rem; color: #000; }
+        h2 { font-size: 2.2rem; font-weight: 800; margin-bottom: 2rem; display: flex; align-items: center; gap: 15px; }
+        h2::before { content: ""; width: 8px; height: 40px; background: var(--primary-color); border-radius: 4px; display: block; }
+        p { font-size: 1.4rem; line-height: 1.6; color: var(--secondary-text); margin-bottom: 2rem; }
+        
+        .highlight { color: var(--primary-color); font-weight: 700; }
+        .code-tag { font-family: 'JetBrains Mono', monospace; background: #f1f2f6; padding: 4px 10px; border-radius: 6px; font-size: 0.9em; font-weight: 700; color: #2f3542; }
+        
+        .logo-bar { position: absolute; top: 3rem; left: 6rem; display: flex; align-items: center; gap: 15px; z-index: 10; }
+        .logo-img { height: 40px; }
+        .logo-text { font-weight: 800; font-size: 1.2rem; letter-spacing: 1px; text-transform: uppercase; }
+
+        .footer { 
+            position: absolute; bottom: 3rem; left: 6rem; 
+            font-size: 0.8rem; color: #95a5a6; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em;
+        }
+
+        .nav-hints {
+            position: fixed; bottom: 3rem; right: 4rem; color: #95a5a6; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
+            background: rgba(255,255,255,0.8); padding: 8px 15px; border-radius: 20px; border: 1px solid #eee; backdrop-filter: blur(5px);
+        }
+
+        /* Animations */
+        @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .slide.active h1, .slide.active p, .slide.active ul { animation: slideUp 0.8s ease-out forwards; }
     </style>
 </head>
 <body>
-    <div class="slide-container" id="slider">
-        <!-- Slide 1 -->
-        <div class="slide active">
-            <div style="text-align: center; margin-bottom: 1.5rem;">
-                <span style="background: rgba(79, 70, 229, 0.1); color: var(--primary-color); padding: 8px 20px; border-radius: 20px; font-size: 1rem; font-weight: 800; letter-spacing: 1px;">SBER500 × GIGACHAT ACCELERATOR</span>
-            </div>
-            <h1>VULNDETECTOR</h1>
-            <p class="center-text" style="font-size: 1.5rem; font-weight: 600; color: var(--primary-color); text-transform: uppercase; letter-spacing: 2px;">Интеллектуальная оркестрация безопасности</p>
-            <p class="center-text" style="font-size: 1.25rem; max-width: 80%; margin: 2rem auto; color: #64748b;">Многоагентная Enterprise-платформа для непрерывного сканирования корпоративной инфраструктуры и автоматической постановки задач инженерам без преград.</p>
-            <div class="footer">01 / VULNDETECTOR</div>
-        </div>
+    <div class="nav-hints">Space / Click to Advance</div>
 
-        <!-- Slide 2 -->
-        <div class="slide">
-            <h2>СМЕНА ПАРАДИГМЫ: ИТ-ИММУНИТЕТ</h2>
-            <ul>
-                <li><strong>Проблема:</strong> ИБ-отделы и DevSecOps инженеры тонут в рутине. Отчеты сканеров сложно применять.</li>
-                <li><strong>Последствия:</strong> Огромный TTR (Time To Remediate). Уязвимости критического уровня исправляются неделями вместо минут.</li>
-                <li><strong>Наше решение:</strong> Непрерывный автоматизированный ИТ-Иммунитет с использованием LLM (GigaChat).</li>
-            </ul>
-            <div class="footer">02 / ПРОБЛЕМА И РЕШЕНИЕ</div>
-        </div>
-
-        <!-- Slide 3 -->
-        <div class="slide">
-            <h2>ПАК «VULNDETECTOR»</h2>
-            <p>Программно-аппаратный комплекс и интеллектуальный веб-интерфейс:</p>
-            <ul>
-                <li><span class="highlight">Zero-UI Архитектура:</span> Роботы работают в фоне, не отвлекая команду от бизнеса.</li>
-                <li><span class="highlight">Непрерывный мониторинг:</span> Мгновенный перехват почтовых алертов и серверных логов.</li>
-                <li><span class="highlight">Enterprise-ready:</span> ГОСТ-документация и полная готовность к Реестру Минцифры РФ.</li>
-            </ul>
-            <div class="footer">03 / РЕАЛИЗАЦИЯ</div>
-        </div>
-
-        <!-- Slide 4 -->
-        <div class="slide">
-            <h2>ЭКОСИСТЕМА И ИНТЕГРАЦИИ</h2>
-            <p>Гибкая инфраструктура и многоагентный оркестратор:</p>
-            <ul>
-                <li><span class="highlight">GigaChat Core:</span> Синтаксический разбор уязвимостей на лету на русском языке.</li>
-                <li><span class="highlight">Kanban Bridge:</span> Перевод технических логов в конкретные задачи для программистов (Jira/Kanboard).</li>
-                <li><span class="highlight">Janitor-Надзиратель:</span> Telegram-система соблюдения SLA по критическим багам.</li>
-            </ul>
-            <div class="footer">04 / ЭКОСИСТЕМА</div>
-        </div>
-
-        <!-- Slide 5 -->
-        <div class="slide">
-            <h2>МОНЕТИЗАЦИЯ И РЫНОК</h2>
-            <ul>
-                <li><strong>Рынок:</strong> B2B, Enterprise-сегмент, FinTech, E-Commerce, Заказная разработка.</li>
-                <li><strong>SaaS подписка:</strong> Облачная оркестрация для небольших IT-компаний.</li>
-                <li><strong>On-Premise:</strong> Установка в закрытый контур корпораций с использованием корпоративного GigaChat API.</li>
-            </ul>
-            <div class="footer">05 / БИЗНЕС-МОДЕЛЬ</div>
-        </div>
-
-        <!-- Slide 6 -->
-        <div class="slide">
-            <h2 style="justify-content: center; border: none; font-size: 2.8rem; margin-top: 2rem;">ГОТОВЫ К ЗАПУСКУ ПИЛОТОВ <span style="color:var(--primary-color)">⚡</span></h2>
-            <p class="center-text" style="font-size: 1.5rem; max-width: 80%; margin: 2rem auto;">
-                <strong>ЦЕЛЬ В АКСЕЛЕРАТОРЕ:</strong> Финансирование масштабирования, плотная техническая интеграция с GigaChat и продукты Сбера, первые крупные Enterprise-клиенты.
-            </p>
-            <div style="text-align: center; margin-top: 3rem;">
-                <span class="highlight" style="font-size: 1.2rem; padding: 12px 30px; border-radius: 30px; border:none; background: #0f172a; color:#fff;">Спасибо за внимание!</span>
-            </div>
-            <div class="footer">06 / ФИНАЛ</div>
-        </div>
+    <div class="logo-bar">
+        <img src="C:\Users\PC\.gemini\antigravity\brain\a6b5f9b3-8f48-401e-9373-a83733661aed/vulndetector_logo_premium_1775804608844.png" class="logo-img">
+        <span class="logo-text">VulnDetector</span>
     </div>
 
-    <div class="nav-hints">
-        <span>[ПРОБЕЛ / КЛИК / СТРЕЛКА ВПРАВО]: ВПЕРЕД &nbsp;&nbsp;|&nbsp;&nbsp; [СТРЕЛКА ВЛЕВО]: НАЗАД</span>
+    <div class="slide-container" id="slider">
+        
+        <!-- Slide 1: The Pain -->
+        <div class="slide active">
+            <div class="content-half">
+                <h1>Синдром <span class="highlight">«Хромого верблюда»</span> в вашем DevOps.</h1>
+                <p>
+                    Инженеры сжигают до <b>30% времени</b> на бюрократию. Пока профи пишут отчёты вручную, ИТ-караван стоит, а риски растут.
+                </p>
+                <div style="margin-top: 1rem;">
+                    <span class="code-tag">Time to Resolution: Weeks</span>
+                </div>
+            </div>
+            <div class="image-half" style="background-image: url('C:/Users/PC/.gemini/antigravity/brain/a6b5f9b3-8f48-401e-9373-a83733661aed/it_frustration_pain_1775804646407.png');"></div>
+            <div class="footer">01 / ПРОБЛЕМА</div>
+        </div>
+
+        <!-- Slide 2: The Logic (MCP/Zero-UI) -->
+        <div class="slide">
+            <div class="content-half">
+                <h2>VULNDETECTOR: ВАШ ИТ-ИММУНИТЕТ</h2>
+                <p>Безынтерфейсный подход (<b>Zero-UI</b>) и мост <b>MCP</b> между ИИ и вашей инфраструктурой.</p>
+                <ul style="list-style: none;">
+                    <li style="margin-bottom: 1rem; font-size: 1.2rem;">🔹 <b>AI-секретарь</b> в Telegram и VK Teams.</li>
+                    <li style="margin-bottom: 1rem; font-size: 1.2rem;">🔹 <b>GigaChat</b> переводит диалоги в задачи.</li>
+                    <li style="margin-bottom: 1rem; font-size: 1.2rem;">🔹 <b>Автоматизация рутины</b> на 100%.</li>
+                </ul>
+            </div>
+            <div class="image-half" style="background-image: url('C:/Users/PC/.gemini/antigravity/brain/a6b5f9b3-8f48-401e-9373-a83733661aed/ai_orchestrator_solution_1775804687833.png');"></div>
+            <div class="footer">02 / РЕШЕНИЕ</div>
+        </div>
+
+        <!-- Slide 3: GigaChat & Security -->
+        <div class="slide">
+            <div class="content-half">
+                <h2>РЕЗЕРВНЫЙ МОЗГ КОМПАНИИ</h2>
+                <p>GigaChat гарантирует суверенитет. Логи не покидают закрытый контур <b>Enterprise РФ</b>.</p>
+                <div style="background: #f8f9fa; padding: 2rem; border-radius: 16px; border-left: 5px solid var(--primary-color);">
+                    <p style="font-size: 1.1rem; margin: 0; color: #2d3436;"><i>"Мы сохраняем техническую экспертизу компании навсегда, предотвращая риски увольнения сотрудников (Bus Factor)."</i></p>
+                </div>
+                <div style="margin-top: 2rem;">
+                    <span class="code-tag">100% ФЗ-152</span>
+                    <span class="code-tag">On-Premise GigaChat</span>
+                </div>
+            </div>
+            <div class="image-half" style="background-image: url('C:/Users/PC/.gemini/antigravity/brain/a6b5f9b3-8f48-401e-9373-a83733661aed/future_enterprise_peace_1775804711413.png');"></div>
+            <div class="footer">03 / ТЕХНОЛОГИИ</div>
+        </div>
+
+        <!-- Slide 4: Business Traction -->
+        <div class="slide" style="flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+            <div style="max-width: 800px;">
+                <h1 style="font-size: 3rem;">ЭКСПЛУАТАЦИЯ <span class="highlight">НЕВИДИМА</span></h1>
+                <p style="font-size: 1.5rem; margin-bottom: 3rem;">Сокращаем время создания задачи с часов до <b>10 секунд</b>. Мы готовы к пилотам в экосистеме Сбера.</p>
+                <div style="display: flex; gap: 2rem; justify-content: center;">
+                    <div style="background: #fff; border: 1px solid #eee; padding: 2rem; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
+                        <div style="color: var(--primary-color); font-size: 3rem; font-weight: 800;">-30%</div>
+                        <div style="text-transform: uppercase; font-size: 0.7rem; font-weight: 700; letter-spacing: 1px;">Расходов на FTE</div>
+                    </div>
+                    <div style="background: #fff; border: 1px solid #eee; padding: 2rem; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
+                        <div style="color: var(--primary-color); font-size: 3rem; font-weight: 800;">0 сек</div>
+                        <div style="text-transform: uppercase; font-size: 0.7rem; font-weight: 700; letter-spacing: 1px;">Задержка IaaS</div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer" style="width: 100%; text-align: center; left: 0;">SBER500 • BATCH 2026 • VulnDetector</div>
+        </div>
+
     </div>
 
     <script>
         const slides = document.querySelectorAll('.slide');
         let currentSlide = 0;
+
         function showSlide(index) {
             slides.forEach((slide, i) => {
                 slide.classList.remove('active');
                 if (i === index) slide.classList.add('active');
             });
         }
+
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight' || e.key === ' ') {
+            if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') {
                 currentSlide = (currentSlide + 1) % slides.length;
                 showSlide(currentSlide);
             } else if (e.key === 'ArrowLeft') {
@@ -141,10 +181,12 @@
                 showSlide(currentSlide);
             }
         });
+        
         document.body.addEventListener('click', () => {
              currentSlide = (currentSlide + 1) % slides.length;
              showSlide(currentSlide);
         });
+
         showSlide(0);
     </script>
 </body>
