@@ -37,12 +37,12 @@ if (-not (Test-Path $avatarDst)) {
 
 # 3. git add
 Write-Host "[3/5] Staging files..." -ForegroundColor Yellow
-git add avatar.jpg index.html deploy.ps1
+git add .
 if ($LASTEXITCODE -ne 0) { Write-Error "git add failed!"; exit 1 }
 
 # 4. git commit
 Write-Host "[4/5] Committing..." -ForegroundColor Yellow
-git commit -m "Deploy landing page - add avatar photo, update links, add consultation form"
+git commit -m "Deploy landing page - integrate CyberSec Simulator Boardroom, Sber500 Slides, ApproveCenter Demo"
 if ($LASTEXITCODE -ne 0) {
     Write-Host "      Nothing to commit or commit failed. Trying push anyway..." -ForegroundColor Yellow
 }

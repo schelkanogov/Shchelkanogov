@@ -8,24 +8,21 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      /* ═══ OBSIDIAN PROTOCOL ═══ */
+      /* ═══ UNIFIED DESIGN SYSTEM ═══ */
       --bg: #050508;
-      --surface: rgba(12, 13, 18, 0.75);
+      --surface: rgba(12, 13, 18, 0.7);
       --surface-solid: #0c0d12;
-      --border: rgba(255, 255, 255, 0.06);
-      --border-hover: rgba(0, 255, 159, 0.4);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(0, 212, 255, 0.4);
       --txt: #f0f2f5;
       --txt2: #8f9bb3;
       --txt3: #4a5068;
-      --accent: #00ff9f;
-      --accent-dim: rgba(0, 255, 159, 0.1);
-      --accent-glow: rgba(0, 255, 159, 0.2);
+      --accent: #00d4ff;
+      --accent-dim: rgba(0, 212, 255, 0.1);
+      --accent-glow: rgba(0, 212, 255, 0.2);
       --green: #00ff9f;
-      --green-dim: rgba(0, 255, 159, 0.08);
       --warn: #ffb703;
-      --warn-dim: rgba(255, 183, 3, 0.1);
       --red: #ff3355;
-      --red-dim: rgba(255, 51, 85, 0.1);
       --cyan: #00d4ff;
       --mono: 'JetBrains Mono', monospace;
       --sans: 'Inter', -apple-system, sans-serif;
@@ -331,7 +328,10 @@
         <input type="tel" id="leadPhone" placeholder="+7 (___) ___-__-__">
       </div>
       <button class="lead-submit" id="leadSubmitBtn" onclick="submitLead()">📧 ОТПРАВИТЬ ЗАЯВКУ</button>
-      <div class="lead-success" id="leadSuccess">✅ Заявка отправлена! Мы свяжемся с вами в течение 24 часов.</div>
+      <div class="lead-success" id="leadSuccess">
+        ✅ Заявка отправлена! <br><br>
+        <a href="CyberSec_Simulator/index.html?quiz=loaded" class="nav-btn primary" style="display:inline-block; text-decoration:none; margin-top:12px; width: 100%;">🎮 ПЕРЕЙТИ В СОВЕЩАТЕЛЬНУЮ КОМНАТУ →</a>
+      </div>
       <div class="lead-error" id="leadError">⚠️ Ошибка отправки. Попробуйте ещё раз или напишите на vulndetector@yandex.ru</div>
       <span class="lead-skip" onclick="document.getElementById('leadForm').style.display='none'">Пропустить</span>
     </div>
@@ -589,7 +589,31 @@ function showResult() {
     zonesList.appendChild(zone);
   });
 
-  // Sort by weakest first
+  // Save quiz data for boardroom simulator
+  const maxScore = 24;
+  const pct = Math.round((total / maxScore) * 100);
+  
+  // Format weak areas
+  const weakAreas = [];
+  QUESTIONS.forEach((q, i) => {
+    const pts = answers[i] ? answers[i].pts : 0;
+    weakAreas.push({ score: pts, category: q.cat, icon: '⚠️' });
+  });
+  weakAreas.sort((a, b) => a.score - b.score);
+
+  const quizData = {
+    score: pct,
+    totalScore: total,
+    maxScore: maxScore,
+    level: riskLabel,
+    answers: answers,
+    weakAreas: weakAreas.slice(0, 3), // top 3 weakest
+    timestamp: new Date().toISOString(),
+    elapsed: 180 // placeholder
+  };
+  localStorage.setItem('vulndetector_quiz', JSON.stringify(quizData));
+
+  // Sort by weakest first for UI
   const items = [...zonesList.children];
   items.sort((a, b) => {
     const sa = parseInt(a.querySelector('.zone-score').textContent);
@@ -683,7 +707,7 @@ ${answersDetail}
     💬 Сообщество в MAX
   </a>
   <p style="margin-top:16px; font-size:0.75rem; color:#4a5068; font-family:'Inter',sans-serif;">
-    © 2026 VulnDetector · Sber CyberSecurity
+    © 2026 Детектор Уязвимостей · Sber CyberSecurity
   </p>
 </footer>
 

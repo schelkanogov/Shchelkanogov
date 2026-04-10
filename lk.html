@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VulnDetector · Approve Center</title>
+  <title>Детектор Уязвимостей · Пульт Управления</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
     /* ═══════════════════════════════════════════
@@ -108,7 +108,7 @@
     .logo-sub {
       font-size: 11px; color: var(--text-dim);
       font-family: var(--mono);
-      letter-spacing: 3px;
+      letter-spacing: 2px;
       text-transform: uppercase;
     }
 
@@ -132,7 +132,7 @@
       letter-spacing: 1px;
     }
 
-    /* ═══════════ HERO BLOCK (ENG REQUESTED) ═══════════ */
+    /* ═══════════ HERO BLOCK ═══════════ */
     .hero-block {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -561,27 +561,27 @@
   <!-- HEADER -->
   <div class="header">
     <div class="logo">
-      <div class="logo-mark">VD</div>
+      <div class="logo-mark">ДУ</div>
       <div>
-        <div class="logo-text">Approve Center</div>
-        <div class="logo-sub">ПАК VulnDetector · Infrastructure Patching</div>
+        <div class="logo-text">Пульт Управления</div>
+        <div class="logo-sub">ПАК «Детектор Уязвимостей»</div>
       </div>
     </div>
     <div class="header-status" style="display:flex; gap: 30px;">
       <div style="display:flex; align-items:center; gap:8px;">
         <div style="width:10px; height:10px; border-radius:50%; background:var(--blue); box-shadow:0 0 10px var(--blue);"></div>
-        <div class="status-label" style="color:var(--blue);">ПАК: ONLINE (TOR)</div>
+        <div class="status-label" style="color:var(--blue);">ПАК: ОНЛАЙН (TOR)</div>
       </div>
       <div style="display:flex; align-items:center; gap:8px;">
         <div class="status-dot" id="statusDot"></div>
-        <div class="status-label" id="statusLabel">BACKEND: STANDBY</div>
+        <div class="status-label" id="statusLabel">СЕРВЕР: ОЖИДАНИЕ</div>
       </div>
     </div>
   </div>
 
-  <!-- HERO BLOCK (NEW REQUIREMENT) -->
+  <!-- HERO BLOCK -->
   <div class="hero-block">
-    >_ Select the lowest-latency feasible VM for a target exchange using an algorithm that measures delay across every traffic segment, then route traffic through three independent providers with physical path diversity via dark fiber, microwave radio links, and optimized IP transit.<span class="blink"></span>
+    >_ Алгоритм анализирует задержки в каждом сегменте трафика, автоматически подбирает ВМ с минимальным пингом для целевой биржи и перенаправляет пакеты через три независимых провайдера с физической диверсификацией маршрутов (темное оптоволокно, РРЛ, IP-транзит).<span class="blink"></span>
   </div>
 
   <!-- SLOGANS MARQUEE -->
@@ -604,12 +604,12 @@
     <div style="display: flex; gap: 24px;">
       <!-- SIDEBAR MENU -->
       <div style="width: 200px; border: 1px solid var(--border-neon); background: rgba(5,10,5,0.8); display: flex; flex-direction: column; gap: 2px;">
-        <div style="padding: 15px; color: var(--neon); font-weight: bold; border-bottom: 1px solid var(--neon); background: rgba(57, 255, 20, 0.1);">[ D - BOARD ]</div>
-        <div style="padding: 15px; color: var(--text-dim); cursor: pointer; transition: 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-dim)'">PAC INVENTORY</div>
-        <div style="padding: 15px; color: var(--text-dim); cursor: pointer; transition: 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-dim)'">SOC FEEDS (TG)</div>
-        <div style="padding: 15px; color: var(--text-dim); cursor: pointer; transition: 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-dim)'">AI MODELS (FPF)</div>
-        <div style="padding: 15px; color: var(--text-dim); cursor: pointer; transition: 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-dim)'">INCIDENTS</div>
-        <div style="padding: 15px; color: var(--text-dim); cursor: pointer; transition: 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-dim)'">REPORTS</div>
+        <div style="padding: 15px; color: var(--neon); font-weight: bold; border-bottom: 1px solid var(--neon); background: rgba(57, 255, 20, 0.1);">[ ПАНЕЛЬ ]</div>
+        <div style="padding: 15px; color: var(--text-dim); cursor: pointer; transition: 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-dim)'">ИНВЕНТАРЬ ПАК</div>
+        <div style="padding: 15px; color: var(--text-dim); cursor: pointer; transition: 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-dim)'">SOC-ЛЕНТЫ (TG)</div>
+        <div style="padding: 15px; color: var(--text-dim); cursor: pointer; transition: 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-dim)'">МОДЕЛИ AI</div>
+        <div style="padding: 15px; color: var(--text-dim); cursor: pointer; transition: 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-dim)'">ИНЦИДЕНТЫ</div>
+        <div style="padding: 15px; color: var(--text-dim); cursor: pointer; transition: 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-dim)'">ОТЧЕТЫ</div>
       </div>
 
       <!-- MAIN CONTENT WRAPPER -->
@@ -617,34 +617,34 @@
         
         <!-- SCAN START -->
         <div class="scan-start-section" id="scanStartSection">
-          <button class="scan-btn" id="scanBtn" onclick="startScan()">▶ EXECUTE INFRA SCAN</button>
+          <button class="scan-btn" id="scanBtn" onclick="startScan()">▶ ЗАПУСТИТЬ СКАН ИНФРАСТРУКТУРЫ</button>
         </div>
 
         <!-- METRICS -->
         <div class="metrics-bar" id="metricsBar" style="display:none;">
           <div class="metric">
             <div class="metric-val critical" id="metricCritical">0</div>
-            <div class="metric-label">Critical CVE</div>
+            <div class="metric-label">Критич. CVE</div>
           </div>
           <div class="metric">
             <div class="metric-val warn" id="metricHigh">0</div>
-            <div class="metric-label">High CVE</div>
+            <div class="metric-label">Высок. CVE</div>
           </div>
           <div class="metric">
             <div class="metric-val" id="metricPatched">0</div>
-            <div class="metric-label">Patched</div>
+            <div class="metric-label">Исправлено</div>
           </div>
           <div class="metric">
             <div class="metric-val critical" id="metricImmunity">0%</div>
-            <div class="metric-label">IT-Immunity</div>
+            <div class="metric-label">Кибериммунитет</div>
           </div>
         </div>
 
     <!-- LEFT: SCANNER CONSOLE -->
     <div class="panel" id="scanPanel" style="display:none;">
       <div class="panel-header">
-        <div class="panel-title">Scanner Console</div>
-        <div class="panel-badge badge-scanning" id="scanBadge">Scanning...</div>
+        <div class="panel-title">Консоль сканера</div>
+        <div class="panel-badge badge-scanning" id="scanBadge">Сканирование...</div>
       </div>
       <div class="panel-body">
         <div class="console" id="console">
@@ -656,8 +656,8 @@
     <!-- RIGHT: PATCH QUEUE -->
     <div class="panel" id="patchPanel" style="display:none;">
       <div class="panel-header">
-        <div class="panel-title">Patch Queue</div>
-        <div class="panel-badge badge-ready" id="patchBadge">Awaiting</div>
+        <div class="panel-title">Очередь патчей</div>
+        <div class="panel-badge badge-ready" id="patchBadge">Ожидание</div>
       </div>
       <div class="panel-body">
         <div class="vuln-list" id="vulnList">
@@ -669,20 +669,20 @@
     <!-- DIFF VIEW (full width) -->
     <div class="panel" id="diffPanel" style="display:none; grid-column: 1 / -1;">
       <div class="panel-header">
-        <div class="panel-title">Proposed IaC Patch</div>
-        <div class="panel-badge badge-ready" id="diffBadge">Select a CVE</div>
+        <div class="panel-title">Сигнатура IaC-патча</div>
+        <div class="panel-badge badge-ready" id="diffBadge">Выберите CVE</div>
       </div>
       <div class="panel-body">
         <div class="diff-view" id="diffView">
-          <div class="diff-placeholder">← Select a vulnerability to view the auto-generated patch</div>
+          <div class="diff-placeholder">← Выберите уязвимость для просмотра авто-сгенерированного патча</div>
         </div>
       </div>
     </div>
 
     <!-- APPROVE BUTTON -->
     <div class="approve-section" id="approveSection" style="display:none;">
-      <button class="approve-btn" id="approveBtn" onclick="approveAll()" disabled>⚡ APPROVE & DEPLOY ⚡</button>
-      <div class="approve-disclaimer">Review all patches before approving · Changes are applied to IaC repository</div>
+      <button class="approve-btn" id="approveBtn" onclick="approveAll()" disabled>⚡ ПРИМЕНИТЬ ПАТЧИ ⚡</button>
+      <div class="approve-disclaimer">Проверьте все изменения перед утверждением · Патчи применяются к IaC-репозиторию</div>
     </div>
 
       </div> <!-- End main content wrapper -->
@@ -690,18 +690,18 @@
 
   <!-- FOOTER -->
   <div class="footer">
-    VulnDetector Approve Center v1.0 · SYSTEM STATUS: READY
+    Детектор Уязвимостей · Пульт Управления v1.0 · СТАТУС: ГОТОВ К РАБОТЕ
   </div>
 </div>
 
 <!-- SUCCESS OVERLAY -->
 <div class="success-overlay" id="successOverlay">
-  <div class="success-icon">[ OK ]</div>
-  <div class="success-text">ALL PATCHES DEPLOYED</div>
-  <div class="success-sub">Infrastructure remediation complete</div>
+  <div class="success-icon">[ ГОТОВО ]</div>
+  <div class="success-text">ВСЕ ПАТЧИ ПРИМЕНЕНЫ</div>
+  <div class="success-sub">Устранение уязвимостей инфраструктуры завершено</div>
   <div class="success-score" id="successScore">87%</div>
-  <div class="success-score-label">New IT-Immunity Score</div>
-  <button class="success-close" onclick="closeSuccess()">← SYSTEM HIBERNATION</button>
+  <div class="success-score-label">Новый уровень кибериммунитета</div>
+  <button class="success-close" onclick="closeSuccess()">← ВЕРНУТЬСЯ В РЕЖИМ ОЖИДАНИЯ</button>
 </div>
 
 <script>
@@ -751,54 +751,54 @@
 
 const VULNS = [
   {
-    id: 'CVE-2019-15846', component: 'Exim smtpd 4.89', severity: 'CRITICAL', cvss: '10.0', port: '25, 465, 587',
-    desc: 'Heap-based buffer overflow in Exim TLS handshake — RCE',
+    id: 'CVE-2019-15846', component: 'Exim smtpd 4.89', severity: 'КРИТИЧЕСКИЙ', cvss: '10.0', port: '25, 465, 587',
+    desc: 'Переполнение буфера в куче при TLS-рукопожатии Exim — RCE',
     diff: {
       file: 'ansible/roles/mailserver/tasks/main.yml',
       old: ['  - name: Install Exim MTA', '    apt:', '      name: exim4=4.89-2'],
-      new: ['  - name: Install Exim MTA (PATCHED by AI)', '    apt:', '      name: exim4=4.97-1']
+      new: ['  - name: Install Exim MTA (ИСПРАВЛЕНО AI)', '    apt:', '      name: exim4=4.97-1']
     }
   },
   {
-    id: 'CVE-2023-38408', component: 'OpenSSH 7.4p1', severity: 'CRITICAL', cvss: '9.8', port: '22',
-    desc: 'PKCS#11 provider remote code execution via ssh-agent forwarding',
+    id: 'CVE-2023-38408', component: 'OpenSSH 7.4p1', severity: 'КРИТИЧЕСКИЙ', cvss: '9.8', port: '22',
+    desc: 'Удаленное выполнение кода через проброс ssh-agent (провайдер PKCS#11)',
     diff: {
       file: 'terraform/modules/ssh/main.tf',
       old: ['  ami = "ami-0123ef" # Debian 9', '  instance_type = "t3.medium"'],
-      new: ['  ami = "ami-0fedcba" # Debian 12 (AI Patched)', '  instance_type = "t3.medium"']
+      new: ['  ami = "ami-0fedcba" # Debian 12 (AI Исправлено)', '  instance_type = "t3.medium"']
     }
   },
   {
-    id: 'TG-0DAY-KII', component: 'NGINX Ingress (KII Zone)', severity: 'CRITICAL', cvss: '9.9', port: '443',
-    desc: 'Zero-day parsed from Telegram SOC Feed: Ingress path traversal',
+    id: 'TG-0DAY-KII', component: 'NGINX Ingress (Зона КИИ)', severity: 'КРИТИЧЕСКИЙ', cvss: '9.9', port: '443',
+    desc: '0-day из SOC-ленты Telegram: Обход путей в Ingress (Path Traversal)',
     diff: {
       file: 'kubernetes/ingress-kii-control.yaml',
       old: ['    nginx.ingress.kubernetes.io/rewrite-target: /'],
-      new: ['    nginx.ingress.kubernetes.io/rewrite-target: /', '    nginx.ingress.kubernetes.io/server-snippet: |', '      location ~* \\.\\./ { deny all; } # FPF Guard']
+      new: ['    nginx.ingress.kubernetes.io/rewrite-target: /', '    nginx.ingress.kubernetes.io/server-snippet: |', '      location ~* \\.\\./ { deny all; } # FPF Защита']
     }
   },
   {
-    id: 'DNS-SPOOF-WARN', component: 'DNS53 Core Module', severity: 'HIGH', cvss: '7.5', port: '53',
-    desc: 'Predictive What-If Model expects imminent cache poisoning attack',
+    id: 'DNS-SPOOF-WARN', component: 'DNS53 Ядро', severity: 'ВЫСОКИЙ', cvss: '7.5', port: '53',
+    desc: 'Предсказательная модель ожидает атаку типа DNS Cache Poisoning',
     diff: {
       file: 'bind/named.conf.options',
       old: ['        dnssec-validation auto;'],
-      new: ['        dnssec-validation yes; # Forced by Watchdog', '        rate-limit { responses-per-second 10; };']
+      new: ['        dnssec-validation yes; # Принудительно ИИ', '        rate-limit { responses-per-second 10; };']
     }
   }
 ];
 
 const SCAN_LOGS = [
-  { t: 300,  cls: 'log-info', msg: '[INIT] ПАК VulnDetector Engine starting...' },
-  { t: 1000, cls: 'log-ok',   msg: '[OK] 287,431 vulnerability signatures loaded from local AI storage' },
-  { t: 2000, cls: 'log-info', msg: '[SCAN] Target: enterprise-network & KII-control' },
-  { t: 3500, cls: 'log-warn', msg: '[WARN] Sub-optimal routes detected in DNS53 node' },
-  { t: 4500, cls: 'log-crit', msg: '[CRITICAL] CVE-2019-15846 — Exim RCE (CVSS 10.0)' },
-  { t: 5500, cls: 'log-crit', msg: '[CRITICAL] CVE-2023-38408 — OpenSSH RCE (CVSS 9.8)' },
-  { t: 6500, cls: 'log-crit', msg: '[CRITICAL] TG-0DAY-KII — Telegram SOC Context Parsed (CVSS 9.9)' },
-  { t: 7500, cls: 'log-warn', msg: '[HIGH] DNS-SPOOF-WARN — Model What-If Prediction Alert' },
-  { t: 8500, cls: 'log-info', msg: '[AI] FPF_Agent Generating unified IaC auto-patches...' },
-  { t: 9500, cls: 'log-ok',   msg: '[DONE] Validated. Patches ready for CISO approval.' },
+  { t: 300,  cls: 'log-info', msg: '[INIT] Двигатель ПАК «Детектор Уязвимостей» запускается...' },
+  { t: 1000, cls: 'log-ok',   msg: '[OK] 287,431 сигнатур загружено из локального AI-хранилища' },
+  { t: 2000, cls: 'log-info', msg: '[SCAN] Цель: Корпоративная сеть и инфраструктура КИИ' },
+  { t: 3500, cls: 'log-warn', msg: '[WARN] Обнаружены неоптимальные маршруты в узле DNS53' },
+  { t: 4500, cls: 'log-crit', msg: '[КРИТИЧЕСКИЙ] CVE-2019-15846 — Exim RCE (CVSS 10.0)' },
+  { t: 5500, cls: 'log-crit', msg: '[КРИТИЧЕСКИЙ] CVE-2023-38408 — OpenSSH RCE (CVSS 9.8)' },
+  { t: 6500, cls: 'log-crit', msg: '[КРИТИЧЕСКИЙ] TG-0DAY-KII — Контекст из Telegram SOC обработан (CVSS 9.9)' },
+  { t: 7500, cls: 'log-warn', msg: '[ВЫСОКИЙ] DNS-SPOOF-WARN — Предсказание атаки What-If' },
+  { t: 8500, cls: 'log-info', msg: '[AI] FPF_Agent генерирует единые IaC-патчи...' },
+  { t: 9500, cls: 'log-ok',   msg: '[DONE] Проверка завершена. Патчи готовы к утверждению CISO.' },
 ];
 
 let scanRunning = false; let patchedCount = 0;
@@ -814,15 +814,15 @@ async function startScan() {
   document.getElementById('scanStartSection').style.display = 'none';
 
   const consoleEl = document.getElementById('console');
-  document.getElementById('statusLabel').textContent = 'BACKEND: SCANNING...';
+  document.getElementById('statusLabel').textContent = 'СЕРВЕР: СКАНИРОВАНИЕ...';
 
-  // ПАК/Backend Integration Attempt
+  // Попытка интеграции с ПАК/Бэкендом
   try {
     const response = await fetch('http://localhost:5000/api/v1/scan', { method: 'POST', mode: 'no-cors' });
-    consoleEl.innerHTML += `<div class="log-info" style="color: var(--blue)">[ПАК-API] Sent scan request to hardware node...</div>`;
-    consoleEl.innerHTML += `<div class="log-warn" style="color: var(--warn)">[ПАК-API] Awaiting hardware telemetry... Timeout. Using demo cache.</div>`;
+    consoleEl.innerHTML += `<div class="log-info" style="color: var(--blue)">[ПАК-API] Отправлен запрос на сканирование узла...</div>`;
+    consoleEl.innerHTML += `<div class="log-warn" style="color: var(--warn)">[ПАК-API] Ожидание телеметрии... Таймаут. Используется демо-кеш.</div>`;
   } catch(e) {
-    consoleEl.innerHTML += `<div class="log-error" style="color: var(--error)">[ПАК-API] Backend connection failed. Initializing Demo Local Cache...</div>`;
+    consoleEl.innerHTML += `<div class="log-error" style="color: var(--error)">[ПАК-API] Ошибка подключения к бэкенду. Инициализация локального кеша...</div>`;
   }
 
   SCAN_LOGS.forEach((log, i) => {
@@ -831,16 +831,16 @@ async function startScan() {
       line.innerHTML = `<span class="log-time">[${new Date().toTimeString().slice(0,8)}]</span> <span class="${log.cls}">${log.msg}</span>`;
       consoleEl.appendChild(line);
       consoleEl.scrollTop = consoleEl.scrollHeight;
-      if (log.msg.includes('CRITICAL')) document.getElementById('metricCritical').textContent = parseInt(document.getElementById('metricCritical').textContent) + 1;
+      if (log.msg.includes('КРИТИЧЕСКИЙ')) document.getElementById('metricCritical').textContent = parseInt(document.getElementById('metricCritical').textContent) + 1;
       if (i === SCAN_LOGS.length - 1) onScanComplete();
     }, log.t);
   });
 }
 
 function onScanComplete() {
-  document.getElementById('scanBadge').textContent = 'Complete';
+  document.getElementById('scanBadge').textContent = 'Завершено';
   document.getElementById('scanBadge').className = 'panel-badge badge-ready';
-  document.getElementById('patchBadge').textContent = '2 Patches Ready';
+  document.getElementById('patchBadge').textContent = 'Доступны патчи';
   document.getElementById('patchBadge').className = 'panel-badge badge-critical';
   document.getElementById('metricImmunity').textContent = '12%';
 
@@ -851,7 +851,7 @@ function onScanComplete() {
     item.innerHTML = `
       <div class="vuln-severity sev-critical">${v.cvss}</div>
       <div class="vuln-info"><div class="vuln-id">${v.id}</div><div class="vuln-component">${v.component}</div></div>
-      <button class="vuln-action" onclick="selectVuln(${i})">View Patch</button>
+      <button class="vuln-action" onclick="selectVuln(${i})">Просмотр патча</button>
     `;
     list.appendChild(item);
   });
@@ -875,12 +875,12 @@ function selectVuln(idx) {
 
 function approveAll() {
   const btn = document.getElementById('approveBtn');
-  btn.textContent = 'DEPLOYING...'; btn.disabled = true;
+  btn.textContent = 'ПРИМЕНЕНИЕ...'; btn.disabled = true;
   VULNS.forEach((v, i) => {
     setTimeout(() => {
       const item = document.getElementById(`vuln-${i}`);
       item.classList.add('patched');
-      item.querySelector('.vuln-action').textContent = 'PATCHED ✓';
+      item.querySelector('.vuln-action').textContent = 'ИСПРАВЛЕНО ✓';
       patchedCount++; document.getElementById('metricPatched').textContent = patchedCount;
       if (i === VULNS.length - 1) setTimeout(showSuccess, 800);
     }, (i + 1) * 1200);
@@ -896,7 +896,7 @@ function showSuccess() {
 
 function closeSuccess() {
   document.getElementById('successOverlay').classList.remove('show');
-  document.getElementById('approveBtn').textContent = '✓ SECURED';
+  document.getElementById('approveBtn').textContent = '✓ ЗАЩИЩЕНО';
 }
 </script>
 
@@ -907,7 +907,7 @@ function closeSuccess() {
     💬 Сообщество в MAX
   </a>
   <p style="margin-top:16px; font-size:0.75rem; color:#4a5068; font-family:'Inter',sans-serif;">
-    © 2026 VulnDetector · Sber CyberSecurity
+    © 2026 Детектор Уязвимостей · Sber CyberSecurity
   </p>
 </footer>
 

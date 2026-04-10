@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Детектор Уязвимостей | Пульт Управления</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-color: #050508;
+            --surface: rgba(15, 17, 21, 0.7);
+            --surface-hover: rgba(0, 212, 255, 0.05);
+            --accent: #00d4ff;
+            --accent-glow: rgba(0, 212, 255, 0.3);
+            --danger: #ff3355;
+            --danger-glow: rgba(255, 51, 85, 0.3);
+            --warning: #ffb703;
+            --success: #00ff9f;
+            --text-main: #f0f2f5;
+            --text-muted: #8f9bb3;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            background-image: 
+                linear-gradient(to bottom, rgba(5, 5, 8, 0.85), rgba(10, 10, 12, 0.98)),
+                url('cyber_datacenter_bg.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Responsive Fixes */
+        @media (max-width: 768px) {
+            .grid-layout {
+                grid-template-columns: 1fr !important;
+            }
+            .dashboard-container {
+                padding: 20px !important;
+                margin: 10px;
+            }
+            .header {
+                flex-direction: column;
+                align-items: flex-start !important;
+                gap: 15px;
+            }
+            .header-title h1 {
+                font-size: 20px !important;
+            }
+            .chart-container {
+                width: 140px !important;
+                height: 140px !important;
+            }
+            #bfi-score {
+                font-size: 24px !important;
+            }
+            .btn-action {
+                padding: 14px !important;
+                font-size: 12px !important;
+            }
+        }
+
+        #cursor-glow {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            pointer-events: none;
+            z-index: 1;
+            background: radial-gradient(circle 600px at var(--x, 50vw) var(--y, 50vh), rgba(0, 240, 255, 0.08), transparent 80%);
+            transition: background 0.1s ease;
+        }
+
+        .dashboard-wrapper {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 900px;
+            padding: 20px;
+            transform-style: preserve-3d;
+        }
+
+        .dashboard-container {
+            background: var(--surface);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8), inset 0 0 40px rgba(0, 240, 255, 0.02);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dashboard-container::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 16px;
+            box-shadow: 0 0 0 0 rgba(0, 240, 255, 0.2);
+            transition: box-shadow 0.3s ease;
+            pointer-events: none;
+        }
+        .dashboard-wrapper:hover .dashboard-container::after {
+            box-shadow: 0 0 30px 2px rgba(0, 240, 255, 0.1);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .header-title h1 {
+            font-size: 24px;
+            font-weight: 800;
+            margin: 0 0 8px 0;
+            letter-spacing: -0.5px;
+        }
+
+        .header-title .badge {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: rgba(0, 240, 255, 0.1);
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+        }
+
+        .status-badge {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 8px; height: 8px;
+            background-color: var(--success);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 255, 102, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(0, 255, 102, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 255, 102, 0); }
+        }
+
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+
+        .panel {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .panel-header {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Console */
+        .console-view {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            line-height: 1.6;
+            height: 250px;
+            overflow-y: auto;
+            color: #A0AABF;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent) rgba(255,255,255,0.05);
+        }
+
+        .console-view::-webkit-scrollbar { width: 6px; }
+        .console-view::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+        .console-view::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
+
+        .log-time { color: var(--text-muted); }
+        .log-info { color: var(--accent); }
+        .log-crit { color: var(--danger); text-shadow: 0 0 8px var(--danger-glow); }
+        .log-warn { color: var(--warning); }
+        .log-ok { color: var(--success); text-shadow: 0 0 8px var(--success); }
+
+        /* Actions */
+        .btn-action {
+            width: 100%;
+            padding: 18px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 800;
+            font-family: var(--font-mono);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: var(--text-main);
+            color: #000;
+            box-shadow: 0 4px 15px rgba(255,255,255,0.1);
+        }
+        .btn-primary:hover:not(:disabled) { 
+            transform: scale(1.02); 
+            box-shadow: 0 10px 30px rgba(255,255,255,0.3); 
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: #FFF;
+            box-shadow: 0 4px 20px var(--danger-glow);
+        }
+        .btn-danger:hover:not(:disabled) { 
+            background: #FF1A50; 
+            box-shadow: 0 10px 40px var(--danger-glow); 
+        }
+
+        .btn-primary:disabled, .btn-danger:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Vulnerability Items */
+        .vuln-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 10px;
+            transition: all 0.2s;
+        }
+        
+        .vuln-item.patched {
+            border-color: var(--success);
+            background: rgba(0, 255, 102, 0.05);
+        }
+
+        .vuln-desc {
+            font-family: var(--font-mono);
+            font-size: 12px;
+        }
+        
+        .vuln-badge {
+            background: rgba(255, 0, 60, 0.2);
+            color: var(--danger);
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid var(--danger);
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .vuln-item.patched .vuln-badge {
+            background: rgba(0, 255, 102, 0.2);
+            color: var(--success);
+            border-color: var(--success);
+        }
+
+        /* Chart container */
+        .chart-container {
+            position: relative;
+            height: 180px;
+            width: 180px;
+            margin: 0 auto 20px;
+        }
+        
+        #bfi-score {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 32px;
+            font-weight: 800;
+            font-family: var(--font-mono);
+            color: var(--danger);
+            text-shadow: 0 0 15px var(--danger-glow);
+            transition: color 0.5s, text-shadow 0.5s;
+        }
+
+        .hidden { display: none !important; }
+
+    </style>
+</head>
+<body>
+
+    <div id="cursor-glow"></div>
+
+    <div class="dashboard-wrapper">
+        <div class="dashboard-container">
+            
+            <div class="header">
+                <div class="header-title">
+                    <div class="badge">Пульт Согласования</div>
+                    <h1>Детектор Уязвимостей</h1>
+                </div>
+                <div class="status-badge" id="mainStatus">
+                    <div class="status-dot"></div>
+                    СИСТЕМА В ОЖИДАНИИ
+                </div>
+            </div>
+
+            <div class="grid-layout">
+                <!-- Левая колонка: Терминал и Действия -->
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <span>>_ Консоль Радара Инфраструктуры</span>
+                            <span id="scanProgress">ОЖИДАНИЕ КОМАНДЫ</span>
+                        </div>
+                        <div class="console-view" id="console">
+                            <span class="log-time">[Система]</span> Инициализация аудита по ГОСТ Минцифры...<br>
+                            <span class="log-time">[Система]</span> Ожидание запуска вручную.
+                        </div>
+                    </div>
+
+                    <div class="panel hidden" id="patchPanel">
+                        <div class="panel-header">
+                            <span>Выявленные ИИ уязвимости</span>
+                            <span style="color:var(--danger)">2 КРИТИЧЕСКИЕ</span>
+                        </div>
+                        <div id="vulnList">
+                            <!-- Заполняется через JS -->
+                        </div>
+                        <button class="btn-action btn-danger" id="approveBtn" onclick="approvePatches()">
+                            ⚠ УТВЕРДИТЬ И ВНЕДРИТЬ ПАТЧИ
+                        </button>
+                    </div>
+
+                    <button class="btn-action btn-primary" id="scanBtn" onclick="startScan()">
+                        ▶ ЗАПУСТИТЬ СКАНИРОВАНИЕ ИНФРАСТРУКТУРЫ
+                    </button>
+                </div>
+
+                <!-- Правая колонка: Метрики и Индекс -->
+                <div class="panel" style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+                    <div class="panel-header" style="justify-content: center; width: 100%;">
+                        <span>ИНДЕКС ИТ-ИММУНИТЕТА</span>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <canvas id="immunityChart"></canvas>
+                        <div id="bfi-score">12%</div>
+                    </div>
+
+                    <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5;" id="immunityDesc">
+                        Критический уровень защищенности. Высокий риск остановки систем. Требуется полный скан периметра.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Эффект курсора
+        document.addEventListener('mousemove', e => {
+            const glow = document.getElementById('cursor-glow');
+            glow.style.setProperty('--x', e.clientX + 'px');
+            glow.style.setProperty('--y', e.clientY + 'px');
+        });
+
+        // Глобальное состояние
+        let immunityValue = 12; // Начальное значение 12% (Критическое)
+        let chartInstance = null;
+
+        // Инициализация диаграммы
+        function initChart() {
+            const ctx = document.getElementById('immunityChart').getContext('2d');
+            chartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Иммунитет', 'Риск'],
+                    datasets: [{
+                        data: [immunityValue, 100 - immunityValue],
+                        backgroundColor: ['#ff3355', 'rgba(255,255,255,0.03)'],
+                        borderWidth: 0,
+                    }]
+                },
+                options: {
+                    cutout: '80%',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: { animateScale: true, animateRotate: true, duration: 2000, easing: 'easeOutExpo' },
+                    plugins: { tooltip: {enabled: false}, legend: { display: false } }
+                }
+            });
+        }
+        initChart();
+
+        function updateChart(newScore, isSuccess) {
+            immunityValue = newScore;
+            document.getElementById('bfi-score').innerText = newScore + '%';
+            
+            const color = isSuccess ? '#00ff9f' : '#ff3355';
+            if (isSuccess) {
+                document.getElementById('bfi-score').style.color = color;
+                document.getElementById('bfi-score').style.textShadow = '0 0 15px rgba(0,255,159,0.4)';
+            }
+            
+            chartInstance.data.datasets[0].data = [newScore, 100 - newScore];
+            chartInstance.data.datasets[0].backgroundColor[0] = color;
+            chartInstance.update();
+        }
+
+        const SCAN_LOGS = [
+            { t: 0,    m: "Подключение к API KanbanBridge..." },
+            { t: 800,  m: "Анализ узлового кластера #442..." },
+            { t: 1500, m: "Сканирование внутренних Docker-реестров..." },
+            { t: 2800, m: "ТРЕВОГА: CVE-2023-38408 (OpenSSH RCE) обнаружена на K8s ingress", c: "log-crit" },
+            { t: 4000, m: "Перекрестная проверка IOC через модуль SOC Telegram..." },
+            { t: 5500, m: "ТРЕВОГА: TG-0DAY-KII (Утечка токена) найдена в config map", c: "log-crit" },
+            { t: 6500, m: "Передача контекста локальному агенту Ollama (профиль FPF)..." },
+            { t: 8000, m: "Агент подготовил 2 манифеста IaC для устранения.", c: "log-info" },
+            { t: 9000, m: "Анализ завершен. Ожидание утверждения CISO в Kanban.", c: "log-ok" },
+        ];
+
+        const VULNS = [
+            { id: 'CVE-2023-38408', component: 'K8s Ingress Controller (OpenSSH)' },
+            { id: 'TG-0DAY-KII', component: 'SOC ConfigMap / env secrets' }
+        ];
+
+        async function startScan() {
+            const btn = document.getElementById('scanBtn');
+            const consoleEl = document.getElementById('console');
+            
+            btn.disabled = true;
+            btn.innerText = "СКАНИРОВАНИЕ...";
+            document.getElementById('mainStatus').innerHTML = '<div class="status-dot" style="background:var(--warning); box-shadow:0 0 10px var(--warning)"></div> ИДЕТ СКАНИРОВАНИЕ';
+            document.getElementById('scanProgress').innerText = "0%";
+            consoleEl.innerHTML = ''; // очистка
+
+            let progress = 0;
+            const progInterval = setInterval(() => {
+                progress += Math.floor(Math.random() * 15);
+                if (progress > 95) progress = 95;
+                document.getElementById('scanProgress').innerText = progress + "%";
+            }, 500);
+
+            SCAN_LOGS.forEach((log, index) => {
+                setTimeout(() => {
+                    const line = document.createElement('div');
+                    const timeStr = new Date().toTimeString().slice(0,8);
+                    const cssClass = log.c || 'log-time';
+                    
+                    line.innerHTML = `<span class="log-time">[${timeStr}]</span> <span class="${cssClass}">${log.m}</span>`;
+                    consoleEl.appendChild(line);
+                    consoleEl.scrollTop = consoleEl.scrollHeight;
+
+                    // Последний шаг
+                    if (index === SCAN_LOGS.length - 1) {
+                        clearInterval(progInterval);
+                        document.getElementById('scanProgress').innerText = "100%";
+                        document.getElementById('scanProgress').style.color = "var(--success)";
+                        finishScan();
+                    }
+                }, log.t);
+            });
+        }
+
+        function finishScan() {
+            document.getElementById('patchPanel').classList.remove('hidden');
+            const list = document.getElementById('vulnList');
+            
+            VULNS.forEach((v, i) => {
+                const item = document.createElement('div');
+                item.className = 'vuln-item';
+                item.id = `vuln-${i}`;
+                item.innerHTML = `
+                    <div class="vuln-desc">
+                        <div style="font-weight:bold; color:#FFF; margin-bottom:4px;">${v.id}</div>
+                        <div style="color:var(--text-muted)">${v.component}</div>
+                    </div>
+                    <div class="vuln-badge">CVSS > 9.0</div>
+                `;
+                list.appendChild(item);
+            });
+
+            document.getElementById('scanBtn').style.display = 'none';
+        }
+
+        function approvePatches() {
+            const btn = document.getElementById('approveBtn');
+            btn.disabled = true;
+            btn.innerText = "ОРКЕСТРАЦИЯ...";
+
+            const consoleEl = document.getElementById('console');
+            consoleEl.innerHTML += `<div><br><span class="log-info">[Интегратор] Передача утверждения в KanbanBridge...</span></div>`;
+            
+            setTimeout(() => {
+                VULNS.forEach((v, i) => {
+                    setTimeout(() => {
+                        const item = document.getElementById(`vuln-${i}`);
+                        item.classList.add('patched');
+                        item.querySelector('.vuln-badge').innerText = 'ИСПРАВЛЕНО ✓';
+                        
+                        consoleEl.innerHTML += `<div><span class="log-time">[${new Date().toTimeString().slice(0,8)}]</span> <span class="log-ok">Внедрен IaC патч для ${v.id}</span></div>`;
+                        consoleEl.scrollTop = consoleEl.scrollHeight;
+
+                        if (i === VULNS.length - 1) {
+                            finalizeDeployment();
+                        }
+                    }, i * 1500);
+                });
+            }, 1000);
+        }
+
+        function finalizeDeployment() {
+            const btn = document.getElementById('approveBtn');
+            btn.style.background = 'var(--success)';
+            btn.style.color = '#000';
+            btn.innerText = "ИНФРАСТРУКТУРА ЗАЩИЩЕНА ✓";
+            
+            document.getElementById('mainStatus').innerHTML = '<div class="status-dot"></div> ВСЕ СИСТЕМЫ В НОРМЕ';
+            
+            // Повышение индекса иммунитета
+            updateChart(98, true);
+            document.getElementById('immunityDesc').innerText = "Инфраструктура изолирована. Zero-Trust политики применены. Архитектура работает штатно.";
+            document.getElementById('immunityDesc').style.color = 'var(--success)';
+        }
+    </script>
+</body>
+</html>
