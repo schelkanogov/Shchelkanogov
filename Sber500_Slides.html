@@ -4,14 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VulnDetector // ITSM Orchestrator // Sber500</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --sber-green: #21a038;
-            --text-dark: #000000;
+            --text-dark: #0f172a;
             --text-gray: #64748b;
             --bg-light: #ffffff;
-            --accent-red: #ff4d4f;
+            --accent-red: #ef4444;
+            --accent-blue: #0ea5e9;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -27,72 +28,76 @@
 
         .slide {
             position: absolute; width: 100%; height: 100%;
-            padding: 8% 10%;
-            display: flex; flex-direction: column; justify-content: center;
+            padding: 8% 8%;
             opacity: 0; transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1);
             pointer-events: none;
             background: var(--bg-light);
             transform: translateX(50px);
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 60px;
+            align-items: center;
         }
 
         .slide.active { opacity: 1; pointer-events: all; transform: translateX(0); z-index: 10; }
+        .slide.center-layout { display: flex; flex-direction: column; justify-content: center; text-align: center; }
 
-        h1 { 
-            font-size: 7rem; 
-            font-weight: 900; 
-            line-height: 0.85; 
-            margin-bottom: 2rem; 
-            letter-spacing: -4px; 
-            text-transform: uppercase;
-        }
+        .content-left { display: flex; flex-direction: column; justify-content: center; height: 100%; }
+        .content-right { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; background: #f8fafc; border-radius: 24px; padding: 40px; border: 1px solid #e2e8f0; position: relative; overflow: hidden; }
 
-        h2 { 
-            font-size: 3.5rem; 
-            font-weight: 900; 
-            color: var(--sber-green); 
-            margin-bottom: 2rem; 
-            letter-spacing: -2px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
+        h1 { font-size: 5.5rem; font-weight: 900; line-height: 0.9; margin-bottom: 2rem; letter-spacing: -3px; text-transform: uppercase; }
+        h2 { font-size: 3rem; font-weight: 900; color: var(--sber-green); margin-bottom: 1.5rem; letter-spacing: -1.5px; display: flex; align-items: center; gap: 20px; }
         h2::after { content: ""; flex: 1; height: 2px; background: #e2e8f0; }
 
-        p { font-size: 2rem; font-weight: 400; color: var(--text-gray); line-height: 1.2; max-width: 1300px; }
+        p { font-size: 1.6rem; font-weight: 400; color: var(--text-gray); line-height: 1.3; margin-bottom: 2rem; }
         b { color: var(--text-dark); font-weight: 900; }
 
-        .comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 3rem; }
-        .comp-card { padding: 40px; border-radius: 20px; border: 2px solid #f1f5f9; }
-        .comp-card.old { border-left: 10px solid #cbd5e1; }
-        .comp-card.new { border-left: 10px solid var(--sber-green); background: #f0fdf4; }
-        .comp-card h4 { font-size: 1.2rem; text-transform: uppercase; color: var(--text-gray); margin-bottom: 10px; }
-        .comp-card .time { font-size: 4rem; font-weight: 900; color: var(--text-dark); }
+        .feature-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; margin-top: 1rem; width: 100%; }
+        .feature-item { border-top: 3px solid var(--sber-green); padding-top: 15px; }
+        .feature-item h3 { font-size: 1.4rem; font-weight: 900; margin-bottom: 5px; }
+        .feature-item p { font-size: 0.95rem; color: var(--text-gray); line-height: 1.4; margin-bottom: 0; }
 
-        .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-top: 3rem; }
-        .feature-grid.four { grid-template-columns: repeat(4, 1fr); }
-        .feature-grid.two { grid-template-columns: repeat(2, 1fr); }
-        .feature-item { border-top: 4px solid var(--sber-green); padding-top: 20px; }
-        .feature-item h3 { font-size: 1.8rem; font-weight: 900; margin-bottom: 10px; }
-        .feature-item p { font-size: 1.1rem; color: var(--text-gray); line-height: 1.4; }
+        .nav-dots { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 15px; z-index: 100; background: rgba(255,255,255,0.7); padding: 15px 25px; border-radius: 30px; backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid rgba(255,255,255,0.5); }
+        .dot { width: 12px; height: 12px; background: #cbd5e1; border-radius: 50%; cursor: pointer; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
+        .dot:hover { background: #94a3b8; transform: scale(1.2); }
+        .dot.active { background: var(--sber-green); transform: scale(1.8); box-shadow: 0 0 15px rgba(33, 160, 56, 0.5); }
 
-        .nav-dots { position: fixed; bottom: 40px; right: 80px; display: flex; gap: 15px; z-index: 100; }
-        .dot { width: 10px; height: 10px; background: #e2e8f0; border-radius: 50%; cursor: pointer; transition: 0.3s; }
-        .dot.active { background: var(--sber-green); transform: scale(1.5); }
+        .nav-arrow { position: fixed; top: 50%; transform: translateY(-50%); width: 60px; height: 120px; background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.6); border-radius: 30px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 100; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 10px 30px rgba(0,0,0,0.05); color: var(--sber-green); }
+        .nav-arrow svg { width: 30px; height: 30px; fill: currentColor; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .nav-arrow:hover { background: rgba(255,255,255,0.95); box-shadow: 0 15px 40px rgba(33, 160, 56, 0.3); width: 70px; }
+        .nav-arrow-left { left: 20px; }
+        .nav-arrow-left:hover svg { transform: translateX(-5px) scale(1.2); }
+        .nav-arrow-right { right: 20px; }
+        .nav-arrow-right:hover svg { transform: translateX(5px) scale(1.2); }
 
-        .header { position: fixed; top: 40px; left: 80px; display: flex; align-items: center; gap: 20px; z-index: 100; }
+
+        .header { position: fixed; top: 40px; left: 80px; display: flex; align-items: center; gap: 15px; z-index: 100; }
         .logo { font-weight: 900; font-size: 1.2rem; }
         .logo span { color: var(--sber-green); }
         .tag { font-weight: 700; color: #94a3b8; font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; }
 
-        .cta-btn {
-            display: inline-block; padding: 25px 60px; background: var(--sber-green);
-            color: #fff; text-decoration: none; border-radius: 50px; font-weight: 900; font-size: 1.8rem;
-            margin-top: 3rem; transition: 0.3s; cursor: pointer; border: none;
-        }
-        .cta-btn:hover { background: #000; }
+        .fact-badge { display: inline-block; padding: 6px 14px; background: #fee2e2; color: var(--accent-red); border-radius: 6px; font-weight: 800; font-size: 0.8rem; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
+        .success-badge { display: inline-block; padding: 6px 14px; background: #f0fdf4; color: var(--sber-green); border-radius: 6px; font-weight: 800; font-size: 0.8rem; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
 
-        .fact-badge { display: inline-block; padding: 5px 15px; background: #fee2e2; color: var(--accent-red); border-radius: 5px; font-weight: 800; font-size: 0.9rem; margin-bottom: 15px; }
-        .success-badge { display: inline-block; padding: 5px 15px; background: #f0fdf4; color: var(--sber-green); border-radius: 5px; font-weight: 800; font-size: 0.9rem; margin-bottom: 15px; }
+        /* SVG BUTTON */
+        .green-btn-svg { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; filter: drop-shadow(0 15px 25px rgba(33, 160, 56, 0.3)); width: 100%; max-width: 400px; }
+        .green-btn-svg:hover { transform: translateY(-3px); filter: drop-shadow(0 20px 35px rgba(33, 160, 56, 0.5)); }
+        .green-btn-svg:hover #btn-body { fill: url(#btnGradHover); }
+        .green-btn-svg:active { transform: translateY(10px); filter: drop-shadow(0 5px 10px rgba(33, 160, 56, 0.3)); }
+        .green-btn-svg:active #btn-body { fill: url(#btnGradActive); }
+
+        /* CYBERNETICS / MATH */
+        .math-block { font-family: 'JetBrains Mono', monospace; background: #0f172a; padding: 25px; border-radius: 16px; color: #38bdf8; font-size: 1.1rem; width: 100%; box-shadow: 0 20px 40px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .math-block .comment { color: #64748b; font-size: 0.9rem; }
+        .math-block .kw { color: #f472b6; }
+        .math-block .str { color: #a3e635; }
+        
+        .huge-number { font-size: 6rem; font-weight: 900; color: var(--sber-green); line-height: 1; margin-bottom: 10px; font-family: 'JetBrains Mono', monospace; letter-spacing: -4px;}
+        .huge-label { font-size: 1.2rem; font-weight: 800; color: var(--text-gray); text-transform: uppercase; letter-spacing: 2px;}
+
+        .diagram-img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px; mix-blend-mode: multiply; }
+        .grid-cyber { position: absolute; inset: 0; background-image: linear-gradient(rgba(33,160,56,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(33,160,56,0.05) 1px, transparent 1px); background-size: 20px 20px; z-index: 0; pointer-events: none; }
+        .content-right > * { z-index: 1; position: relative; }
 
     </style>
 </head>
@@ -105,174 +110,307 @@
     <div class="slide-wrapper">
         <!-- 1: TITLE -->
         <div class="slide active">
-            <div class="success-badge">АВТОПИЛОТ ДЛЯ ИТ-БЕЗОПАСНОСТИ</div>
-            <h1>ЗЕЛЁНАЯ КНОПКА <br>ИММУНИТЕТА</h1>
-            <p>Нажали — и всё работает. ПАК «Детектор Уязвимостей» — это интеллектуальное управление инфраструктурой на базе <b>GigaChat</b> и стандарта <b>MCP</b>. Без лишних интерфейсов.</p>
-            <div class="feature-grid">
-                <div class="feature-item"><h3>Zero-UI</h3><p>Полное отсутствие дашбордов. Прямые задачи.</p></div>
-                <div class="feature-item"><h3>On-Premise</h3><p>Полная суверенность данных в контуре.</p></div>
-                <div class="feature-item"><h3>Автопилот</h3><p>Решение бизнес-процессов навсегда.</p></div>
+            <div class="content-left">
+                <div><div class="success-badge">АВТОПИЛОТ ДЛЯ ИТ-БЕЗОПАСНОСТИ</div></div>
+                <h1>ДЕТЕКТОР <br>УЯЗВИМОСТЕЙ</h1>
+                <p>Нажали — и всё работает. Интеллектуальное управление инфраструктурой на базе <b>GigaChat</b> и стандарта <b>MCP</b>. Без лишних интерфейсов.</p>
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+                    <div class="feature-item"><h3>Zero-UI</h3><p>Отсутствие дашбордов.</p></div>
+                    <div class="feature-item"><h3>On-Premise</h3><p>Суверенность данных.</p></div>
+                    <div class="feature-item"><h3>Автопилот</h3><p>Решение навсегда.</p></div>
+                </div>
+            </div>
+            <div class="content-right" style="background: #ecfdf5; border-color: #a7f3d0;">
+                <div class="grid-cyber"></div>
+                <div style="text-align:center; transform: scale(1.1);">
+                    <!-- COMPACT 3D BUTTON -->
+                    <svg viewBox="0 0 500 160" xmlns="http://www.w3.org/2000/svg" class="green-btn-svg" onclick="show(1)">
+                        <defs>
+                            <linearGradient id="btnGrad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#34d399"/><stop offset="100%" stop-color="#16a34a"/></linearGradient>
+                            <linearGradient id="btnGradHover" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#4ade80"/><stop offset="100%" stop-color="#22c55e"/></linearGradient>
+                            <linearGradient id="btnGradActive" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#16a34a"/><stop offset="100%" stop-color="#15803d"/></linearGradient>
+                            <radialGradient id="btnGlow" cx="50%" cy="30%" r="70%"><stop offset="0%" stop-color="rgba(255,255,255,0.4)" /><stop offset="100%" stop-color="rgba(255,255,255,0)" /></radialGradient>
+                        </defs>
+                        <rect x="10" y="30" width="480" height="120" rx="60" fill="#064e3b"/>
+                        <rect x="10" y="25" width="480" height="120" rx="60" fill="#14532d"/>
+                        <rect id="btn-body" x="10" y="10" width="480" height="120" rx="60" fill="url(#btnGrad)"/>
+                        <rect id="btn-highlight" x="25" y="15" width="450" height="55" rx="27" fill="url(#btnGlow)"/>
+                        <text x="250" y="75" font-family="'Inter', sans-serif" font-weight="900" font-size="34" fill="#ffffff" text-anchor="middle" letter-spacing="1">БЕЗОПАСНОСТЬ НАВСЕГДА!</text>
+                        <text x="250" y="105" font-family="'JetBrains Mono', monospace" font-weight="700" font-size="12" fill="rgba(255,255,255,0.8)" text-anchor="middle" letter-spacing="4">НАЖАТЬ ДЛЯ ЗАПУСКА АВТОПИЛОТА</text>
+                    </svg>
+                </div>
             </div>
         </div>
 
         <!-- 2: PROBLEM -->
         <div class="slide">
-            <div class="fact-badge">БЮРОКРАТИЯ СЖИГАЕТ БЮДЖЕТЫ</div>
-            <h2>ИТ-БАРЬЕРЫ</h2>
-            <p>Инженеры тратят <b>30% времени</b> не на задачи, а на отчеты. Бюрократия — самый медленный процесс. <br>Миллионы рублей сгорают в ожидании, пока кто-то <b>заметит инцидент</b>.</p>
-            <div class="feature-grid">
-                <div class="feature-item"><h3>Manual Fail</h3><p>Ручные логи и таблицы Excel.</p></div>
-                <div class="feature-item"><h3>Ожидание</h3><p>Бесконечные совещания и согласования.</p></div>
-                <div class="feature-item"><h3>Потеря денег</h3><p>Сгоревший в бюрократии бюджет.</p></div>
+            <div class="content-left">
+                <div><div class="fact-badge">БЮРОКРАТИЯ СЖИГАЕТ БЮДЖЕТЫ</div></div>
+                <h2>ИТ-БАРЬЕРЫ</h2>
+                <p>Инженеры тратят <b>30% времени</b> на отчеты. Бюрократия — самый медленный процесс. <br>Миллионы рублей сгорают в ожидании патча.</p>
+                <div class="feature-grid">
+                    <div class="feature-item"><h3>Manual Fail</h3><p>Ручные логи и таблицы Excel.</p></div>
+                    <div class="feature-item"><h3>Ожидание</h3><p>Бесконечные совещания CISO.</p></div>
+                </div>
+            </div>
+            <div class="content-right" style="background:#1e293b; border-color:#0f172a;">
+                <div class="grid-cyber"></div>
+                <div class="math-block" style="background:transparent; padding:0; box-shadow:none;">
+                    <div class="comment">// Кибернетическая модель задержки:</div>
+                    <div><span class="kw">function</span> calcVulnerabilityWindow() {</div>
+                    <div style="padding-left:20px;">
+                        <span class="kw">let</span> T_detect = <span class="str">4h</span>; <span class="comment">// Сканер</span><br>
+                        <span class="kw">let</span> T_report = <span class="str">48h</span>; <span class="comment">// PDF отчет</span><br>
+                        <span class="kw">let</span> T_approve = <span class="str">120h</span>; <span class="comment">// Совещания</span><br>
+                        <span class="kw">let</span> T_patch = <span class="str">16h</span>; <span class="comment">// DevOps</span><br>
+                        <span class="kw">return</span> <span class="str">"MTTR = 14 Дней"</span>;
+                    </div>
+                    <div>}</div>
+                    <div class="comment" style="margin-top:20px; color:#ef4444;">// ALERT: Риск эксплуатации > 99%</div>
+                </div>
             </div>
         </div>
 
         <!-- 3: SPEED -->
         <div class="slide">
-            <h2>РЕВОЛЮЦИЯ СКОРОСТИ</h2>
-            <p>Мы сокращаем время реагирования в <b>10 000 раз</b>. Прямой проброс данных от сканера к ЛПР.</p>
-            <div class="comparison-grid">
-                <div class="comp-card old">
-                    <h4>Традиционный процесс</h4>
-                    <div class="time">14 ДНЕЙ</div>
-                    <p>Трактовка логов, ручные тикеты, посредники.</p>
+            <div class="content-left">
+                <h2>РЕВОЛЮЦИЯ СКОРОСТИ</h2>
+                <p>Мы сокращаем время реагирования в <b>10 000 раз</b>. Прямой проброс данных от сканера AI-агенту.</p>
+                <div class="comparison-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:1rem;">
+                    <div style="border-left: 5px solid #cbd5e1; padding-left: 15px;">
+                        <div style="font-size:1rem;color:var(--text-gray);font-weight:700;">СТАРЫЙ ПРОЦЕСС</div>
+                        <div style="font-size:2.5rem;font-weight:900;">14 ДНЕЙ</div>
+                    </div>
+                    <div style="border-left: 5px solid var(--sber-green); padding-left: 15px;">
+                        <div style="font-size:1rem;color:var(--sber-green);font-weight:700;">VULNDETECTOR</div>
+                        <div style="font-size:2.5rem;font-weight:900;">10 СЕКУНД</div>
+                    </div>
                 </div>
-                <div class="comp-card new">
-                    <h4>Детектор Уязвимостей</h4>
-                    <div class="time">10 СЕКУНД</div>
-                    <p>Анализ, патч-код, и кнопка «Внедрить» без задержек.</p>
+            </div>
+            <div class="content-right" style="padding: 20px;">
+                <div class="grid-cyber"></div>
+                <img src="schemas/puml_resolution_flow.png" alt="Resolution Flow GOST Schema" class="diagram-img">
+                <div style="position:absolute; bottom:15px; right:20px; font-family:'JetBrains Mono'; font-size:10px; color:#94a3b8;">ГОСТ 19.505-79 C4-DIAGRAM</div>
+            </div>
+        </div>
+
+        <!-- 4: IMMUNITY & ALGORITHM -->
+        <div class="slide">
+            <div class="content-left">
+                <h2>ИТ-ИММУНИТЕТ</h2>
+                <p>Не антивирус. Это <b>интеллектуальный маршрутизатор</b>. Он детектирует уязвимости в бизнес-процессах и исправляет их.</p>
+                <div class="feature-grid">
+                    <div class="feature-item"><h3>MCP Protocol</h3><p>Бесшовное управление IaaS (Terraform/Ansible).</p></div>
+                    <div class="feature-item"><h3>Anti-Tamper</h3><p>Защита от саботажа и дублей тикетов.</p></div>
+                </div>
+            </div>
+            <div class="content-right" style="background:#0f172a;">
+                <div class="grid-cyber"></div>
+                <div class="math-block" style="box-shadow:none; background:transparent;">
+                    <div class="comment"># Формула расчета ИТ-Иммунитета (BFI - Business Fear Index)</div>
+                    <br>
+                    <div style="font-size: 2.2rem; color: #fff; text-align: center; margin-bottom: 20px; font-weight: 700;">
+                        <math>
+                            <mi>BFI</mi>
+                            <mo>=</mo>
+                            <mn>1</mn>
+                            <mo>-</mo>
+                            <mfrac>
+                                <mrow><munderover><mo>&#x2211;</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><mo>(</mo><msub><mi>W</mi><mi>i</mi></msub><mo>&#xD7;</mo><msub><mi>V</mi><mi>i</mi></msub><mo>&#xD7;</mo><msup><mi>e</mi><mrow><mi>&#x3B1;</mi><msub><mi>T</mi><mi>i</mi></msub></mrow></msup><mo>)</mo></mrow>
+                                <msub><mi>R</mi><mi>max</mi></msub>
+                            </mfrac>
+                        </math>
+                    </div>
+                    <ul style="list-style:none; font-size:0.95rem; color:#94a3b8; padding-left:10px;">
+                        <li style="margin-bottom:8px;"><span style="color:#a3e635;">Wi</span> — вес бизнес-критичности узла</li>
+                        <li style="margin-bottom:8px;"><span style="color:#a3e635;">Vi</span> — вектор взлома (CVSS > 7.0)</li>
+                        <li style="margin-bottom:8px;"><span style="color:#a3e635;">T</span> — время жизни уязвимости</li>
+                        <li><b>ИИ минимизирует T, максимизируя BFI (Иммунитет)</b></li>
+                    </ul>
                 </div>
             </div>
         </div>
 
-        <!-- 4: IMMUNITY -->
+        <!-- 5: SYNERGY -->
         <div class="slide">
-            <h2>ИТ-ИММУНИТЕТ</h2>
-            <p>Это не антивирус. Это <b>интеллектуальный маршрутизатор задач</b>. Он детектирует уязвимости в бизнес-процессах и исправляет их.</p>
-            <div class="feature-grid four">
-                <div class="feature-item"><h3>MCP Protocol</h3><p>Бесшовное управление инфраструктурой.</p></div>
-                <div class="feature-item"><h3>Anti-Tamper</h3><p>Защита от саботажа и дублей.</p></div>
-                <div class="feature-item"><h3>B2B Ready</h3><p>Интеграция с ЭДО (СБИС, Диадок).</p></div>
-                <div class="feature-item"><h3>ГОСТ</h3><p>Полное соответствие нормативам.</p></div>
+            <div class="content-left">
+                <div><div class="success-badge">128 МЛРД ₽ РЫНОК ИТ В РФ</div></div>
+                <h2>СИНЕРГИЯ СО СБЕРОМ</h2>
+                <p>Наше решение — <b>постоянный драйвер потребления токенов GigaChat</b>. Enterprise интеграция генерирует непрерывный поток аналитики.</p>
+                <div class="feature-grid">
+                    <div class="feature-item"><h3>Chain of Thought</h3><p>Длительные цепочки размышлений AI.</p></div>
+                    <div class="feature-item"><h3>Реестр Минцифры</h3><p>Соответствие строгим требованиям КИИ.</p></div>
+                </div>
             </div>
-        </div>
-
-        <!-- 5: SYNERGY & MARKET -->
-        <div class="slide">
-            <div class="success-badge">128 МЛРД ₽ РЫНОК ИТ В РФ</div>
-            <h2>СИНЕРГИЯ СО СБЕРОМ</h2>
-            <p>Наше решение — драйвер потребления <b>токенов GigaChat</b>. Полностью отечественная Enterprise-разработка с гигантским потенциалом.</p>
-            <div class="feature-grid">
-                <div class="feature-item"><h3>GigaChat Token</h3><p>Длительные цепочки размышлений AI.</p></div>
-                <div class="feature-item"><h3>Минцифры</h3><p>Соответствие строгим требованиям реестра ПО.</p></div>
-                <div class="feature-item"><h3>Cloud growth</h3><p>Интеграция со SberCloud.</p></div>
+            <div class="content-right" style="padding: 20px;">
+                <div class="grid-cyber"></div>
+                <img src="schemas/puml_ai_orchestration.png" alt="AI Orchestration GOST Schema" class="diagram-img">
+                <div style="position:absolute; bottom:15px; right:20px; font-family:'JetBrains Mono'; font-size:10px; color:#94a3b8;">ГОСТ 19.404-79 AI-ORCHESTRATION</div>
             </div>
         </div>
 
         <!-- 6: COMPETITORS -->
         <div class="slide">
-            <h2>МЫ — ОРКЕСТРАТОР</h2>
-            <p>Мы не еще один сканер аутсайдеров. Западные метрики устарели, а локальные <b>не чинят автоматически</b>. Мы восстанавливаем контур за 10 секунд.</p>
-            <div class="comparison-grid">
-                <div class="comp-card old">
-                    <h4>Устаревшие системы</h4>
-                    <div class="time">МЕДЛЕННО</div>
-                    <p>Сухие отчеты, PDF, ручная работа инженеров.</p>
+            <div class="content-left">
+                <h2>МЫ — ОРКЕСТРАТОР</h2>
+                <p>Мы не еще один сканер. Западные метрики недоступны, а локальные системы <b>не чинят автоматически</b>.</p>
+                <div class="feature-grid">
+                    <div class="feature-item" style="border-top-color:#94a3b8;"><h3>Устаревшие системы</h3><p>Сухие PDF-отчеты и ручная работа.</p></div>
+                    <div class="feature-item"><h3>VulnDetector</h3><p>Автономно закрывает разрыв между детектированием и патчем.</p></div>
                 </div>
-                <div class="comp-card new">
-                    <h4>Интеллектуальный AI</h4>
-                    <div class="time">АВТОНОМНО</div>
-                    <p>Закрывает разрыв между детектированием и исправлением.</p>
-                </div>
+            </div>
+            <div class="content-right" style="text-align: left;">
+                <div class="huge-number" style="font-size:3.5rem;">0 СЕК</div>
+                <div class="huge-label" style="margin-bottom: 2rem;">ОЖИДАНИЕ ДО ПОЯВЛЕНИЯ ПАТЧА</div>
+                <p style="font-size:1.1rem; color:var(--text-gray);">В отличие от классического SIEM (MaxPatrol, Splunk), мы предоставляем <b>готовый Pull-Request (IaC)</b> вместе с алертами об уязвимости через MCP Server.</p>
             </div>
         </div>
 
         <!-- 7: BUSINESS MODEL -->
         <div class="slide">
-            <h2>ГИБРИДНАЯ БИЗНЕС-МОДЕЛЬ</h2>
-            <p>Фокус на длительный рекуррентный доход. Продажа ядра + пакеты токенов GigaChat.</p>
-            <div class="comparison-grid">
-                <div class="comp-card new" style="border-left-color: var(--text-dark);">
-                    <h4>Ежегодная лицензия на ядро</h4>
-                    <div class="time" style="font-size:3rem;">1.5 МЛН ₽</div>
-                    <p>On-Premise или Cloud Native ядро.</p>
+            <div class="content-left">
+                <h2>ГИБРИДНАЯ МОДЕЛЬ</h2>
+                <p>Продажа Enterprise-ядра + рекуррентные пакеты токенов GigaChat. Каналы роста: маркетплейс СберКлауд и MSSP.</p>
+                <div class="feature-grid">
+                    <div class="feature-item" style="border-top-color: #0f172a;"><h3>Ядро Окркестратора</h3><p>Лицензия для On-Premise или Cloud.</p></div>
+                    <div class="feature-item"><h3>Токены GigaChat</h3><p>Сторонний анализ и RAG-база знаний.</p></div>
                 </div>
-                <div class="comp-card new">
-                    <h4>Пакеты токенов для RAG</h4>
-                    <div class="time" style="font-size:3rem;">от 500К ₽</div>
-                    <p>Сторонний анализ и RAG-база для инфраструктуры.</p>
+            </div>
+            <div class="content-right">
+                <div class="grid-cyber"></div>
+                <div style="text-align:center; padding: 20px; background:#fff; border-radius:16px; border:2px solid var(--text-dark); width: 100%; margin-bottom: 20px; z-index:2;">
+                    <div class="huge-label" style="color:var(--text-dark);">ЛИЦЕНЗИЯ НА ЯДРО / ГОД</div>
+                    <div class="huge-number" style="color:var(--text-dark); font-size:4rem; margin-top:10px;">1.5 МЛН ₽</div>
+                </div>
+                <div style="text-align:center; padding: 20px; background:#f0fdf4; border-radius:16px; border:2px solid var(--sber-green); width: 100%; z-index:2;">
+                    <div class="huge-label" style="color:var(--sber-green);">ПАКЕТ ТОКЕНОВ (GIGACHAT)</div>
+                    <div class="huge-number" style="color:var(--sber-green); font-size:4rem; margin-top:10px;">+500К ₽</div>
                 </div>
             </div>
         </div>
 
         <!-- 8: UNIT ECONOMICS -->
         <div class="slide">
-            <h2>ЮНИТ-ЭКОНОМИКА</h2>
-            <p>Рентабельность бизнеса <b>85%</b>. Окупаемость вложенных инвестиций (CAC) менее чем за 3 месяца.</p>
-            <div class="feature-grid">
-                <div class="feature-item"><h3>125 000 ₽</h3><p>CAC (Стоимость привлечения).</p></div>
-                <div class="feature-item"><h3>4.5 МЛН ₽</h3><p>LTV / Доход за 3 года.</p></div>
-                <div class="feature-item"><h3>&gt;30×</h3><p>Соотношение LTV к CAC.</p></div>
+            <div class="content-left">
+                <h2>ЮНИТ-ЭКОНОМИКА</h2>
+                <p>Рентабельность <b>85%</b>. Окупаемость (CAC payback) менее 3 месяцев за счет автоматизированного B2B-воронки демо-стендов.</p>
+            </div>
+            <div class="content-right" style="background:#1e293b; color:#fff; border:none;">
+                <div class="math-block" style="background:transparent; border:none; box-shadow:none; padding:10px;">
+                    <div style="margin-bottom:30px;">
+                        <div class="huge-label" style="color:#64748b;">CAC (СТОИМОСТЬ ПРИВЛЕЧЕНИЯ)</div>
+                        <div class="huge-number" style="color:#f8fafc; font-size:3.5rem;">125 000 ₽</div>
+                    </div>
+                    <div style="margin-bottom:30px;">
+                        <div class="huge-label" style="color:#64748b;">LTV (ДОХОД ЗА 3 ГОДА)</div>
+                        <div class="huge-number" style="color:#22c55e; font-size:4.5rem;">4 500 000 ₽</div>
+                    </div>
+                    <div style="padding-top:20px; border-top:2px dashed #475569;">
+                        <div class="huge-label" style="color:#94a3b8;">LTV / CAC RATIO</div>
+                        <div class="huge-number" style="color:#38bdf8; font-size:5rem;">> 30×</div>
+                    </div>
+                </div>
             </div>
         </div>
 
         <!-- 9: TWO STRATEGIES -->
         <div class="slide">
-            <h2>ДВЕ СТРАТЕГИИ — ОДНО ЯДРО</h2>
-            <p>Единое программное ядро закрывает два совершенно разных сегмента рынка: Cloud и Enterprise.</p>
-            <div class="feature-grid two">
-                <div class="feature-item" style="border-top-color: #0ea5e9;">
-                    <h3>☁️ Cloud Native (SaaS)</h3>
-                    <p>AWS, СберКлауд, Kubernetes. Гибкое автомасштабирование для технологических компаний. (150 000 ₽/год)</p>
+            <div class="content-left">
+                <h2>ДВЕ СТРАТЕГИИ GTM</h2>
+                <p>Единое программное ядро, закрывающее <b>два разных сегмента</b> рынка. Облачный SaaS + Enterprise On-Premise.</p>
+                <div class="feature-grid">
+                    <div class="feature-item" style="border-top-color: var(--accent-blue);">
+                        <h3>☁️ Cloud Native</h3>
+                        <p>SaaS. AWS, СберКлауд, K8s автомасштабирование.</p>
+                    </div>
+                    <div class="feature-item" style="border-top-color: var(--text-dark);">
+                        <h3>🏛 Замкнутый контур</h3>
+                        <p>100% изоляция. Замена ИБ-сканеров. Системы КИИ.</p>
+                    </div>
                 </div>
-                <div class="feature-item">
-                    <h3>🏛 Замкнутый контур (On-Prem)</h3>
-                    <p>100% изоляция. Замена классических ИБ-сканеров. Полное соответствие ГОСТам. (500 000 ₽/год)</p>
-                </div>
+            </div>
+            <div class="content-right" style="padding: 20px;">
+                <img src="schemas/puml_architecture.png" alt="Topology GOST Schema" class="diagram-img">
+                <div style="position:absolute; bottom:15px; right:20px; font-family:'JetBrains Mono'; font-size:10px; color:#94a3b8;">ГОСТ 19.404-79 TOPOLOGY</div>
             </div>
         </div>
 
         <!-- 10: TRACTION -->
         <div class="slide">
-            <div class="success-badge">СИСТЕМА ГОТОВА К МАСШТАБИРОВАНИЮ</div>
-            <h2>РЕЗУЛЬТАТЫ (TRACTION)</h2>
-            <p>Пилоты в <b>Aqvalife</b> и <b>Orskemi</b> подтвердили гипотезу. Мы получили подтвержденный B2B спрос.</p>
-            <div class="feature-grid">
-                <div class="feature-item"><h3>2 Успешных ИБ-Пилота</h3><p>Внедрение прошло гладко.</p></div>
-                <div class="feature-item"><h3>250+ Заявок</h3><p>Сформированный спрос.</p></div>
-                <div class="feature-item"><h3>ТОП-50 Инноваций</h3><p>Одобрено платформой Радар 2025.</p></div>
+            <div class="content-left">
+                <div><div class="success-badge">СИСТЕМА ГОТОВА К МАСШТАБИРОВАНИЮ</div></div>
+                <h2>РЕЗУЛЬТАТЫ</h2>
+                <p>Успешные корпоративные пилоты в <b>Aqvalife</b> и <b>Orskemi</b> подтвердили BFI-гипотезу и 100% автономность закрытия тикетов.</p>
+            </div>
+            <div class="content-right" style="background:#0f172a; padding: 40px;">
+                <div class="grid-cyber"></div>
+                <div style="text-align: center; margin-bottom:30px;">
+                    <div class="huge-number" style="font-size: 6rem; color:#fff;">2</div>
+                    <div class="huge-label" style="color:#22c55e;">УСПЕШНЫХ ПИЛОТА</div>
+                </div>
+                <div style="text-align: center; margin-bottom:30px;">
+                    <div class="huge-number" style="font-size: 5rem; color:#38bdf8;">250+</div>
+                    <div class="huge-label" style="color:#0ea5e9;">ЗАЯВОК (СПРОС)</div>
+                </div>
+                <div style="text-align: center;">
+                    <div class="huge-number" style="font-size: 4rem; color:#f472b6;">TOP-50</div>
+                    <div class="huge-label" style="color:#db2777;">ИННОВАЦИЙ 2025 (РАДАР)</div>
+                </div>
             </div>
         </div>
 
         <!-- 11: TEAM -->
         <div class="slide">
-            <h2>КОМАНДА ПРОЕКТА</h2>
-            <p>Глубокая экспертиза в инфраструктуре платформы, Kubernetes, и автономных ИИ-агентах (MCP).</p>
-            <div class="feature-grid two">
-                <div class="feature-item">
-                    <h3>Павел Щелканогов / CEO</h3>
-                    <p>Системный архитектор. Эксперт по HighLoad-инфраструктуре HFTCloud. Создатель ядра VulnDetector.</p>
+            <div class="content-left">
+                <h2>КОМАНДА ПРОЕКТА</h2>
+                <p>Глубокая профильная экспертиза в высоконагруженной инфраструктуре (HFT), Kubernetes, и автономных ИИ-агентах.</p>
+            </div>
+            <div class="content-right" style="align-items:flex-start; background:#fff;">
+                <div style="margin-bottom: 40px; padding-bottom: 30px; border-bottom: 1px solid #e2e8f0; width: 100%;">
+                    <div class="huge-label" style="color:var(--text-dark);">СИСТЕМНЫЙ АРХИТЕКТОР / CEO</div>
+                    <div style="font-size:2.5rem; font-weight:900; color:var(--text-dark); margin:5px 0 15px 0; letter-spacing:-1px;">ПАВЕЛ ЩЕЛКАНОГОВ</div>
+                    <p style="font-size:1rem; margin:0;">Эксперт HFTCloud. Разработка ядра оркестратора (MCP) и математической модели безопасности BFI.</p>
                 </div>
-                <div class="feature-item" style="border-top-color: var(--text-dark);">
-                    <h3>Сергей Викулин / CTO</h3>
-                    <p>Tech Lead Kubernetes и AWS. Создание отказоустойчивых кластеров и Zero-Trust LLM.</p>
+                <div style="width: 100%;">
+                    <div class="huge-label" style="color:var(--sber-green);">TECH LEAD KUBERNETES / CTO</div>
+                    <div style="font-size:2.5rem; font-weight:900; color:var(--sber-green); margin:5px 0 15px 0; letter-spacing:-1px;">СЕРГЕЙ ВИКУЛИН</div>
+                    <p style="font-size:1rem; margin:0;">Организация отказоустойчивых контуров. Внедрение Zero-Trust сред для безопасной эксплуатации LLM на серверах.</p>
                 </div>
             </div>
         </div>
 
         <!-- 12: CTA -->
-        <div class="slide" style="text-align: center; align-items: center;">
-            <h1 style="font-size: 5rem;">ЗАПУСК <br>ИТ-ИММУНИТЕТА</h1>
-            <p>Превратите бюрократию в оцифрованный процесс одним кликом.</p>
-            <div style="display:flex; gap: 20px; justify-content: center; margin-top: 2rem;">
-                <button onclick="window.open('https://schelkanogov.github.io/Shchelkanogov/ApproveCenter_Demo.html')" class="cta-btn">ЗАПУСТИТЬ ПУЛЬТ</button>
+        <div class="slide center-layout" style="display: flex; padding: 0;">
+            <div style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; height: 100%; z-index: 2; padding: 0 10%;">
+                <h1 style="font-size: 6rem; margin-bottom: 2rem;">ЗАПУСК <br>АВТОПИЛОТА</h1>
+                <p style="font-size: 2rem; max-width: 1000px; margin-bottom: 3rem;">Превратите бюрократию в оцифрованный процесс. Одним кликом.</p>
+                
+                <svg viewBox="0 0 500 160" width="400" height="120" xmlns="http://www.w3.org/2000/svg" class="green-btn-svg" onclick="window.open('https://schelkanogov.github.io/Shchelkanogov/ApproveCenter_Demo.html')">
+                    <defs>
+                        <linearGradient id="btnGradCta" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#34d399"/><stop offset="100%" stop-color="#16a34a"/></linearGradient>
+                    </defs>
+                    <rect x="10" y="30" width="480" height="120" rx="60" fill="#064e3b"/>
+                    <rect x="10" y="25" width="480" height="120" rx="60" fill="#14532d"/>
+                    <rect id="btn-body-cta" x="10" y="10" width="480" height="120" rx="60" fill="url(#btnGradCta)"/>
+                    <text x="250" y="75" font-family="'Inter', sans-serif" font-weight="900" font-size="30" fill="#ffffff" text-anchor="middle" letter-spacing="1">ПЕРЕЙТИ К ДЕМО</text>
+                    <text x="250" y="105" font-family="'JetBrains Mono', monospace" font-weight="700" font-size="11" fill="rgba(255,255,255,0.8)" text-anchor="middle" letter-spacing="3">ОКРУЖЕНИЕ: ПЕСОЧНИЦА</text>
+                </svg>
+                
+                <p style="margin-top: 50px; font-family: 'JetBrains Mono', monospace; font-size: 1rem; letter-spacing: 2px;">VULNDETECTOR.PRO</p>
             </div>
-            <p style="margin-top: 40px; color: var(--text-gray); font-weight: 700; font-size: 1.2rem;">
-                Демо-стенд готов. Безопасность — навсегда.
-            </p>
+            <div class="grid-cyber" style="background-size: 60px 60px;"></div>
         </div>
     </div>
 
+    <!-- Navigation WOW Arrows -->
+    <div class="nav-arrow nav-arrow-left" onclick="show(c - 1)">
+        <svg viewBox="0 0 24 24"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/></svg>
+    </div>
+    <div class="nav-arrow nav-arrow-right" onclick="show(c + 1)">
+        <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+    </div>
+
+    <!-- Glassmorphic Dots -->
     <div class="nav-dots" id="dots"></div>
 
     <script>
