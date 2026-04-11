@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>🎤 Настройка озвучки — Sber500</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --green: #21a038; --dark: #1a1a2e; }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Inter',sans-serif; background:#f8fafc; color:#1e293b; padding:30px; }
+        h1 { font-size:2rem; margin-bottom:10px; }
+        .subtitle { color:#64748b; margin-bottom:30px; }
+
+        .controls { display:flex; gap:20px; align-items:center; background:#fff; padding:20px; border-radius:16px; box-shadow:0 4px 20px rgba(0,0,0,0.06); margin-bottom:30px; flex-wrap:wrap; }
+        .control-group { display:flex; flex-direction:column; gap:4px; }
+        .control-group label { font-size:0.8rem; font-weight:600; color:#64748b; text-transform:uppercase; }
+        select, input[type=range] { padding:8px; border:2px solid #e2e8f0; border-radius:8px; font-size:0.9rem; }
+        input[type=range] { width:150px; }
+        .val { font-size:0.85rem; font-weight:700; color:var(--green); }
+
+        .slides-list { display:flex; flex-direction:column; gap:12px; }
+        .slide-row { background:#fff; padding:16px 20px; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,0.04); display:flex; align-items:flex-start; gap:16px; border-left:4px solid var(--green); }
+        .slide-num { font-size:1.4rem; font-weight:800; color:var(--green); min-width:40px; padding-top:2px; }
+        .slide-text { flex:1; line-height:1.6; font-size:0.95rem; }
+        .slide-text textarea { width:100%; min-height:70px; border:1px solid #e2e8f0; border-radius:8px; padding:10px; font-family:'Inter',sans-serif; font-size:0.9rem; resize:vertical; }
+
+        .btn { padding:10px 20px; border:none; border-radius:10px; font-weight:700; cursor:pointer; font-size:0.9rem; transition:0.2s; }
+        .btn-play { background:var(--green); color:#fff; }
+        .btn-play:hover { background:#168d2c; transform:scale(1.05); }
+        .btn-stop { background:#ef4444; color:#fff; }
+        .btn-all { background:var(--dark); color:#fff; padding:16px 40px; font-size:1.1rem; border-radius:50px; margin-top:20px; }
+        .btn-all:hover { opacity:0.9; }
+
+        .status { position:fixed; top:20px; right:20px; padding:10px 20px; border-radius:50px; font-weight:700; font-size:0.9rem; display:none; }
+        .status.speaking { display:block; background:var(--green); color:#fff; animation:pulse 1.5s infinite; }
+        @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.6;} }
+    </style>
+</head>
+<body>
+    <h1>🎤 Настройка озвучки Sber500</h1>
+    <p class="subtitle">Настройте голос, тембр и скорость. Тестируйте каждый слайд отдельно.</p>
+
+    <div class="controls">
+        <div class="control-group">
+            <label>Голос</label>
+            <select id="voiceSelect"></select>
+        </div>
+        <div class="control-group">
+            <label>Скорость <span class="val" id="rateVal">0.90</span></label>
+            <input type="range" id="rate" min="0.5" max="1.5" step="0.05" value="0.9">
+        </div>
+        <div class="control-group">
+            <label>Тембр <span class="val" id="pitchVal">1.0</span></label>
+            <input type="range" id="pitch" min="0.5" max="1.5" step="0.1" value="1.0">
+        </div>
+        <div class="control-group">
+            <label>Громкость <span class="val" id="volVal">1.0</span></label>
+            <input type="range" id="volume" min="0" max="1" step="0.1" value="1.0">
+        </div>
+        <button class="btn btn-stop" onclick="window.speechSynthesis.cancel()">⏹ СТОП</button>
+    </div>
+
+    <div id="status" class="status">🔊 Говорю...</div>
+
+    <div class="slides-list" id="slidesList"></div>
+
+    <div style="text-align:center; margin-top:30px;">
+        <button class="btn btn-all" onclick="playAll()">🎬 ЗАПУСТИТЬ ВСЁ ПОДРЯД</button>
+        <p style="margin-top:10px; color:#64748b; font-size:0.85rem;">Включите запись экрана (Win+G) перед нажатием</p>
+    </div>
+
+    <script>
+        const texts = [
+            "Представьте... зелёную кнопку автопилота для вашей ИТ-безопасности. Нажали — и всё работает. Навсегда. ПАК «Детектор Уязвимостей» — это интеллектуальное управление инфраструктурой, на базе ГигаЧат, и стандарта MCP. Без лишних интерфейсов. С полной суверенностью данных.",
+            "Сегодня, инженеры тратят тридцать процентов рабочего времени, не на задачи... а на отчёты. Бюрократия, — самый медленный процесс в любой компании. Ручные логи. Таблицы Excel. Бесконечные совещания... Миллионы рублей, сгорают в ожидании, пока кто-то заметит инцидент.",
+            "Мы сокращаем время реагирования, в десять тысяч раз. Традиционный процесс — четырнадцать дней. Наш Детектор Уязвимостей... десять секунд. Прямой проброс данных, от сканера, к лицу принимающему решения. Без посредников. Без задержек.",
+            "Это не антивирус. Это — интеллектуальный маршрутизатор задач. Он детектирует уязвимости, в самих бизнес-процессах, и исправляет их. Бесшовное управление инфраструктурой по протоколам. Защита от саботажа. Полная интеграция, с электронным документооборотом.",
+            "Объём рынка управления ИТ-инфраструктурой в России, — сто двадцать восемь миллиардов рублей. Наше решение... — это драйвер потребления токенов ГигаЧат. Полностью отечественная Enterprise-разработка. Соответствие строгим требованиям Минцифры.",
+            "Мы — не просто ещё один сканер. Мы... — оркестратор, который закрывает разрыв, между детектированием, и исправлением. Устаревшие системы, работают медленно и дорого. Детектор Уязвимостей — восстановление, за десять секунд. Полностью автономные ИИ-решения.",
+            "Гибридная модель монетизации. Ежегодная лицензия на ядро — полтора миллиона рублей в год. Пакеты токенов ГигаЧат для стороннего анализа — от пятисот тысяч. Каналы роста: маркетплейс СберКлауд, прямые продажи в Enterprise, и интеграция с MSSP-провайдерами.",
+            "Юнит-экономика. Стоимость привлечения клиента — сто двадцать пять тысяч рублей. Доход с клиента за три года — четыре с половиной миллиона. Соотношение LTV к CAC — больше тридцати. Рентабельность... — восемьдесят пять процентов. Окупаемость — три месяца.",
+            "Единое программное ядро — два бизнес-продукта. Первая стратегия — Cloud Native. AWS, СберКлауд, Kubernetes. Гибкое автомасштабирование, для технологических компаний. Вторая стратегия... — замкнутый контур. On-Premise. Сто процентов изоляции. Замена классических ИБ-сканеров. Полное соответствие ГОСТам.",
+            "Пилоты в компаниях «Аквалайф» и «Орскэми» подтвердили гипотезу. Более двухсот пятидесяти заявок — это подтверждённый, сформированный спрос. Система... полностью готова к масштабированию, на весь Enterprise Сбера.",
+            "Павел Щелканогов — CEO и системный архитектор. Эксперт в высоконагруженной ИТ-инфраструктуре. Автор математической модели безопасности BFI. Сергей Викулин — CTO и Tech Lead. Глубокая экспертиза, в Kubernetes и AWS-автомасштабировании. Наш проект... входит в Топ-пятьдесят инновационных проектов двадцать пятого года, по версии платформы Радар.",
+            "Превратите бюрократию... в оцифрованный процесс, одним кликом. Запустите демо прямо сейчас. Детектор Уязвимостей — залог безопасности вашего бизнеса... Навсегда."
+        ];
+
+        const slideNames = ["Заглавный","ИТ-Барьеры","Революция скорости","ИТ-Иммунитет","Синергия и рынок","Конкуренты","Бизнес-модель","Юнит-экономика","Две стратегии","Результаты","Команда","CTA"];
+
+        // Build slide rows
+        const list = document.getElementById('slidesList');
+        texts.forEach((t, i) => {
+            const row = document.createElement('div');
+            row.className = 'slide-row';
+            row.innerHTML = `
+                <div class="slide-num">${i+1}</div>
+                <div class="slide-text">
+                    <div style="font-weight:700;margin-bottom:6px;color:#64748b;font-size:0.8rem;">${slideNames[i]}</div>
+                    <textarea id="text${i}">${t}</textarea>
+                </div>
+                <button class="btn btn-play" onclick="speakOne(${i})">▶</button>
+            `;
+            list.appendChild(row);
+        });
+
+        // Range display
+        document.getElementById('rate').oninput = e => document.getElementById('rateVal').textContent = e.target.value;
+        document.getElementById('pitch').oninput = e => document.getElementById('pitchVal').textContent = e.target.value;
+        document.getElementById('volume').oninput = e => document.getElementById('volVal').textContent = e.target.value;
+
+        // Load voices
+        let voices = [];
+        function loadVoices() {
+            voices = window.speechSynthesis.getVoices();
+            const sel = document.getElementById('voiceSelect');
+            sel.innerHTML = '';
+            const ruVoices = voices.filter(v => v.lang.startsWith('ru'));
+            const otherVoices = voices.filter(v => !v.lang.startsWith('ru'));
+            // Russian voices first
+            ruVoices.forEach((v,i) => {
+                const o = document.createElement('option');
+                o.value = voices.indexOf(v);
+                o.textContent = `🇷🇺 ${v.name} (${v.lang})`;
+                if (i === 0) o.selected = true;
+                sel.appendChild(o);
+            });
+            otherVoices.forEach(v => {
+                const o = document.createElement('option');
+                o.value = voices.indexOf(v);
+                o.textContent = `${v.name} (${v.lang})`;
+                sel.appendChild(o);
+            });
+        }
+        window.speechSynthesis.onvoiceschanged = loadVoices;
+        loadVoices();
+
+        function getUtterance(text) {
+            const u = new SpeechSynthesisUtterance(text);
+            u.voice = voices[document.getElementById('voiceSelect').value] || null;
+            u.rate = parseFloat(document.getElementById('rate').value);
+            u.pitch = parseFloat(document.getElementById('pitch').value);
+            u.volume = parseFloat(document.getElementById('volume').value);
+            u.lang = 'ru-RU';
+            return u;
+        }
+
+        function speakOne(idx) {
+            window.speechSynthesis.cancel();
+            const text = document.getElementById(`text${idx}`).value;
+            const u = getUtterance(text);
+            const st = document.getElementById('status');
+            st.className = 'status speaking';
+            st.textContent = `🔊 Слайд ${idx+1}: ${slideNames[idx]}`;
+            u.onend = () => { st.className = 'status'; };
+            u.onerror = () => { st.className = 'status'; };
+            window.speechSynthesis.speak(u);
+        }
+
+        async function playAll() {
+            for (let i = 0; i < texts.length; i++) {
+                const text = document.getElementById(`text${i}`).value;
+                await new Promise(resolve => {
+                    const u = getUtterance(text);
+                    const st = document.getElementById('status');
+                    st.className = 'status speaking';
+                    st.textContent = `🔊 Слайд ${i+1}/${texts.length}: ${slideNames[i]}`;
+                    u.onend = resolve;
+                    u.onerror = resolve;
+                    window.speechSynthesis.speak(u);
+                });
+                await new Promise(r => setTimeout(r, 1200));
+            }
+            document.getElementById('status').className = 'status';
+        }
+    </script>
+</body>
+</html>

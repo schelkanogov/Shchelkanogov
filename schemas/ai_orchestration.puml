@@ -1,0 +1,45 @@
+@startuml ai_orchestration
+!theme hacker
+skinparam BackgroundColor #050508
+skinparam FontColor #FFFFFF
+skinparam Shadowing true
+skinparam RoundCorner 12
+skinparam DefaultFontName Arial
+skinparam DefaultFontSize 14
+
+title Схема Интеллектуальной Оркестрации
+
+node "Система Управления Инцидентами" {
+  [Бот Утверждения\n(Канал связи)] as TgDaemon
+  [Логическое Ядро\n(Оркестратор задач)] as KB
+}
+
+database "База Данных Задач\n(SQLite)" {
+  artifact "Карточка Инцидента\n(Задача)" as Task
+}
+
+cloud "Нейросеть СберБанка" {
+  component "Языковая Модель" as LLM
+}
+
+node "Телеком-Инфраструктура" {
+  actor "Инженер Безопасности" as SecEng
+}
+
+KB --> Task : Регистрация уязвимости\n(Автосоздание задачи)
+KB --> LLM : Отправка контекста инцидента\nдля анализа
+LLM --> KB : Возврат скрипта устранения\n(Готовый код)
+
+KB -> Task : Обновление задачи:\nПрикрепление скрипта
+KB -> TgDaemon : Сигнал готовности к деплою
+
+TgDaemon -> SecEng : Push-кнопка в мессенджере:\n[Утвердить и Исправить]
+
+SecEng -> TgDaemon : Нажатие кнопки подтверждения
+TgDaemon -> KB : Сигнал успешной авторизации
+KB -> Task : Изменение статуса на "В процессе"
+KB --> KB : Применение скрипта к серверам
+
+KB -> Task : Изменение статуса на "Выполнено"
+
+@enduml

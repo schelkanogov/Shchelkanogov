@@ -3,221 +3,410 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VulnDetector // Sber500 Final</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Playfair+Display:ital,wght@1,900&display=swap" rel="stylesheet">
+    <title>ПАК «Детектор Уязвимостей» — Sber500 Pitch Deck</title>
+    <meta name="description" content="Презентация ПАК «Детектор Уязвимостей» для Sber500 × GigaChat. 12 слайдов. Zero-UI ITSM-платформа.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --sber-green: #21a038;
-            --krokodil-red: #d32f2f;
-            --paper-texture: #f4f1ea;
-            --corporate-white: #ffffff;
-            --text-main: #1e293b;
+            --bg: #ffffff;
+            --surface: #f8fafc;
+            --surface-alt: #f1f5f9;
+            --accent: #21a038;
+            --accent-light: rgba(33, 160, 56, 0.08);
+            --accent-glow: rgba(33, 160, 56, 0.15);
+            --danger: #ef4444;
+            --danger-light: rgba(239, 68, 68, 0.08);
+            --gold: #b45309;
+            --gold-light: rgba(180, 83, 9, 0.08);
+            --text: #000000;
+            --text-dim: #64748b;
+            --border: #e2e8f0;
+            --radius: 12px;
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body { font-family: 'Inter', sans-serif; background: #000; overflow: hidden; height: 100vh; }
-
-        .slide-wrapper { width: 100vw; height: 100vh; position: relative; }
-
-        .slide {
-            position: absolute; width: 100%; height: 100%;
-            padding: 80px 120px;
-            display: flex; flex-direction: column; justify-content: center;
-            opacity: 0; transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            pointer-events: none;
-            background: var(--corporate-white);
-        }
-
-        /* SATIRE STYLE */
-        .slide.satire {
-            background: var(--paper-texture);
-            background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
-            border: 30px solid var(--krokodil-red);
-            text-align: center;
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', -apple-system, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
             align-items: center;
-            transform: scale(1.1);
-        }
-        .slide.satire.active { transform: scale(1); }
-        
-        .slide.satire h3 {
-            font-family: 'Playfair Display', serif;
-            font-size: 5rem; color: var(--krokodil-red); font-style: italic;
-            margin-bottom: 2rem;
-            text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
-        }
-        
-        .satire-box {
-            width: 80%; height: 55%;
-            border: 5px solid #000;
-            background: #fff;
-            display: flex; align-items: center; justify-content: center;
-            position: relative;
-            box-shadow: 15px 15px 0px rgba(0,0,0,0.2);
-        }
-        .satire-box::after {
-            content: "КАРИКАТУРА: БЮРОКРАТ В ГОРАХ ТИКЕТОВ";
-            font-size: 1.5rem; font-weight: 900; color: #999;
+            perspective: 1200px;
         }
 
-        .slide.active { opacity: 1; pointer-events: all; }
-
-        /* CORPORATE STYLE */
-        h1 { font-size: 4.5rem; font-weight: 900; line-height: 0.95; margin-bottom: 2rem; color: #000; }
-        h2 { font-size: 3rem; color: var(--sber-green); font-weight: 800; margin-bottom: 2rem; display: flex; align-items: center; gap: 20px; }
-        h2::before { content: ""; width: 8px; height: 45px; background: var(--sber-green); border-radius: 4px; }
-        
-        p { font-size: 1.5rem; line-height: 1.4; color: #334155; margin-bottom: 25px; max-width: 900px; }
-        
-        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-top: 2rem; width: 100%; }
-        .card { background: #f8fafc; padding: 35px; border-radius: 20px; border: 1px solid #e2e8f0; }
-        .card h3 { font-size: 2.8rem; color: var(--sber-green); margin-bottom: 10px; font-weight: 900; }
-        .card p { font-size: 0.9rem; font-weight: 800; color: #64748b; text-transform: uppercase; margin: 0; }
-
-        .nav { position: fixed; bottom: 50px; left: 120px; display: flex; gap: 12px; z-index: 100; }
-        .dot { width: 12px; height: 12px; background: #94a3b8; border-radius: 50%; cursor: pointer; transition: 0.3s; }
-        .dot.active { background: var(--sber-green); transform: scale(1.5); }
-
-        .header { position: fixed; top: 50px; left: 120px; font-weight: 900; color: var(--sber-green); font-size: 1rem; letter-spacing: 2px; }
-        .tag { position: fixed; top: 50px; right: 120px; color: #cbd5e1; font-weight: 700; font-size: 0.7rem; letter-spacing: 4px; }
-
-        .btn {
-            display: inline-block; padding: 22px 60px; background: var(--sber-green);
-            color: #fff; text-decoration: none; border-radius: 60px; font-weight: 900; font-size: 1.5rem;
-            transition: 0.4s; margin-top: 2rem; 
+        .grid-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background-image:
+                linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none; z-index: 0;
         }
-        .btn:hover { background: #1a8a2e; transform: translateY(-5px); }
 
+        .pw { position: relative; z-index: 10; width: 94vw; height: 88vh; transform-style: preserve-3d; transition: transform 0.15s ease-out; }
+        .sc { width: 100%; height: 100%; position: relative; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: 0 20px 60px rgba(0,0,0,0.08); overflow: hidden; }
+
+        .slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; padding: 3rem 4.5rem; display: flex; flex-direction: column; opacity: 0; pointer-events: none; z-index: 1; transform: translateX(50px); transition: all 0.45s cubic-bezier(0.4, 0, 0.2, 1); }
+        .slide.active { opacity: 1; pointer-events: all; z-index: 2; transform: translateX(0); }
+        .slide.prev { transform: translateX(-50px); opacity: 0; }
+
+        .sh { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1.8rem; padding-bottom: 0.8rem; border-bottom: 1px solid var(--border); }
+        h1 { font-size: 2rem; font-weight: 800; letter-spacing: -0.5px; line-height: 1.2; }
+        h1 .hl { color: var(--accent); }
+        h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 1rem; }
+        .sub { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; }
+        .badge { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; background: var(--accent-light); padding: 5px 12px; border-radius: 4px; display: inline-block; border: 1px solid rgba(33,160,56,0.2); }
+
+        .cg { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; flex-grow: 1; align-items: start; }
+        .cg3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; flex-grow: 1; align-items: start; }
+        .cg4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+
+        p, li { font-size: 1.05rem; line-height: 1.6; }
+        ul { list-style: none; }
+        ul li { position: relative; padding-left: 1.4rem; margin-bottom: 0.8rem; }
+        ul li::before { content: '›'; position: absolute; left: 0; color: var(--accent); font-weight: 800; font-size: 1.3rem; line-height: 1.3; }
+        .hl { color: var(--accent); font-weight: 600; }
+        .danger { color: var(--danger); font-weight: 600; }
+        .dim { color: var(--text-dim); }
+
+        .sc-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.8rem 1.4rem; text-align: center; transition: all 0.3s; }
+        .sc-card:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: 0 10px 30px rgba(0,0,0,0.06); }
+        .sv { font-size: 2.4rem; font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--accent); margin-bottom: 0.2rem; }
+        .sl { font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; font-family: 'JetBrains Mono', monospace; }
+
+        .ib { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.2rem; transition: border-color 0.3s; }
+        .ib:hover { border-color: var(--accent); }
+        .ib h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.4rem; }
+        .ib p { font-size: 0.9rem; color: var(--text-dim); line-height: 1.5; }
+
+        .gost-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 1rem; }
+        .gost-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 5px 12px; border-radius: 6px; background: var(--accent-light); border: 1px solid rgba(33,160,56,0.15); color: var(--accent); }
+
+        .tm { background: #1e293b; border-radius: var(--radius); padding: 1.2rem 1.5rem; color: #e2e8f0; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; line-height: 1.7; box-shadow: 0 15px 30px rgba(0,0,0,0.12); }
+        .tm .dots { display: flex; gap: 6px; margin-bottom: 0.8rem; }
+        .tm .dots div { width: 10px; height: 10px; border-radius: 50%; }
+        .tg { color: #22c55e; } .tc { color: #06b6d4; } .td { color: #94a3b8; } .tr { color: #ef4444; } .ty { color: #eab308; }
+
+        .pc { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; transition: all 0.3s; }
+        .pc:hover { border-color: var(--accent); box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
+        .pc h3 { font-size: 1.4rem; margin-bottom: 0.2rem; }
+        .pc .role { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.8rem; }
+        .pc p { font-size: 0.95rem; color: var(--text-dim); line-height: 1.5; }
+
+        .btn-cta { display: inline-flex; align-items: center; gap: 8px; padding: 14px 32px; border: none; border-radius: 8px; font-size: 13px; font-weight: 700; font-family: 'JetBrains Mono', monospace; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s; text-decoration: none; }
+        .btn-g { background: var(--accent); color: #fff; }
+        .btn-g:hover { box-shadow: 0 8px 20px rgba(33,160,56,0.25); transform: translateY(-2px); }
+        .btn-o { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+        .btn-o:hover { background: var(--accent-light); }
+
+        .controls { position: absolute; bottom: 20px; right: 36px; display: flex; gap: 8px; z-index: 100; }
+        .nb { background: var(--surface); border: 1px solid var(--border); color: var(--text-dim); font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 8px 18px; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-weight: 600; }
+        .nb:hover { border-color: var(--accent); color: var(--accent); }
+        .nb.pr { background: var(--accent); color: #fff; border-color: var(--accent); }
+        .nb.pr:hover { box-shadow: 0 6px 16px rgba(33,160,56,0.2); }
+
+        .pi { position: absolute; bottom: 24px; left: 36px; display: flex; gap: 6px; z-index: 100; }
+        .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--border); transition: all 0.3s; cursor: pointer; }
+        .dot.active { background: var(--accent); box-shadow: 0 0 6px var(--accent-glow); transform: scale(1.4); }
+        .dot:hover:not(.active) { background: var(--text-dim); }
+
+        .sctr { position: absolute; top: 20px; right: 36px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-dim); z-index: 100; }
+        .nlogo { position: absolute; top: 20px; left: 36px; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 13px; color: var(--accent); letter-spacing: 1px; z-index: 100; }
+        .nlogo span { color: var(--text); }
+
+        @media (max-width: 900px) {
+            .slide { padding: 1.5rem; }
+            .cg, .cg3, .cg4 { grid-template-columns: 1fr; gap: 1rem; }
+            h1 { font-size: 1.4rem; }
+            .sv { font-size: 1.8rem; }
+        }
     </style>
 </head>
 <body>
-    <div class="header">VULNDETECTOR // DEMO DAY</div>
-    <div class="tag">BATCH SBER500 - 2026</div>
+<div class="grid-overlay"></div>
+<div class="pw" id="tilter">
+<div class="sc">
+    <div class="nlogo">ДЕТЕКТОР<span>УЯЗВИМОСТЕЙ</span></div>
+    <div class="sctr" id="cnt">1 / 12</div>
 
-    <div class="slide-wrapper">
-        <!-- 1: TITLE -->
-        <div class="slide active">
-            <h1>ДЕТЕКТОР <br>УЯЗВИМОСТЕЙ</h1>
-            <p>Умная оркестрация ИБ для Enterprise-сегмента. Автоматизация Remediation без лишних интерфейсов.</p>
-            <div class="grid">
-                <div class="card"><h3>10с</h3><p>RESPONSE SLA</p></div>
-                <div class="card"><h3>30%</h3><p>COST REDUCTION</p></div>
-                <div class="card"><h3>AI</h3><p>GIGACHAT INSIDE</p></div>
+    <!-- 1. ЗАГЛАВНЫЙ -->
+    <div class="slide active">
+        <div style="flex-grow:1;display:flex;flex-direction:column;justify-content:center;max-width:700px;">
+            <div class="badge" style="margin-bottom:20px;">SBER500 × GIGACHAT</div>
+            <h1 style="font-size:clamp(2.2rem,4.5vw,3.4rem);margin-bottom:16px;line-height:1.1;">
+                <span class="hl">Зелёная кнопка</span> автопилота для ИТ-безопасности
+            </h1>
+            <p class="dim" style="font-size:1.1rem;margin-bottom:28px;max-width:560px;">
+                ПАК «Детектор Уязвимостей» — интеллектуальное управление инфраструктурой на базе GigaChat и стандарта MCP. Без лишних интерфейсов. С полной суверенностью данных.
+            </p>
+            <div style="display:flex;gap:14px;flex-wrap:wrap;">
+                <span class="btn-cta btn-g" onclick="navSlide(1)" style="cursor:pointer;">Перейти к презентации →</span>
             </div>
-        </div>
-
-        <!-- 2: PROBLEM -->
-        <div class="slide">
-            <h2>ПРОБЛЕМА</h2>
-            <p>Классическая безопасность работает в режиме «пожарной команды», утопая в тикетах и PDF-отчетах.</p>
-            <div class="grid">
-                <div class="card" style="border-color: #fecaca;"><h3>#1</h3><p>ВРЕМЯ РЕАКЦИИ — НЕДЕЛИ</p></div>
-                <div class="card" style="border-color: #fecaca;"><h3>#2</h3><p>РУЧНАЯ ПРИОРИТИЗАЦИЯ</p></div>
-                <div class="card" style="border-color: #fecaca;"><h3>#3</h3><p>БЮРОКРАТИЯ И ОТЧЕТЫ</p></div>
+            <div style="display:flex;gap:36px;margin-top:40px;border-top:1px solid var(--border);padding-top:28px;">
+                <div><div style="font-family:'JetBrains Mono';font-size:24px;font-weight:700;color:var(--accent);">&lt;10с</div><div style="font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-top:3px;">MTTR</div></div>
+                <div><div style="font-family:'JetBrains Mono';font-size:24px;font-weight:700;color:var(--accent);">87%</div><div style="font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-top:3px;">Классификация</div></div>
+                <div><div style="font-family:'JetBrains Mono';font-size:24px;font-weight:700;color:var(--accent);">10</div><div style="font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-top:3px;">MCP-модулей</div></div>
+                <div><div style="font-family:'JetBrains Mono';font-size:24px;font-weight:700;color:var(--accent);">2</div><div style="font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-top:3px;">Роспатент</div></div>
             </div>
-        </div>
-
-        <!-- 3: SATIRE 1 -->
-        <div class="slide satire">
-            <h3>ДОРОГОЙ БЮРОКРАТ!</h3>
-            <div class="satire-box"></div>
-            <p style="margin-top: 30px; font-weight: 900; color: #000; font-size: 2rem;">«ПЕРВЫМ ДЕЛОМ — ТИКЕТ, А ВЗЛОМ ПОДОЖДЕТ...»</p>
-        </div>
-
-        <!-- 4: SOLUTION -->
-        <div class="slide">
-            <h2>РЕШЕНИЕ: ИТ-ИММУНИТЕТ</h2>
-            <p>Платформа перехватывает новые уязвимости и сама ставит задачи в Kanban/Jira инженерам.</p>
-            <div class="grid">
-                <div class="card"><h3>RAG</h3><p>База знаний СЗИ</p></div>
-                <div class="card"><h3>Zero</h3><p>Никаких дашбордов</p></div>
-                <div class="card"><h3>Fast</h3><p>Прямой мост к DevOps</p></div>
-            </div>
-        </div>
-
-        <!-- 5: SYNERGY -->
-        <div class="slide">
-            <h2>СИНЕРГИЯ СО СБЕРОМ</h2>
-            <p>Мы используем мощь GigaChat для анализа логов и разворачиваемся в облаке SberCloud.</p>
-            <ul>
-                <li style="font-size: 1.5rem; margin-bottom: 15px;">🚀 Потребление 10 000+ токенов на один скан.</li>
-                <li style="font-size: 1.5rem; margin-bottom: 15px;">🛡️ Замена импортных сканеров и SIEM-систем.</li>
-                <li style="font-size: 1.5rem; margin-bottom: 15px;">🤝 Интеграция в B2B-предложения Сбера.</li>
-            </ul>
-        </div>
-
-        <!-- 6: SATIRE 2 -->
-        <div class="slide satire">
-            <h3>ОТЧЕТ НА ОТЧЕТЕ</h3>
-            <div class="satire-box" style="border-color: var(--sber-green);"></div>
-            <p style="margin-top: 30px; font-weight: 900; color: #000; font-size: 2rem;">«СОГЛАСОВАНО 15 ПОДПИСЯМИ, А СЕРВЕР УЖЕ УПАЛ»</p>
-        </div>
-
-        <!-- 7: MARKET & TEAM -->
-        <div class="slide">
-            <h2>РЫНОК И КОМАНДА</h2>
-            <p>Рынок ИБ в РФ — 128 млрд рублей. Наша цель — ТОП-100 компаний.</p>
-            <div class="card" style="width: 100%;">
-                <h3 style="font-size: 2rem;">CEO: ПАВЕЛ ЩЕЛКАНОГОВ</h3>
-                <p>ЭКСПЕРТ ПО HFT И ИНФРАСТРУКТУРЕ. КОМАНДА AI-ИНЖЕНЕРОВ.</p>
-            </div>
-        </div>
-
-        <!-- 8: TRACTION -->
-        <div class="slide">
-            <h2>РЕЗУЛЬТАТЫ (TRACTION)</h2>
-            <p>Успешные пилоты в Aqvalife и Orskemi. Обработано более 250 лидов.</p>
-            <div class="grid">
-                <div class="card"><h3>SLA</h3><p>Выполнение 100%</p></div>
-                <div class="card"><h3>Pilot</h3><p>Production Ready</p></div>
-                <div class="card"><h3>Next</h3><p>Scale Up</p></div>
-            </div>
-        </div>
-
-        <!-- 9: CTA -->
-        <div class="slide" style="text-align: center; align-items: center;">
-            <h1>ЗАЩИТИТЕ <br>СВОЁ БУДУЩЕЕ</h1>
-            <p>Готовы к интеграции. Готовы к победе.</p>
-            <a href="#" class="btn">ЗАПУСТИТЬ ДЕМО-СТЕНД</a>
-            <p style="margin-top: 40px; font-family: monospace; color: var(--sber-green); font-weight: 900; font-size: 1.5rem;">vulndetector.pro/demo</p>
         </div>
     </div>
 
-    <div class="nav" id="dots"></div>
+    <!-- 2. ИТ-БАРЬЕРЫ -->
+    <div class="slide">
+        <div class="sh"><h1>ИТ-<span class="hl">Барьеры</span>: Бюрократия сжигает бюджеты</h1><span class="sub">Проблема</span></div>
+        <div class="cg">
+            <div>
+                <h2>30% рабочего времени — не на задачи</h2>
+                <ul>
+                    <li>Инженеры тратят треть FTE на <span class="danger">отчёты, таблицы Excel, бесконечные совещания</span>.</li>
+                    <li>Ручные логи и бюрократия — самый медленный процесс в любой компании.</li>
+                    <li>Миллионы рублей сгорают в ожидании, пока кто-то <strong>заметит инцидент</strong>.</li>
+                </ul>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:1rem;">
+                <div class="ib" style="border-left:3px solid var(--danger);"><h4>💰 Стоимость бездействия</h4><p>Час простоя ДБО = убытки в миллионы. 80% отчётов сканеров оседают в почте и не превращаются в задачи.</p></div>
+                <div class="ib" style="border-left:3px solid var(--gold);"><h4>🧑‍💻 Bus Factor</h4><p>Знания об уязвимостях хранятся в головах единичных «звёздных» инженеров. Уходит человек — уходит контекст.</p></div>
+            </div>
+        </div>
+    </div>
 
-    <script>
-        const s = document.querySelectorAll('.slide');
-        const d = document.getElementById('dots');
-        let c = 0;
-        let isMoving = false;
+    <!-- 3. РЕВОЛЮЦИЯ СКОРОСТИ -->
+    <div class="slide">
+        <div class="sh"><h1>Революция <span class="hl">скорости</span>: ×10 000</h1><span class="sub">Решение</span></div>
+        <div class="cg">
+            <div>
+                <h2>14 дней → 10 секунд</h2>
+                <p class="dim" style="margin-bottom:1.2rem;">Мы сокращаем время реагирования в десять тысяч раз.</p>
+                <ul>
+                    <li>Прямой проброс данных от сканера к лицу, принимающему решения.</li>
+                    <li><strong>Без посредников.</strong> Без задержек. Без совещаний.</li>
+                    <li>ИИ мгновенно находит Первопричину, оценивает ущерб и генерирует код лечения.</li>
+                </ul>
+            </div>
+            <div class="tm">
+                <div class="dots"><div style="background:#ef4444;"></div><div style="background:#eab308;"></div><div style="background:#22c55e;"></div></div>
+                <div><span class="td">[Бот Инфраструктуры]</span></div>
+                <div style="margin-top:6px;"><span class="tr">⚠ ALERT:</span> Открытый порт Redis (Критично)</div>
+                <div style="margin-top:3px;"><span class="tc">ИИ-Агент:</span> Сгенерирован IaC патч</div>
+                <div><span class="td">Terraform/Ansible для изоляции</span></div>
+                <div style="margin-top:10px;"><span class="ty">Ожидаю разрешения CISO...</span></div>
+                <div style="margin-top:14px;text-align:center;">
+                    <span style="display:inline-block;background:var(--accent);color:#fff;padding:8px 28px;border-radius:6px;font-weight:700;letter-spacing:1px;">УТВЕРДИТЬ И ВНЕДРИТЬ ПАТЧ</span>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        s.forEach((_, i) => {
-            const di = document.createElement('div');
-            di.className = `dot ${i === 0 ? 'active' : ''}`;
-            di.onclick = () => show(i);
-            d.appendChild(di);
-        });
+    <!-- 4. ИТ-ИММУНИТЕТ -->
+    <div class="slide">
+        <div class="sh"><h1>ИТ-<span class="hl">Иммунитет</span>: Не антивирус</h1><span class="sub">Продукт</span></div>
+        <div class="cg">
+            <div>
+                <h2>Интеллектуальный маршрутизатор задач</h2>
+                <ul>
+                    <li>Детектирует уязвимости <strong>в самих бизнес-процессах</strong> и исправляет их.</li>
+                    <li>Бесшовное управление инфраструктурой по протоколам MCP.</li>
+                    <li>Защита от саботажа. Anti-Tamper ядро блокирует дубли.</li>
+                    <li>Полная интеграция с электронным документооборотом.</li>
+                </ul>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:1rem;">
+                <div class="cg4" style="gap:0.8rem;">
+                    <div class="ib" style="text-align:center;"><h4>🧠</h4><p style="font-size:0.85rem;font-weight:600;color:var(--text);">MCP-Роутер</p><p style="font-size:0.8rem;">Нейросетевой шлюз GigaChat</p></div>
+                    <div class="ib" style="text-align:center;"><h4>⚙️</h4><p style="font-size:0.85rem;font-weight:600;color:var(--text);">Стейт-машина</p><p style="font-size:0.8rem;">Трекинг FTE и SLA</p></div>
+                    <div class="ib" style="text-align:center;"><h4>💾</h4><p style="font-size:0.85rem;font-weight:600;color:var(--text);">Резервный мозг</p><p style="font-size:0.8rem;">RAG-индекс знаний</p></div>
+                    <div class="ib" style="text-align:center;"><h4>📊</h4><p style="font-size:0.85rem;font-weight:600;color:var(--text);">Пульт CTO</p><p style="font-size:0.8rem;">Метрики иммунитета</p></div>
+                </div>
+                <div class="gost-bar">
+                    <span class="gost-tag">ГОСТ 19.404-79</span>
+                    <span class="gost-tag">ГОСТ 19.505-79</span>
+                    <span class="gost-tag">MCP Protocol</span>
+                    <span class="gost-tag">GigaChat Pro</span>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        function show(n) {
-            if(n === c) return;
-            s[c].classList.remove('active');
-            document.querySelectorAll('.dot')[c].classList.remove('active');
-            c = n;
-            s[c].classList.add('active');
-            document.querySelectorAll('.dot')[c].classList.add('active');
-        }
+    <!-- 5. СИНЕРГИЯ И РЫНОК -->
+    <div class="slide">
+        <div class="sh"><h1>Синергия со <span class="hl">Сбером</span> и рынок</h1><span class="sub">Рынок</span></div>
+        <div class="cg">
+            <div>
+                <h2>128 млрд ₽ — рынок управления ИТ в РФ</h2>
+                <ul>
+                    <li>Наше решение — <span class="hl">драйвер потребления токенов GigaChat</span> в Enterprise-сегменте.</li>
+                    <li>Полностью отечественная разработка. Соответствие требованиям Минцифры.</li>
+                    <li>Каждый клиент = рекуррентное потребление API Сбера.</li>
+                </ul>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:1rem;justify-content:center;">
+                <div class="sc-card"><div class="sv">128B ₽</div><div class="sl">TAM Россия</div></div>
+                <div class="sc-card"><div class="sv" style="font-size:1.6rem;">Реестр Минцифры</div><div class="sl">02.09 Категория</div></div>
+            </div>
+        </div>
+    </div>
 
-        window.onwheel = (e) => {
-            if (isMoving) return;
-            isMoving = true;
-            show((c + (e.deltaY > 0 ? 1 : -1) + s.length) % s.length);
-            setTimeout(() => isMoving = false, 800);
-        };
+    <!-- 6. КОНКУРЕНТЫ -->
+    <div class="slide">
+        <div class="sh"><h1>Конкуренты: мы — <span class="hl">оркестратор</span></h1><span class="sub">Позиционирование</span></div>
+        <div class="cg">
+            <div>
+                <h2>Мы не ещё один сканер</h2>
+                <ul>
+                    <li><strong>Западные SIEM</strong> (ServiceNow, Splunk): юридически не могут работать в КИИ.</li>
+                    <li><strong>Отечественные сканеры</strong> (MaxPatrol): выдают сухие отчёты, <span class="danger">не чинят автоматически</span>.</li>
+                    <li>Устаревшие системы — <span class="dim">медленно и дорого</span>.</li>
+                    <li>Мы закрываем разрыв между <strong>детектированием</strong> и <strong>исправлением</strong>: восстановление за 10 секунд.</li>
+                </ul>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:0.8rem;">
+                <div class="ib" style="border-left:3px solid var(--accent);"><h4>🛡 Защита рынка</h4><p>Нативная интеграция с SOC-моделью Сбера. 2 Свидетельства Роспатент.</p></div>
+                <div class="ib" style="border-left:3px solid var(--accent);"><h4>🧠 «Резервный Мозг»</h4><p>RAG-база для сохранения опыта специалистов. Bus Factor → 0.</p></div>
+                <div class="ib" style="border-left:3px solid var(--accent);"><h4>🔌 Автономный ИИ</h4><p>Полностью автономные решения без ожидания человека в цикле.</p></div>
+            </div>
+        </div>
+    </div>
 
-        document.onkeydown = (e) => {
-            if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') show((c + 1) % s.length);
-            if (e.key === 'ArrowLeft') show((c - 1 + s.length) % s.length);
-        };
-    </script>
+    <!-- 7. БИЗНЕС-МОДЕЛЬ -->
+    <div class="slide">
+        <div class="sh"><h1>Бизнес-<span class="hl">модель</span></h1><span class="sub">Монетизация</span></div>
+        <div class="cg">
+            <div>
+                <h2>Гибридная модель монетизации</h2>
+                <ul>
+                    <li><strong>Ежегодная лицензия на ядро:</strong> <span class="hl">1 500 000 ₽/год</span></li>
+                    <li><strong>Пакеты токенов GigaChat</strong> для стороннего анализа: от 500 000 ₽</li>
+                </ul>
+                <h2 style="margin-top:1.5rem;">Каналы роста</h2>
+                <ul>
+                    <li>Маркетплейс СберКлауд</li>
+                    <li>Прямые продажи в Enterprise</li>
+                    <li>Интеграция с MSSP-провайдерами</li>
+                </ul>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:1rem;justify-content:center;">
+                <div class="sc-card" style="border-bottom:3px solid var(--accent);"><div class="sv">1.5M ₽</div><div class="sl">Лицензия / год</div></div>
+                <div class="sc-card" style="border-bottom:3px solid var(--gold);"><div class="sv" style="color:var(--gold);">500K+ ₽</div><div class="sl">Пакеты токенов</div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 8. ЮНИТ-ЭКОНОМИКА -->
+    <div class="slide">
+        <div class="sh"><h1>Юнит-<span class="hl">экономика</span></h1><span class="sub">Unit Economics</span></div>
+        <div class="cg3" style="margin-top:0.5rem;">
+            <div class="sc-card"><div class="sv">125K ₽</div><div class="sl">CAC</div><p style="font-size:0.9rem;color:var(--text-dim);margin-top:0.8rem;">Стоимость привлечения клиента</p></div>
+            <div class="sc-card"><div class="sv">4.5M ₽</div><div class="sl">LTV (3 года)</div><p style="font-size:0.9rem;color:var(--text-dim);margin-top:0.8rem;">Доход с клиента за 3 года</p></div>
+            <div class="sc-card"><div class="sv">&gt;30×</div><div class="sl">LTV / CAC</div><p style="font-size:0.9rem;color:var(--text-dim);margin-top:0.8rem;">Кратный возврат инвестиций</p></div>
+        </div>
+        <div class="cg" style="margin-top:1.2rem;gap:1rem;flex-grow:0;">
+            <div class="sc-card" style="padding:1.2rem;"><div class="sv" style="font-size:2rem;">85%</div><div class="sl">Рентабельность</div></div>
+            <div class="sc-card" style="padding:1.2rem;"><div class="sv" style="font-size:2rem;">3 мес</div><div class="sl">Окупаемость</div></div>
+        </div>
+    </div>
+
+    <!-- 9. ДВЕ СТРАТЕГИИ -->
+    <div class="slide">
+        <div class="sh"><h1>Две <span class="hl">стратегии</span> — одно ядро</h1><span class="sub">Go-to-Market</span></div>
+        <div class="cg">
+            <div class="ib" style="padding:2rem;border-left:4px solid var(--accent);height:100%;display:flex;flex-direction:column;justify-content:center;">
+                <h4 style="font-size:1.3rem;margin-bottom:0.8rem;">☁️ Стратегия 1: Cloud Native</h4>
+                <ul>
+                    <li>AWS, СберКлауд, Kubernetes</li>
+                    <li>Гибкое автомасштабирование</li>
+                    <li>Для технологических компаний</li>
+                    <li>SaaS-подписка: <span class="hl">150 000 ₽/год</span></li>
+                </ul>
+            </div>
+            <div class="ib" style="padding:2rem;border-left:4px solid var(--gold);height:100%;display:flex;flex-direction:column;justify-content:center;">
+                <h4 style="font-size:1.3rem;margin-bottom:0.8rem;">🏛 Стратегия 2: Замкнутый контур</h4>
+                <ul>
+                    <li>On-Premise. 100% изоляция</li>
+                    <li>Замена классических ИБ-сканеров</li>
+                    <li>Полное соответствие ГОСТам</li>
+                    <li>Крупный КИИ: <span class="hl">500 000 ₽/год</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- 10. РЕЗУЛЬТАТЫ -->
+    <div class="slide">
+        <div class="sh"><h1>Результаты и <span class="hl">пилоты</span></h1><span class="sub">Traction</span></div>
+        <div class="cg">
+            <div>
+                <h2>Подтверждённый спрос</h2>
+                <ul>
+                    <li>Пилоты в компаниях <strong class="hl">«Аквалайф»</strong> и <strong class="hl">«Орскэми»</strong> подтвердили гипотезу.</li>
+                    <li>Более <strong>250 заявок</strong> — сформированный спрос.</li>
+                    <li>Система полностью готова к масштабированию на весь Enterprise Сбера.</li>
+                </ul>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:1rem;">
+                <div class="sc-card"><div class="sv">250+</div><div class="sl">Подтверждённых заявок</div></div>
+                <div class="sc-card"><div class="sv">2</div><div class="sl">Успешных пилота</div></div>
+                <div class="sc-card"><div class="sv" style="font-size:1.6rem;">Топ-50</div><div class="sl">Инновации 2025 (Радар)</div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 11. КОМАНДА -->
+    <div class="slide">
+        <div class="sh"><h1>Команда <span class="hl">проекта</span></h1><span class="sub">Team</span></div>
+        <div class="cg">
+            <div class="pc">
+                <h3>Павел Щелканогов</h3>
+                <div class="role">CEO, Системный Архитектор</div>
+                <p>Эксперт в высоконагруженной ИТ-инфраструктуре. Автор математической модели безопасности BFI. Разработка ядра оркестратора и MCP-модулей. Автоматизировал 7 продуктов кластера HFTCloud.</p>
+            </div>
+            <div class="pc">
+                <h3>Сергей Викулин</h3>
+                <div class="role" style="color:var(--gold);">CTO, Tech Lead</div>
+                <p>Глубокая экспертиза в Kubernetes и AWS-автомасштабировании. Создание отказоустойчивых кластеров. Внедрение Zero-Trust контуров для защищённой эксплуатации LLM. SRE и контроль нагрузок.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 12. CTA -->
+    <div class="slide">
+        <div style="flex-grow:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;">
+            <h1 style="font-size:clamp(1.8rem,3.5vw,2.8rem);margin-bottom:14px;">Превратите бюрократию в <span class="hl">оцифрованный процесс</span></h1>
+            <p class="dim" style="font-size:1.1rem;margin-bottom:36px;max-width:560px;">Одним кликом. Запустите демо прямо сейчас. Детектор Уязвимостей — залог безопасности вашего бизнеса. Навсегда.</p>
+            <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;">
+                <a href="https://schelkanogov.github.io/Shchelkanogov/ApproveCenter_Demo.html" target="_blank" class="btn-cta btn-g">Подключить Пульт Утверждений →</a>
+                <a href="https://kinescope.io/rThrL5AoCcRwvpz53XbchN" target="_blank" class="btn-cta btn-o">Смотреть видео-демо</a>
+            </div>
+            <div style="margin-top:44px;border-top:1px solid var(--border);padding-top:20px;">
+                <p style="font-family:'JetBrains Mono';color:var(--text-dim);font-size:0.85rem;">it.immunity@yandex.ru &nbsp;|&nbsp; @pavel_it &nbsp;|&nbsp; schelkanogov.ru</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- NAV -->
+    <div class="controls">
+        <button class="nb" onclick="navSlide(-1)">← Назад</button>
+        <button class="nb pr" onclick="navSlide(1)">Вперёд →</button>
+    </div>
+    <div class="pi" id="dots"></div>
+</div>
+</div>
+
+<script>
+const slides=document.querySelectorAll('.slide'),dc=document.getElementById('dots'),cnt=document.getElementById('cnt');
+let cur=0;
+slides.forEach((_,i)=>{const d=document.createElement('div');d.classList.add('dot');if(i===0)d.classList.add('active');d.onclick=()=>go(i);dc.appendChild(d);});
+const dots=document.querySelectorAll('.dot');
+function go(i){cur=i;slides.forEach((s,j)=>{s.classList.remove('active','prev');if(j===i)s.classList.add('active');else if(j<i)s.classList.add('prev');});dots.forEach((d,j)=>d.classList.toggle('active',j===i));cnt.textContent=`${i+1} / ${slides.length}`;}
+function navSlide(d){let n=cur+d;if(n<0)n=slides.length-1;if(n>=slides.length)n=0;go(n);}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();navSlide(1);}else if(e.key==='ArrowLeft')navSlide(-1);});
+const t=document.getElementById('tilter');
+document.addEventListener('mousemove',e=>{const mx=(e.clientX/window.innerWidth-0.5)*2,my=(e.clientY/window.innerHeight-0.5)*2;t.style.transform=`rotateX(${-my*1.2}deg) rotateY(${mx*1.2}deg)`;});
+document.addEventListener('mouseleave',()=>{t.style.transform='rotateX(0) rotateY(0)';});
+</script>
 </body>
 </html>

@@ -1,0 +1,60 @@
+@startuml architecture_v21
+!theme hacker
+skinparam BackgroundColor #050508
+skinparam FontColor #FFFFFF
+skinparam Shadowing true
+skinparam RoundCorner 12
+skinparam DefaultFontName Arial
+skinparam DefaultFontSize 14
+
+title Архитектура ПАК «Детектор Уязвимостей» (v2.1)
+
+package "Внешний Контур" {
+    component "БД Уязвимостей\n(ФСТЭК БДУ)" as BDU
+}
+
+package "Внутренний Защищенный Контур (Zero-Trust)" {
+    
+    package "Аналитическое Ядро" {
+        component "Сервер Обработки\n(Основная логика)" as Backend
+        database "База Данных\n(Активы и инциденты)" as DB
+    }
+
+    package "Модуль Искусственного Интеллекта" {
+        component "Нейросеть-Сбер\n(GigaChat модель)" as GigaChat
+        note right of GigaChat
+            Валидация уязвимостей
+            и формирование патчей
+        end note
+    }
+
+    package "Модуль Оркестрации Инцидентов" {
+        component "Шлюз Задач\n(Оркестратор)" as KB
+        component "Система Трекинга\n(Задачи Kanban)" as Kanboard
+    }
+
+    package "Окно Утверждения (Шлюз)" {
+        component "Бот Утверждения\n(Telegram-шлюз)" as ApproveBot
+    }
+
+}
+
+actor "Офицер Безопасности\n(ИБ Специалист)" as User
+
+' Connections
+BDU --> Backend : Синхронизация угроз
+Backend <--> DB : Чтение/Запись
+
+Backend --> KB : Передача инцидента
+KB --> Kanboard : Формирование задачи
+KB --> GigaChat : Запрос создания патча
+GigaChat --> KB : Возврат готового скрипта
+
+KB --> ApproveBot : Оповещение с патчем
+ApproveBot --> User : Интерактивный диалог
+User --> ApproveBot : Одобрение патча
+
+ApproveBot --> KB : Подтверждение
+KB --> Kanboard : Закрытие задачи
+
+@enduml

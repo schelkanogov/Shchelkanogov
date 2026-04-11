@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<body style="margin:0; padding:0; background:#050508;">
+    <div style="position:relative; display:inline-block;" id="container">
+        <!-- Main Schema -->
+        <img id="bg" style="display:block;" src="">
+        
+        <!-- Logo Overlay -->
+        <div style="position:absolute; top:30px; right:30px; display:flex; align-items:center; gap:15px; background:rgba(5,5,8,0.8); padding:10px 20px; border-radius:12px; border:1px solid rgba(0,212,255,0.3); box-shadow:0 0 20px rgba(0,212,255,0.2);">
+            <img id="logo" style="height:40px; border-radius:6px;" src="">
+            <span style="color:#FFF; font-family:'Inter', sans-serif; font-size:16px; font-weight:700; letter-spacing:1px;">ДЕТЕКТОР УЯЗВИМОСТЕЙ</span>
+        </div>
+    </div>
+    
+    <script>
+        // Extract params from query string
+        const urlParams = new URLSearchParams(window.location.search);
+        const bgParam = urlParams.get('bg');
+        const logoParam = urlParams.get('logo');
+        
+        document.getElementById('bg').src = bgParam;
+        document.getElementById('logo').src = logoParam;
+    </script>
+</body>
+</html>

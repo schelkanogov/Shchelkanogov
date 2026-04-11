@@ -1,0 +1,48 @@
+@startuml resolution_flow
+!theme hacker
+skinparam BackgroundColor #050508
+skinparam FontColor #FFFFFF
+skinparam Shadowing true
+skinparam RoundCorner 12
+skinparam DefaultFontName Arial
+skinparam DefaultFontSize 14
+
+title Жизненный Цикл Инцидента
+
+actor "Сетевые Сенсоры" as Sensors
+participant "Ядро Детектора" as Core
+participant "Нейросеть (ИИ)" as LLM
+participant "Модуль Оркестрации" as Orchestrator
+participant "Бот Утверждения" as TgBot
+actor "ИБ Офицер" as CISO
+
+Sensors -> Core : Обнаружение уязвимости (ИОК)
+activate Core
+Core -> Core : Анализ на базе ФСТЭК БДУ
+Core -> LLM : Запрос подтверждения валидности
+activate LLM
+LLM -> LLM : Анализ структуры системы
+LLM --> Core : Вывод: Подтверждено
+Core -> LLM : Генерация скрипта исправления
+LLM --> Core : Готовый скрипт
+deactivate LLM
+
+Core -> Orchestrator : Передача инцидента
+activate Orchestrator
+Orchestrator -> Orchestrator : Оформление задачи безопасности
+Orchestrator -> TgBot : Алерт с вариантами решения
+activate TgBot
+TgBot -> CISO : "Критическая Уязвимость. Патч готов."
+CISO -> TgBot : Кнопка "Утвердить и Применить"
+
+TgBot -> Orchestrator : Сигнал одобрения получен
+deactivate TgBot
+Orchestrator -> Orchestrator : Применение скрипта к системе
+Orchestrator -> Orchestrator : Выполнение закрытия задачи
+Orchestrator --> Core : Сводка о резолюции
+deactivate Orchestrator
+
+Core -> CISO : "Уязвимость успешно устранена"
+deactivate Core
+
+@enduml
