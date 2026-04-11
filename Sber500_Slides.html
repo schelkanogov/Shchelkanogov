@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VulnDetector // ITSM Orchestrator // Sber500</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --sber-green: #21a038;
@@ -17,7 +17,7 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
-            font-family: 'Inter', sans-serif; 
+            font-family: 'Montserrat', sans-serif; 
             background: var(--bg-light); 
             color: var(--text-dark); 
             overflow: hidden; 
@@ -100,23 +100,57 @@
         .content-right > * { z-index: 1; position: relative; }
 
         @keyframes floatSchema {
-            0% { transform: translateY(0); filter: drop-shadow(0 10px 20px rgba(33, 160, 56, 0.2)); }
-            50% { transform: translateY(-15px); filter: drop-shadow(0 20px 40px rgba(33, 160, 56, 0.4)); }
-            100% { transform: translateY(0); filter: drop-shadow(0 10px 20px rgba(33, 160, 56, 0.2)); }
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+            100% { transform: translateY(0); }
         }
-        .floating-schema {
-            animation: floatSchema 6s ease-in-out infinite;
-            mix-blend-mode: multiply;
-            margin-top: 30px;
-            max-width: 90%;
-            border-radius: 12px;
-            opacity: 0.85;
-            transition: all 0.3s;
-        }
-        .floating-schema:hover {
-            opacity: 1;
-            transform: scale(1.05);
-        }
+
+        /* === CSS-ДИАГРАММЫ === */
+        .css-diagram { width: 100%; display: flex; flex-direction: column; gap: 6px; z-index: 2; position: relative; }
+        .css-diagram .d-label { font-family: 'JetBrains Mono', monospace; font-size: 0.55rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #94a3b8; text-align: center; margin: 4px 0 2px; }
+        .css-diagram .d-tier { display: flex; gap: 7px; justify-content: center; flex-wrap: wrap; }
+        .css-diagram .d-box { padding: 9px 12px; border-radius: 10px; font-size: 0.72rem; font-weight: 700; text-align: center; line-height: 1.25; transition: all 0.3s cubic-bezier(0.4,0,0.2,1); animation: dBoxIn 0.5s ease-out both; cursor: pointer; }
+        .css-diagram .d-box:hover { transform: translateY(-4px) scale(1.05); box-shadow: 0 10px 24px rgba(33,160,56,0.15); outline: 2px solid var(--sber-green); outline-offset: 2px; }
+        .css-diagram .d-box small { display: block; font-size: 0.6rem; font-weight: 400; color: #94a3b8; margin-top: 2px; transition: color 0.3s; }
+        .css-diagram .d-box:hover small { color: var(--text-dark); }
+        .d-box.src { background: #f0fdf4; border: 2px solid #86efac; color: #166534; }
+        .d-box.core { background: #fff; border: 2px solid var(--sber-green); color: var(--text-dark); box-shadow: 0 3px 10px rgba(33,160,56,0.08); }
+        .d-box.ai { background: linear-gradient(135deg, #ecfdf5, #d1fae5); border: 2.5px solid var(--sber-green); color: #065f46; box-shadow: 0 0 18px rgba(33,160,56,0.12); }
+        .d-box.out { background: #f8fafc; border: 2px solid #cbd5e1; color: #475569; }
+        .css-diagram .d-conn { display: flex; justify-content: center; align-items: center; gap: 6px; height: 22px; color: var(--sber-green); font-size: 0.8rem; font-weight: 900; animation: connPulse 2.5s ease-in-out infinite; }
+        .css-diagram .d-conn span { font-family: 'JetBrains Mono', monospace; font-size: 0.5rem; color: #94a3b8; letter-spacing: 1.5px; }
+
+        /* Lifecycle Vertical */
+        .css-lifecycle { display: flex; flex-direction: column; align-items: stretch; gap: 12px; width: 100%; max-width: 380px; z-index: 2; position: relative; }
+        .css-lifecycle .lf-step { display: flex; flex-direction: row; align-items: center; text-align: left; padding: 12px 20px; background: #fff; border: 2px solid #e2e8f0; border-radius: 16px; gap: 20px; position: relative; animation: dBoxIn 0.5s ease-out both; box-shadow: 0 4px 15px rgba(0,0,0,0.03); cursor: pointer; transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
+        .css-lifecycle .lf-step:hover { transform: translateX(10px); border-color: var(--sber-green); box-shadow: 0 10px 25px rgba(33,160,56,0.15); }
+        .css-lifecycle .lf-step:nth-child(1) { animation-delay: 0s; }
+        .css-lifecycle .lf-step:nth-child(2) { animation-delay: 0.08s; }
+        .css-lifecycle .lf-step:nth-child(3) { animation-delay: 0.16s; }
+        .css-lifecycle .lf-step:nth-child(4) { animation-delay: 0.24s; }
+        .css-lifecycle .lf-step:nth-child(5) { animation-delay: 0.32s; }
+        .css-lifecycle .lf-icon { width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; transition: transform 0.3s; margin-bottom: 0; }
+        .css-lifecycle .lf-step:hover .lf-icon { transform: scale(1.15) rotate(-5deg); }
+        .css-lifecycle .lf-content { flex: 1; }
+        .css-lifecycle .lf-title { font-size: 0.95rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-dark); margin-bottom: 2px; }
+        .css-lifecycle .lf-desc { font-size: 0.8rem; color: var(--text-gray); line-height: 1.3; }
+        .css-lifecycle .lf-step:not(:last-child)::after { content: "▼"; position: absolute; bottom: -20px; left: 34px; color: var(--sber-green); font-size: 1rem; animation: connPulse 2s infinite; font-weight: 900; }
+
+        /* Orchestration hub */
+        .css-orch { display: flex; flex-direction: column; align-items: stretch; height: 100%; width: 100%; z-index: 2; position: relative; padding: 15px 0; }
+        .css-orch .o-center { padding: 25px 30px; background: linear-gradient(135deg, #ecfdf5, #d1fae5); border: 3px solid var(--sber-green); border-radius: 20px; font-size: 1.2rem; font-weight: 900; color: var(--sber-green); text-align: center; animation: glowPulse 3s ease-in-out infinite; cursor: pointer; transition: all 0.3s cubic-bezier(0.4,0,0.2,1); box-shadow: 0 10px 25px rgba(33,160,56,0.1); }
+        .css-orch .o-center:hover { transform: scale(1.03); box-shadow: 0 0 50px rgba(33,160,56,0.4); }
+        .css-orch .o-center small { font-weight: 600; font-size: 0.75rem; color: #065f46; display: block; margin-top: 4px; }
+        .css-orch .o-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; width: 100%; }
+        .css-orch .o-node { padding: 16px 12px; background: #fff; border: 2px solid #e2e8f0; border-radius: 16px; text-align: center; font-size: 0.85rem; font-weight: 800; color: var(--text-dark); line-height: 1.35; transition: all 0.3s; animation: dBoxIn 0.5s ease-out both; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.04); display: flex; flex-direction: column; justify-content: center; }
+        .css-orch .o-node:hover { border-color: var(--sber-green); transform: translateY(-4px) scale(1.02); box-shadow: 0 10px 25px rgba(33,160,56,0.15); }
+        .css-orch .o-node small { font-size: 0.65rem; font-weight: 500; color: #94a3b8; margin-top: 5px; transition: color 0.3s; }
+        .css-orch .o-node:hover small { color: var(--text-dark); }
+        .css-orch .o-conn { flex: 1; display: flex; justify-content: center; align-items: center; font-size: 0.55rem; color: #cbd5e1; font-family: 'JetBrains Mono', monospace; letter-spacing: 2px; font-weight: 700; animation: connPulse 2s ease-in-out infinite; }
+
+        @keyframes dBoxIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes connPulse { 0%, 100% { opacity: 0.4; transform: translateY(0); } 50% { opacity: 1; transform: translateY(2px); } }
+        @keyframes glowPulse { 0%, 100% { box-shadow: 0 0 12px rgba(33,160,56,0.08); } 50% { box-shadow: 0 0 30px rgba(33,160,56,0.25); } }
 
     </style>
 </head>
@@ -154,11 +188,32 @@
                         <rect x="10" y="25" width="580" height="120" rx="60" fill="#14532d"/>
                         <rect id="btn-body" x="10" y="10" width="580" height="120" rx="60" fill="url(#btnGrad)"/>
                         <rect id="btn-highlight" x="25" y="15" width="550" height="55" rx="27" fill="url(#btnGlow)"/>
-                        <text x="300" y="75" font-family="'Inter', sans-serif" font-weight="900" font-size="34" fill="#ffffff" text-anchor="middle" letter-spacing="1">БЕЗОПАСНОСТЬ НАВСЕГДА!</text>
-                        <text x="300" y="105" font-family="'JetBrains Mono', monospace" font-weight="700" font-size="12" fill="rgba(255,255,255,0.8)" text-anchor="middle" letter-spacing="4">НАЖАТЬ ДЛЯ ЗАПУСКА АВТОПИЛОТА</text>
+                        <text x="300" y="75" font-family="'Montserrat', sans-serif" font-weight="900" font-size="26" fill="#ffffff" text-anchor="middle" letter-spacing="1">БЕЗОПАСНОСТЬ НАВСЕГДА!</text>
+                        <text x="300" y="105" font-family="'JetBrains Mono', monospace" font-weight="700" font-size="10" fill="rgba(255,255,255,0.8)" text-anchor="middle" letter-spacing="4">НАЖАТЬ ДЛЯ ЗАПУСКА АВТОПИЛОТА</text>
                     </svg>
                     
-                    <img src="schemas/architecture.svg" class="floating-schema" alt="Архитектура системы C4">
+                    <div class="css-diagram" style="animation: floatSchema 6s ease-in-out infinite; margin-top: 15px; max-width: 400px;">
+                        <div class="d-label">Источники данных</div>
+                        <div class="d-tier">
+                            <div class="d-box src" style="animation-delay:0s;">🐳 Сенсоры<br>IaaS</div>
+                            <div class="d-box src" style="animation-delay:0.05s;">📧 Почта<br>IMAP</div>
+                            <div class="d-box src" style="animation-delay:0.1s;">💬 Мессенджер<br>Telegram</div>
+                        </div>
+                        <div class="d-conn">▼ <span>ФИЛЬТРАЦИЯ</span> ▼</div>
+                        <div class="d-label">Ядро системы</div>
+                        <div class="d-tier">
+                            <div class="d-box core" style="animation-delay:0.15s;">⚙️ Backend<br>Core</div>
+                            <div class="d-box ai" style="animation-delay:0.2s;">🧠 AI-Daemon<br>GigaChat</div>
+                            <div class="d-box core" style="animation-delay:0.25s;">🔀 MCP<br>Router</div>
+                        </div>
+                        <div class="d-conn">▼ <span>ОРКЕСТРАЦИЯ</span> ▼</div>
+                        <div class="d-label">Результаты</div>
+                        <div class="d-tier">
+                            <div class="d-box out" style="animation-delay:0.3s;">📋 Kanban</div>
+                            <div class="d-box out" style="animation-delay:0.35s;">🤖 Telegram</div>
+                            <div class="d-box out" style="animation-delay:0.4s;">🔧 IaC Патчи</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -167,27 +222,31 @@
         <div class="slide">
             <div class="content-left">
                 <div><div class="fact-badge">БЮРОКРАТИЯ СЖИГАЕТ БЮДЖЕТЫ</div></div>
-                <h2>ИТ-БАРЬЕРЫ</h2>
+                <h2 style="color: var(--text-dark);"><span style="color: var(--sber-green);">ИТ</span>-БАРЬЕРЫ</h2>
                 <p>Инженеры тратят <b>30% времени</b> на отчеты. Бюрократия — самый медленный процесс. <br>Миллионы рублей сгорают в ожидании патча.</p>
                 <div class="feature-grid">
                     <div class="feature-item"><h3>Manual Fail</h3><p>Ручные логи и таблицы Excel.</p></div>
                     <div class="feature-item"><h3>Ожидание</h3><p>Бесконечные совещания CISO.</p></div>
                 </div>
             </div>
-            <div class="content-right" style="background:#1e293b; border-color:#0f172a;">
+            <div class="content-right" style="background:#f8fafc; border-color:#e2e8f0; padding:20px;">
                 <div class="grid-cyber"></div>
-                <div class="math-block" style="background:transparent; padding:0; box-shadow:none;">
-                    <div class="comment">// Кибернетическая модель задержки:</div>
-                    <div><span class="kw">function</span> calcVulnerabilityWindow() {</div>
-                    <div style="padding-left:20px;">
-                        <span class="kw">let</span> T_detect = <span class="str">4h</span>; <span class="comment">// Сканер</span><br>
-                        <span class="kw">let</span> T_report = <span class="str">48h</span>; <span class="comment">// PDF отчет</span><br>
-                        <span class="kw">let</span> T_approve = <span class="str">120h</span>; <span class="comment">// Совещания</span><br>
-                        <span class="kw">let</span> T_patch = <span class="str">16h</span>; <span class="comment">// DevOps</span><br>
-                        <span class="kw">return</span> <span class="str">"MTTR = 14 Дней"</span>;
+                <!-- Диаграмма-водопад задержек (Устранение киберфона) -->
+                <div class="css-diagram" style="max-width:350px;">
+                    <div class="d-label" style="color:#ef4444; font-size: 0.7rem;">ТИПИЧНЫЙ СОГЛАСОВАТЕЛЬНЫЙ ПРОЦЕСС</div>
+                    <div class="d-conn">▼</div>
+                    <div class="d-box out" style="border-right-width:6px; border-right-color:#cbd5e1; display:flex; justify-content:space-between; align-items:center; text-align:left;"><span>🔍 Сканирование ИБ</span> <small style="margin:0;">4 часа</small></div>
+                    <div class="d-conn">▼</div>
+                    <div class="d-box out" style="border-right-width:6px; border-right-color:#fca5a5; background:#fef2f2; display:flex; justify-content:space-between; align-items:center; text-align:left;"><span>📄 Подготовка отчета</span> <small style="margin:0; color:#ef4444; font-weight:900;">2-4 Дня</small></div>
+                    <div class="d-conn">▼</div>
+                    <div class="d-box out" style="border-right-width:6px; border-right-color:#f87171; background:#fef2f2; border-color:#fca5a5; display:flex; justify-content:space-between; align-items:center; text-align:left;"><span>👔 Совещание CISO</span> <small style="margin:0; color:#ef4444; font-weight:900;">1 Неделя</small></div>
+                    <div class="d-conn">▼</div>
+                    <div class="d-box out" style="border-right-width:6px; border-right-color:#cbd5e1; display:flex; justify-content:space-between; align-items:center; text-align:left;"><span>🔧 Задача в Jira</span> <small style="margin:0;">Бэклог</small></div>
+                    
+                    <div style="margin-top:15px; padding:15px; background:#fff1f2; border:2px dashed #f87171; border-radius:12px; text-align:center; animation: glowPulse 2s infinite;">
+                        <span style="font-weight:900; color:#ef4444; font-size:1.5rem; font-family:'JetBrains Mono', monospace;">MTTR = 14 ДНЕЙ</span>
+                        <br><small style="color:#b91c1c; font-weight:700;">КРИТИЧЕСКОЕ ОКНО УЯЗВИМОСТИ</small>
                     </div>
-                    <div>}</div>
-                    <div class="comment" style="margin-top:20px; color:#ef4444;">// ALERT: Риск эксплуатации > 99%</div>
                 </div>
             </div>
         </div>
@@ -210,7 +269,43 @@
             </div>
             <div class="content-right" style="padding: 20px;">
                 <div class="grid-cyber"></div>
-                <img src="schemas/resolution_flow.svg" alt="Жизненный Цикл Инцидента" class="diagram-img">
+                <div class="css-lifecycle">
+                    <div class="lf-step">
+                        <div class="lf-icon" style="background:#fef2f2; border:2px solid #fca5a5;">🔍</div>
+                        <div class="lf-content">
+                            <div class="lf-title">Обнаружение</div>
+                            <div class="lf-desc">Docker-сканер, ИБ-сенсоры</div>
+                        </div>
+                    </div>
+                    <div class="lf-step">
+                        <div class="lf-icon" style="background:#f0fdf4; border:2px solid #86efac;">🧠</div>
+                        <div class="lf-content">
+                            <div class="lf-title">AI-Анализ</div>
+                            <div class="lf-desc">RAG + GigaChat FPF-модель</div>
+                        </div>
+                    </div>
+                    <div class="lf-step">
+                        <div class="lf-icon" style="background:#eff6ff; border:2px solid #93c5fd;">📋</div>
+                        <div class="lf-content">
+                            <div class="lf-title">Маршрутизация</div>
+                            <div class="lf-desc">KanbanBridge приоритизация</div>
+                        </div>
+                    </div>
+                    <div class="lf-step">
+                        <div class="lf-icon" style="background:#fefce8; border:2px solid #fcd34d;">🔧</div>
+                        <div class="lf-content">
+                            <div class="lf-title">Устранение</div>
+                            <div class="lf-desc">Генерация IaC-патча (Центр Утверждения)</div>
+                        </div>
+                    </div>
+                    <div class="lf-step" style="border-color: var(--sber-green); background:#f0fdf4;">
+                        <div class="lf-icon" style="background:#fff; border:2px solid var(--sber-green);">✅</div>
+                        <div class="lf-content">
+                            <div class="lf-title" style="color:var(--sber-green);">Закрытие</div>
+                            <div class="lf-desc">СУБД-индексация и SLA-отчёт</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -224,29 +319,40 @@
                     <div class="feature-item"><h3>Anti-Tamper</h3><p>Защита от саботажа и дублей тикетов.</p></div>
                 </div>
             </div>
-            <div class="content-right" style="background:#0f172a;">
-                <div class="grid-cyber"></div>
-                <div class="math-block" style="box-shadow:none; background:transparent;">
-                    <div class="comment"># Формула расчета ИТ-Иммунитета (BFI - Business Fear Index)</div>
-                    <br>
-                    <div style="font-size: 2.2rem; color: #fff; text-align: center; margin-bottom: 20px; font-weight: 700;">
-                        <math>
-                            <mi>BFI</mi>
-                            <mo>=</mo>
-                            <mn>1</mn>
-                            <mo>-</mo>
-                            <mfrac>
-                                <mrow><munderover><mo>&#x2211;</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><mo>(</mo><msub><mi>W</mi><mi>i</mi></msub><mo>&#xD7;</mo><msub><mi>V</mi><mi>i</mi></msub><mo>&#xD7;</mo><msup><mi>e</mi><mrow><mi>&#x3B1;</mi><msub><mi>T</mi><mi>i</mi></msub></mrow></msup><mo>)</mo></mrow>
-                                <msub><mi>R</mi><mi>max</mi></msub>
-                            </mfrac>
-                        </math>
+            <div class="content-right" style="background:#ffffff; border-radius: 24px; padding: 50px; border: 1px solid #e2e8f0; box-shadow: 0 20px 40px rgba(0,0,0,0.03);">
+                <div style="z-index:2; position:relative; width: 100%;">
+                    
+                    <div class="huge-label" style="color:var(--sber-green); margin-bottom: 20px; font-size: 0.85rem; letter-spacing: 2px;">СУТЬ ИТ-ИММУНИТЕТА (ПРОСТЫМИ СЛОВАМИ)</div>
+                    
+                    <div style="display:flex; flex-direction:column; gap: 15px; margin-top: 20px;">
+                        <!-- Threat -->
+                        <div style="display:flex; align-items:center; background:#fef2f2; border: 2px solid #fecaca; border-radius: 16px; padding: 20px; transition: transform 0.3s;" onmouseover="this.style.transform='translateX(10px)';">
+                            <div style="font-size:3rem; margin-right:20px; animation: connPulse 2s infinite;">🐛</div>
+                            <div>
+                                <h3 style="color:#ef4444; margin:0 0 5px 0; font-size:1.2rem;">Шаг 1: Обнаружение</h3>
+                                <p style="margin:0; color:#991b1b; font-size:0.9rem;">Сенсор ловит критическую уязвимость (Вектор взлома).</p>
+                            </div>
+                        </div>
+                        
+                        <!-- AI processing -->
+                        <div style="display:flex; align-items:center; background:#f8fafc; border: 2px solid #cbd5e1; border-radius: 16px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); position:relative; left: 20px; transition: transform 0.3s;" onmouseover="this.style.transform='translateX(10px)';">
+                            <div style="font-size:3rem; margin-right:20px;">🧠</div>
+                            <div>
+                                <h3 style="color:var(--text-dark); margin:0 0 5px 0; font-size:1.2rem;">Шаг 2: AI-Оркестрация</h3>
+                                <p style="margin:0; color:#64748b; font-size:0.9rem;">GigaChat мгновенно анализирует систему и пишет код исправления.</p>
+                            </div>
+                        </div>
+
+                        <!-- Result -->
+                        <div style="display:flex; align-items:center; background:#f0fdf4; border: 2px solid var(--sber-green); border-radius: 16px; padding: 20px; box-shadow: 0 10px 30px rgba(33,160,56,0.15); position:relative; left: 40px; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.02)';">
+                            <div style="font-size:3rem; margin-right:20px; text-shadow: 0 0 20px rgba(33,160,56,0.5);">🛡️</div>
+                            <div>
+                                <h3 style="color:var(--sber-green); margin:0 0 5px 0; font-size:1.2rem;">Шаг 3: Авто-патчинг</h3>
+                                <p style="margin:0; color:#065f46; font-size:0.9rem;">Уязвимость физически устранена через IaC (Инфраструктура как код).</p>
+                            </div>
+                        </div>
                     </div>
-                    <ul style="list-style:none; font-size:0.95rem; color:#94a3b8; padding-left:10px;">
-                        <li style="margin-bottom:8px;"><span style="color:#a3e635;">Wi</span> — вес бизнес-критичности узла</li>
-                        <li style="margin-bottom:8px;"><span style="color:#a3e635;">Vi</span> — вектор взлома (CVSS > 7.0)</li>
-                        <li style="margin-bottom:8px;"><span style="color:#a3e635;">T</span> — время жизни уязвимости</li>
-                        <li><b>ИИ минимизирует T, максимизируя BFI (Иммунитет)</b></li>
-                    </ul>
+
                 </div>
             </div>
         </div>
@@ -264,7 +370,25 @@
             </div>
             <div class="content-right" style="padding: 20px;">
                 <div class="grid-cyber"></div>
-                <img src="schemas/ai_orchestration.svg" alt="Схема Интеллектуальной Оркестрации" class="diagram-img">
+                <div class="css-orch">
+                    <div class="o-grid" style="grid-template-columns: repeat(2, 1fr);">
+                        <div class="o-node" style="animation-delay:0s;">🛡️ ФСТЭК БДУ<small>База уязвимостей</small></div>
+                        <div class="o-node" style="animation-delay:0.08s;">📡 Сетевые сенсоры<small>Docker / IaaS</small></div>
+                    </div>
+                    <div class="o-conn">▼ ВХОДНЫЕ ДАННЫЕ ▼</div>
+                    <div class="o-center">🧠 GigaChat AI-Daemon<small>RAG + Chain of Thought + FPF</small></div>
+                    <div class="o-conn">▼ ОРКЕСТРАЦИЯ ▼</div>
+                    <div class="o-grid">
+                        <div class="o-node" style="animation-delay:0.16s;">🔀 MCP Server<small>Протокол</small></div>
+                        <div class="o-node" style="animation-delay:0.24s;">📋 KanbanBridge<small>Оркестратор</small></div>
+                        <div class="o-node" style="animation-delay:0.32s;">✅ Центр Утверждения<small>Zero-Trust</small></div>
+                    </div>
+                    <div class="o-conn">▼ РЕЗУЛЬТАТЫ ▼</div>
+                    <div class="o-grid" style="grid-template-columns: repeat(2, 1fr);">
+                        <div class="o-node" style="animation-delay:0.4s; border-color:var(--sber-green);">🤖 TG / Max / CRM<small style="color:var(--sber-green);">Уведомления / Тикеты</small></div>
+                        <div class="o-node" style="animation-delay:0.48s; border-color:var(--sber-green);">🔧 IaC Патчи<small style="color:var(--sber-green);">Ansible / Bash</small></div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -291,7 +415,7 @@
                 <h2>ГИБРИДНАЯ МОДЕЛЬ</h2>
                 <p>Продажа Enterprise-ядра + рекуррентные пакеты токенов GigaChat. Каналы роста: маркетплейс СберКлауд и MSSP.</p>
                 <div class="feature-grid">
-                    <div class="feature-item" style="border-top-color: #0f172a;"><h3>Ядро Окркестратора</h3><p>Лицензия для On-Premise или Cloud.</p></div>
+                    <div class="feature-item" style="border-top-color: #0f172a;"><h3>Ядро Оркестратора</h3><p>Лицензия для On-Premise или Cloud.</p></div>
                     <div class="feature-item"><h3>Токены GigaChat</h3><p>Сторонний анализ и RAG-база знаний.</p></div>
                 </div>
             </div>
@@ -314,19 +438,39 @@
                 <h2>ЮНИТ-ЭКОНОМИКА</h2>
                 <p>Рентабельность <b>85%</b>. Окупаемость (CAC payback) менее 3 месяцев за счет автоматизированного B2B-воронки демо-стендов.</p>
             </div>
-            <div class="content-right" style="background:#1e293b; color:#fff; border:none;">
-                <div class="math-block" style="background:transparent; border:none; box-shadow:none; padding:10px;">
-                    <div style="margin-bottom:30px;">
-                        <div class="huge-label" style="color:#64748b;">CAC (СТОИМОСТЬ ПРИВЛЕЧЕНИЯ)</div>
-                        <div class="huge-number" style="color:#f8fafc; font-size:3.5rem;">125 000 ₽</div>
+            <div class="content-right" style="background:#ffffff; border: 1px solid #e2e8f0; padding: 40px; border-radius: 24px; position:relative; overflow:hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.03);">
+                
+                <h3 style="color:var(--sber-green); font-size: 1.1rem; margin-bottom: 20px; letter-spacing: 2px; position:relative; z-index:2;">ПИЛОТНЫЙ ПРОЕКТ: ТОП-10 БАНК</h3>
+                
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 25px; margin-bottom: 20px; position: relative; z-index: 2;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px dashed rgba(0,0,0,0.1); padding-bottom: 20px; margin-bottom: 20px;">
+                        <div>
+                            <div style="color:#64748b; font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; margin-bottom: 8px;">ДО (РУЧНАЯ РАБОТА С ИБ)</div>
+                            <div style="color:#ef4444; font-size: 1.6rem; font-weight: 900; font-family:'JetBrains Mono', monospace;">~12 МЛН ₽ / ГОД</div>
+                            <div style="color:#94a3b8; font-size: 0.8rem; margin-top:5px;">(ФОТ 3-х AppSec инженеров + простои)</div>
+                        </div>
                     </div>
-                    <div style="margin-bottom:30px;">
-                        <div class="huge-label" style="color:#64748b;">LTV (ДОХОД ЗА 3 ГОДА)</div>
-                        <div class="huge-number" style="color:#22c55e; font-size:4.5rem;">4 500 000 ₽</div>
+                    
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <div style="color:var(--sber-green); font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; margin-bottom: 8px;">ПОСЛЕ (ДЕТЕКТОР УЯЗВИМОСТЕЙ)</div>
+                            <div style="color:var(--text-dark); font-size: 2.2rem; font-weight: 900; font-family:'JetBrains Mono', monospace;">1.5 МЛН ₽ / ГОД</div>
+                            <div style="color:#059669; font-size: 0.85rem; font-weight: 700; margin-top:5px;">Экономия бюджета: 87%</div>
+                        </div>
+                        <div style="font-size: 2.8rem; animation: glowPulse 3s infinite;">🛡️</div>
                     </div>
-                    <div style="padding-top:20px; border-top:2px dashed #475569;">
-                        <div class="huge-label" style="color:#94a3b8;">LTV / CAC RATIO</div>
-                        <div class="huge-number" style="color:#38bdf8; font-size:5rem;">> 30×</div>
+                </div>
+
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px; z-index: 2; position: relative;">
+                    <div style="background: #e0f2fe; border: 1px solid #7dd3fc; border-radius: 16px; padding: 20px; transition: all 0.3s;" onmouseover="this.style.transform='translateY(-3px)';" onmouseout="this.style.transform='translateY(0)';">
+                        <div style="color:#0284c7; font-size: 2.2rem; font-weight: 900; font-family:'JetBrains Mono', monospace; margin-bottom: 8px;">125k ₽</div>
+                        <div style="color:#0369a1; font-size: 0.85rem; font-weight: 800; letter-spacing: 0.5px;">РАСЧЕТНЫЙ CAC</div>
+                        <div style="color:#475569; font-size: 0.75rem; margin-top: 10px; line-height: 1.4;">Низкая стоимость за счет B2B-воронки и авто-демо стендов (без участия pre-sales).</div>
+                    </div>
+                    <div style="background: #dcfce7; border: 1px solid #86efac; border-radius: 16px; padding: 20px; transition: all 0.3s;" onmouseover="this.style.transform='translateY(-3px)';" onmouseout="this.style.transform='translateY(0)';">
+                        <div style="color:#16a34a; font-size: 2.2rem; font-weight: 900; font-family:'JetBrains Mono', monospace; margin-bottom: 8px;">4.5M ₽</div>
+                        <div style="color:#15803d; font-size: 0.85rem; font-weight: 800; letter-spacing: 0.5px;">LTV ЗА 3 ГОДА</div>
+                        <div style="color:#475569; font-size: 0.75rem; margin-top: 10px; line-height: 1.4;">Гарантированное удержание за счет глубокой интеграции IaC патчей.</div>
                     </div>
                 </div>
             </div>
@@ -349,7 +493,34 @@
                 </div>
             </div>
             <div class="content-right" style="padding: 20px;">
-                <img src="schemas/architecture.svg" alt="Архитектура системы C4" class="diagram-img">
+                <div class="css-diagram" style="max-width: 100%;">
+                    <div class="d-label">Внешний контур — Источники данных</div>
+                    <div class="d-tier">
+                        <div class="d-box src" style="animation-delay:0s;">🐳 Сенсоры IaaS<small>Docker</small></div>
+                        <div class="d-box src" style="animation-delay:0.05s;">📧 Электронная почта<small>IMAP</small></div>
+                        <div class="d-box src" style="animation-delay:0.1s;">💬 Мессенджер<small>Telegram/MAX</small></div>
+                    </div>
+                    <div class="d-conn">▼ <span>СИНХРОНИЗАЦИЯ</span> ▼</div>
+                    <div class="d-label">Защищённый контур — Ядро</div>
+                    <div class="d-tier">
+                        <div class="d-box core" style="animation-delay:0.15s;">⚙️ Backend Core<small>NestJS, Clean Arch</small></div>
+                        <div class="d-box ai" style="animation-delay:0.2s;">🧠 AI-Daemon<small>GigaChat + RAG</small></div>
+                        <div class="d-box core" style="animation-delay:0.25s;">🔀 MCP Router<small>Model Context Protocol</small></div>
+                    </div>
+                    <div class="d-conn">▼ <span>ОРКЕСТРАЦИЯ</span> ▼</div>
+                    <div class="d-label">Исполнение и контроль</div>
+                    <div class="d-tier">
+                        <div class="d-box out" style="animation-delay:0.3s;">📋 KanbanBridge<small>Трекинг</small></div>
+                        <div class="d-box out" style="animation-delay:0.35s;">✅ Центр Утверждения<small>Zero-Trust</small></div>
+                    </div>
+                    <div class="d-conn">▼ <span>РЕЗУЛЬТАТЫ</span> ▼</div>
+                    <div class="d-tier">
+                        <div class="d-box out" style="animation-delay:0.4s;">📋 Kanban</div>
+                        <div class="d-box out" style="animation-delay:0.43s;">🤖 TG / Max<small>Уведомления</small></div>
+                        <div class="d-box out" style="animation-delay:0.46s;">🔧 IaC Патчи</div>
+                        <div class="d-box out" style="animation-delay:0.49s;">📊 OSINT</div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -357,22 +528,63 @@
         <div class="slide">
             <div class="content-left">
                 <div><div class="success-badge">СИСТЕМА ГОТОВА К МАСШТАБИРОВАНИЮ</div></div>
-                <h2>РЕЗУЛЬТАТЫ</h2>
+                <h2 style="color: var(--sber-green); text-transform: uppercase;">КЕЙС ВНЕДРЕНИЯ И РОСТ</h2>
                 <p>Успешные корпоративные пилоты в <b>Aqvalife</b> и <b>Orskemi</b> подтвердили BFI-гипотезу и 100% автономность закрытия тикетов.</p>
+                <div style="margin-top: 30px;">
+                    <a href="Traction_Dashboard.html" target="_blank" style="display: inline-flex; align-items: center; justify-content: center; gap: 10px; background: var(--text-dark); color: #fff; padding: 18px 35px; border-radius: 16px; font-weight: 800; text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; box-shadow: 0 10px 30px rgba(0,0,0,0.15); transition: all 0.3s;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 15px 40px rgba(0,0,0,0.25)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 10px 30px rgba(0,0,0,0.15)';">
+                        <span style="font-size: 1.5rem;">📈</span> ОТКРЫТЬ TRACTION DASHBOARD
+                    </a>
+                </div>
             </div>
-            <div class="content-right" style="background:#0f172a; padding: 40px;">
-                <div class="grid-cyber"></div>
-                <div style="text-align: center; margin-bottom:30px;">
-                    <div class="huge-number" style="font-size: 6rem; color:#fff;">2</div>
-                    <div class="huge-label" style="color:#22c55e;">УСПЕШНЫХ ПИЛОТА</div>
+            <div class="content-right" style="background:#ffffff; border: 1px solid #e2e8f0; padding: 40px; border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.03);">
+                <!-- Минцифра Пилот и Патенты -->
+                <a href="https://fips.ru/registers-doc-view/fips_servlet?DB=EVM&DocNumber=2025617162&TypeFile=html" target="_blank" style="text-decoration:none; display: block;">
+                    <div style="background: rgba(34, 197, 94, 0.05); border: 2px solid rgba(34, 197, 94, 0.2); border-radius: 16px; padding: 15px 25px; margin-bottom: 10px; display: flex; align-items:center; justify-content:space-between; transition: all 0.3s;" onmouseover="this.style.borderColor='rgba(34, 197, 94, 0.5)'; this.style.transform='scale(1.02)';" onmouseout="this.style.borderColor='rgba(34, 197, 94, 0.2)'; this.style.transform='scale(1)';">
+                        <div>
+                            <div style="color:var(--sber-green); font-size: 0.8rem; font-weight: 800; letter-spacing: 1px;">РОСПАТЕНТ ПО 2025г</div>
+                            <div style="color:var(--text-dark); font-size: 1.3rem; font-weight: 900; margin-top:2px;">СВИДЕТЕЛЬСТВО НА ЯДРО 🔗</div>
+                        </div>
+                        <div style="background:#22c55e; color:#fff; padding:6px 15px; border-radius:20px; font-weight:700; font-size:0.9rem;">✅ №2025617162</div>
+                    </div>
+                </a>
+                
+                <a href="https://fips.ru/registers-doc-view/fips_servlet?DB=DB&DocNumber=2025622617&TypeFile=html" target="_blank" style="text-decoration:none; display: block;">
+                    <div style="background: rgba(34, 197, 94, 0.05); border: 2px solid rgba(34, 197, 94, 0.2); border-radius: 16px; padding: 15px 25px; margin-bottom: 20px; display: flex; align-items:center; justify-content:space-between; transition: all 0.3s;" onmouseover="this.style.borderColor='rgba(34, 197, 94, 0.5)'; this.style.transform='scale(1.02)';" onmouseout="this.style.borderColor='rgba(34, 197, 94, 0.2)'; this.style.transform='scale(1)';">
+                        <div>
+                            <div style="color:var(--sber-green); font-size: 0.8rem; font-weight: 800; letter-spacing: 1px;">РОСПАТЕНТ БД 2025г</div>
+                            <div style="color:var(--text-dark); font-size: 1.3rem; font-weight: 900; margin-top:2px;">СВИДЕТЕЛЬСТВО НА БАЗУ 🔗</div>
+                        </div>
+                        <div style="background:#22c55e; color:#fff; padding:6px 15px; border-radius:20px; font-weight:700; font-size:0.9rem;">✅ №2025622617</div>
+                    </div>
+                </a>
+
+                <!-- Habr & Product Radar -->
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom:20px;">
+                    <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 16px; padding: 20px; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-3px)';" onmouseout="this.style.transform='translateY(0)';">
+                        <a href="https://habr.com/ru/companies/productradar/articles/925568/" target="_blank" style="text-decoration:none; display:block;">
+                            <div style="color:#64748b; font-size: 0.75rem; font-weight: 800; letter-spacing: 1px;">HABR (ИЮЛЬ 2025)</div>
+                            <div style="color:#0ea5e9; font-size: 2.2rem; font-weight: 900; font-family:'JetBrains Mono', monospace; margin: 5px 0;">1 МЕСТО</div>
+                            <div style="color:var(--text-dark); font-size: 0.9rem;">🔗 578 голосов сообщества</div>
+                        </a>
+                    </div>
+                    <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 16px; padding: 20px; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-3px)';" onmouseout="this.style.transform='translateY(0)';">
+                        <a href="https://productradar.ru/product/detektor-uyazvimostej/" target="_blank" style="text-decoration:none; display:block;">
+                            <div style="color:#64748b; font-size: 0.75rem; font-weight: 800; letter-spacing: 1px;">PRODUCT RADAR</div>
+                            <div style="color:#f43f5e; font-size: 2.2rem; font-weight: 900; font-family:'JetBrains Mono', monospace; margin: 5px 0;">№1</div>
+                            <div style="color:var(--text-dark); font-size: 0.9rem;">🔗 Продукт Июля 2025 г.</div>
+                        </a>
+                    </div>
                 </div>
-                <div style="text-align: center; margin-bottom:30px;">
-                    <div class="huge-number" style="font-size: 5rem; color:#38bdf8;">250+</div>
-                    <div class="huge-label" style="color:#0ea5e9;">ЗАЯВОК (СПРОС)</div>
-                </div>
-                <div style="text-align: center;">
-                    <div class="huge-number" style="font-size: 4rem; color:#f472b6;">TOP-50</div>
-                    <div class="huge-label" style="color:#db2777;">ИННОВАЦИЙ 2025 (РАДАР)</div>
+                
+                <!-- TOP-50 & Brands -->
+                <div style="text-align: center; position: relative; padding-top:20px; border-top: 2px dashed #e2e8f0;">
+                    <div class="huge-number" style="font-size: 3.5rem; color:var(--text-dark); letter-spacing:-2px;">TOP-50</div>
+                    <div class="huge-label" style="font-family:'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 800; color:var(--sber-green); letter-spacing: 2px; text-transform:uppercase; margin-bottom: 20px; margin-top: -5px;">ЛУЧШИХ СТАРТАПОВ 2025-26</div>
+                    <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+                        <a href="https://sberbank-500.ru/" target="_blank" style="text-decoration: none;"><span style="background: #f1f5f9; border: 1px solid #94a3b8; color: #475569; padding: 8px 16px; border-radius: 8px; font-size: 0.8rem; font-weight: 800; letter-spacing: 1px; transition: all 0.2s; display: inline-block;" onmouseover="this.style.background='#e2e8f0';" onmouseout="this.style.background='#f1f5f9';">🔗 SBER500</span></a>
+                        <a href="https://www.hse.ru/" target="_blank" style="text-decoration: none;"><span style="background: #f1f5f9; border: 1px solid #94a3b8; color: #475569; padding: 8px 16px; border-radius: 8px; font-size: 0.8rem; font-weight: 800; letter-spacing: 1px; transition: all 0.2s; display: inline-block;" onmouseover="this.style.background='#e2e8f0';" onmouseout="this.style.background='#f1f5f9';">🔗 НИУ ВШЭ</span></a>
+                        <a href="https://productradar.ru/product/detektor-uyazvimostej/" target="_blank" style="text-decoration: none;"><span style="background: #f1f5f9; border: 1px solid #94a3b8; color: #475569; padding: 8px 16px; border-radius: 8px; font-size: 0.8rem; font-weight: 800; letter-spacing: 1px; transition: all 0.2s; display: inline-block;" onmouseover="this.style.background='#e2e8f0';" onmouseout="this.style.background='#f1f5f9';">🔗 PRODUCTRADAR</span></a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -381,13 +593,13 @@
         <div class="slide">
             <div class="content-left">
                 <h2>КОМАНДА ПРОЕКТА</h2>
-                <p>Глубокая профильная экспертиза в высоконагруженной инфраструктуре (HFT), Kubernetes, и автономных ИИ-агентах.</p>
+                <p>Глубокая профильная экспертиза в телекоммуникациях и высоконагруженной инфраструктуре. Развитые навыки системного мышления, практический опыт работы с Kubernetes и автономными ИИ-агентами.</p>
             </div>
             <div class="content-right" style="align-items:flex-start; background:#fff;">
                 <div style="margin-bottom: 40px; padding-bottom: 30px; border-bottom: 1px solid #e2e8f0; width: 100%;">
                     <div class="huge-label" style="color:var(--text-dark);">СИСТЕМНЫЙ АРХИТЕКТОР / CEO</div>
                     <div style="font-size:2.5rem; font-weight:900; color:var(--text-dark); margin:5px 0 15px 0; letter-spacing:-1px;">ПАВЕЛ ЩЕЛКАНОГОВ</div>
-                    <p style="font-size:1rem; margin:0;">Эксперт HFTCloud. Разработка ядра оркестратора (MCP) и математической модели безопасности BFI.</p>
+                    <p style="font-size:1rem; margin:0;">Разработка ядра оркестратора (MCP) и математической модели безопасности BFI.</p>
                 </div>
                 <div style="width: 100%;">
                     <div class="huge-label" style="color:var(--sber-green);">TECH LEAD KUBERNETES / CTO</div>
@@ -403,7 +615,7 @@
                 <h1 style="font-size: 6rem; margin-bottom: 2rem;">ЗАПУСК <br>АВТОПИЛОТА</h1>
                 <p style="font-size: 2rem; max-width: 1000px; margin-bottom: 3rem;">Превратите бюрократию в оцифрованный процесс. Одним кликом.</p>
                 
-                <svg viewBox="0 0 600 160" width="500" height="130" xmlns="http://www.w3.org/2000/svg" class="green-btn-svg" onclick="window.open('https://schelkanogov.github.io/Shchelkanogov/ApproveCenter_Demo.html')">
+                <svg viewBox="0 0 600 160" width="500" height="130" xmlns="http://www.w3.org/2000/svg" class="green-btn-svg" onclick="window.open('ApproveCenter_Demo.html')">
                     <defs>
                         <linearGradient id="btnGradCta" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#34d399"/><stop offset="100%" stop-color="#16a34a"/></linearGradient>
                     </defs>
@@ -414,7 +626,7 @@
                     <text x="300" y="105" font-family="'JetBrains Mono', monospace" font-weight="700" font-size="12" fill="rgba(255,255,255,0.8)" text-anchor="middle" letter-spacing="3">ОКРУЖЕНИЕ: ПЕСОЧНИЦА</text>
                 </svg>
                 
-                <p style="margin-top: 50px; font-family: 'JetBrains Mono', monospace; font-size: 1.2rem; letter-spacing: 2px; color: var(--sber-green); font-weight: 800; cursor: pointer;">ПРИСОЕДИНИТЬСЯ К ГРУППЕ МАКСА</p>
+                <a href="https://max.ru/join/3z8g9YR9JSZn3qhEnz9UfqVtPPsKKzbH9Gf2VlWXfXs" target="_blank" style="margin-top: 50px; font-family: 'JetBrains Mono', monospace; font-size: 1.2rem; letter-spacing: 1px; color: var(--sber-green); font-weight: 800; text-decoration: none; padding: 15px 30px; border: 2px solid var(--sber-green); border-radius: 12px; transition: all 0.3s; display: inline-block; background: rgba(33, 160, 56, 0.05);" onmouseover="this.style.background='var(--sber-green)'; this.style.color='#fff'; this.style.transform='scale(1.05)';" onmouseout="this.style.background='rgba(33, 160, 56, 0.05)'; this.style.color='var(--sber-green)'; this.style.transform='scale(1)';">🔗 ПРИСОЕДИНИТЬСЯ К ГРУППЕ В СОЦСЕТИ МАКС</a>
             </div>
             <div class="grid-cyber" style="background-size: 60px 60px;"></div>
         </div>

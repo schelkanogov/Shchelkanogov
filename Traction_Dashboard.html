@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Трэкшен и Результаты | ПАК Детектор Уязвимостей</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=JetBrains+Mono:wght@400;700;800&display=swap');
+        
+        :root {
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --text-dark: #0f172a;
+            --text-gray: #64748b;
+            --accent-green: #21a038;
+            --accent-blue: #0ea5e9;
+            --accent-pink: #f43f5e;
+            --border: #e2e8f0;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text-dark);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        header {
+            background: var(--surface);
+            padding: 20px 40px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 900;
+            font-size: 1.5rem;
+            letter-spacing: -1px;
+        }
+
+        .logo span { color: var(--accent-green); }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 40px;
+        }
+
+        /* Metrics Sidebar */
+        .metrics-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .metric-card {
+            background: var(--surface);
+            padding: 25px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+            transition: transform 0.2s;
+        }
+
+        .metric-card:hover { transform: translateY(-3px); }
+        .metric-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 3rem;
+            font-weight: 900;
+            margin: 10px 0;
+            letter-spacing: -2px;
+        }
+        .metric-label {
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: var(--text-gray);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Chart */
+        .chart-container {
+            background: var(--surface);
+            padding: 25px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
+            height: 250px;
+            position: relative;
+        }
+
+        /* Timeline Area */
+        .timeline-area {
+            background: var(--surface);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.03);
+        }
+
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .filter-btn {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            color: var(--text-gray);
+            transition: all 0.2s;
+        }
+        .filter-btn.active, .filter-btn:hover {
+            background: var(--text-dark);
+            color: #fff;
+            border-color: var(--text-dark);
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 10px;
+            bottom: 20px;
+            width: 2px;
+            background: var(--border);
+        }
+
+        .t-event {
+            position: relative;
+            margin-bottom: 40px;
+            animation: fadeIn 0.5s ease forwards;
+        }
+        .t-event::before {
+            content: '';
+            position: absolute;
+            left: -32px;
+            top: 4px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #fff;
+            border: 3px solid var(--accent-green);
+            z-index: 2;
+            transition: transform 0.2s;
+        }
+        .t-event:hover::before {
+            transform: scale(1.3);
+            background: var(--accent-green);
+        }
+
+        .t-date {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-gray);
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        .t-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin: 0 0 10px 0;
+            color: var(--text-dark);
+        }
+        .t-desc {
+            font-size: 0.95rem;
+            color: var(--text-gray);
+            line-height: 1.6;
+            margin: 0;
+        }
+        .t-tags {
+            margin-top: 15px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .t-tag {
+            background: #f1f5f9;
+            color: #475569;
+            font-size: 0.75rem;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            border: 1px solid #cbd5e1;
+            transition: all 0.2s;
+        }
+        .t-tag:hover {
+            background: #e2e8f0;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Custom Chart Bar */
+        .bar-wrap {
+            display: flex;
+            align-items: flex-end;
+            gap: 15px;
+            height: 150px;
+            margin-top: 30px;
+            justify-content: space-between;
+        }
+        .bar-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+            position: relative;
+        }
+        .bar {
+            width: 100%;
+            background: var(--accent-green);
+            border-radius: 6px 6px 0 0;
+            transition: height 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+        }
+        .bar:hover {
+            opacity: 0.8;
+            cursor: pointer;
+        }
+        .bar-lbl {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-gray);
+            font-weight: 700;
+        }
+        .bar-val {
+            position: absolute;
+            top: -25px;
+            font-size: 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">VULN<span>DETECTOR</span> // PUBLIC TRACTION DASHBOARD</div>
+        <div>
+            <a href="Sber500_Slides.html" style="font-weight: 600; color: var(--accent-green); text-decoration: none; border: 1px solid var(--accent-green); padding: 8px 16px; border-radius: 20px;">Вернуться к презентации</a>
+        </div>
+    </header>
+
+    <div class="dashboard-container">
+        
+        <!-- SIDEBAR -->
+        <div class="metrics-panel">
+            <div class="metric-card" style="background:#f0f9ff; border-color:#bae6fd;">
+                <div class="metric-label" style="color:#0369a1;">Голоса сообщества</div>
+                <div class="metric-value" style="color:var(--accent-blue);">578+</div>
+                <div style="font-size:0.8rem; color:#0c4a6e;">В рамках Product Radar и Habr (Июль 2025)</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-label">Спрос (Заявки)</div>
+                <div class="metric-value" style="color:var(--text-dark);">250+</div>
+                <div style="font-size:0.8rem; color:var(--text-gray);">Входящие B2B лиды</div>
+            </div>
+
+            <div class="metric-card" style="background:#f0fdf4; border-color:#bbf7d0;">
+                <div class="metric-label" style="color:var(--accent-green);">Государственные тесты</div>
+                <div class="metric-value" style="color:var(--accent-green);">Успешно</div>
+                <div style="font-size:0.8rem; color:#166534;">Пилот Минцифры РФ (2024-2025)</div>
+            </div>
+
+            <div class="chart-container">
+                <div class="metric-label">Рост популярности (Упоминания / Просмотры)</div>
+                <div class="bar-wrap" id="chart-wrap">
+                    <div class="bar-col"><div class="bar-val" style="opacity:0;">10%</div><div class="bar" style="height: 0%;" data-h="10%" data-color="#cbd5e1"></div><div class="bar-lbl">МАР</div></div>
+                    <div class="bar-col"><div class="bar-val" style="opacity:0;">25%</div><div class="bar" style="height: 0%;" data-h="25%" data-color="#94a3b8"></div><div class="bar-lbl">АПР</div></div>
+                    <div class="bar-col"><div class="bar-val" style="opacity:0;">45%</div><div class="bar" style="height: 0%;" data-h="45%" data-color="#64748b"></div><div class="bar-lbl">МАЙ</div></div>
+                    <div class="bar-col"><div class="bar-val" style="opacity:0;">75%</div><div class="bar" style="height: 0%;" data-h="75%" data-color="#38bdf8"></div><div class="bar-lbl">ИЮН</div></div>
+                    <div class="bar-col"><div class="bar-val" style="opacity:0;">100%</div><div class="bar" style="height: 0%;" data-h="100%" data-color="var(--accent-green)"></div><div class="bar-lbl" style="color:var(--accent-green);">ИЮЛ</div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAIN TIMELINE -->
+        <div class="timeline-area">
+            <h2 style="margin-top:0; font-size: 2rem; letter-spacing: -1px;">Временная шкала развития (2024-2026)</h2>
+            <p style="color: var(--text-gray); margin-bottom: 30px;">Фиксируем ключевые вехи, государственные тестирования и публикации в профильных СМИ.</p>
+            
+            <div class="filters" id="filters">
+                <button class="filter-btn active" data-filter="all">Все события</button>
+                <button class="filter-btn" data-filter="media">СМИ & Сообщество</button>
+                <button class="filter-btn" data-filter="gov">Гос. тестирование</button>
+                <button class="filter-btn" data-filter="biz">Рынок (B2B)</button>
+            </div>
+
+            <div class="timeline" id="timeline">
+                
+                <div class="t-event" data-type="media">
+                    <div class="t-date">Июль 2025</div>
+                    <h3 class="t-title">🏆 1-е Место на Habr (578 голосов)</h3>
+                    <p class="t-desc">Продукт занял лидирующие позиции по выбору ИТ-сообщества. Опубликована фундаментальная статья о том, как отказаться от дашбордов в пользу AI-оркестрации, вызвавшая резонанс в DevOps-комьюнити.</p>
+                    <div class="t-tags">
+                        <span class="t-tag">#Habr</span>
+                        <span class="t-tag">#Признание</span>
+                        <a href="https://habr.com/ru/companies/productradar/articles/925568/" target="_blank" class="t-tag" style="background:#e0f2fe; color:#0284c7; text-decoration:none; border-color:#bae6fd;">🔗 Читать статью на Habr</a>
+                    </div>
+                </div>
+
+                <div class="t-event" data-type="media">
+                    <div class="t-date">Июль 2025</div>
+                    <h3 class="t-title">🔴 Продукт месяца №1 (Product Radar)</h3>
+                    <p class="t-desc">Аудитория Product Radar проголосовала за Детектор Уязвимостей как за продукт месяца №1. Проект вышел в тренды и начал активно упоминаться в Telegram-комьюнити по информационной безопасности.</p>
+                    <div class="t-tags">
+                        <span class="t-tag">#ProductRadar</span>
+                        <span class="t-tag">#Telegram</span>
+                        <span class="t-tag">#Growth</span>
+                    </div>
+                </div>
+
+                <div class="t-event" data-type="biz">
+                    <div class="t-date">Июнь 2025</div>
+                    <h3 class="t-title">📈 Рост B2B заявок (250+ компаний)</h3>
+                    <p class="t-desc">Сформирован сильный пайплайн внедрений: более 250 заявок от финтеха, брокеров и e-commerce, которые стремятся автоматизировать AppSec без найма дополнительных инженеров.</p>
+                    <div class="t-tags">
+                        <span class="t-tag">#Traction</span>
+                        <span class="t-tag">#PreSales</span>
+                    </div>
+                </div>
+
+                <div class="t-event" data-type="gov">
+                    <div class="t-date">Фефраль 2025</div>
+                    <h3 class="t-title">🚀 ТОП-50 Стартапов (SBER500 & НИУ ВШЭ)</h3>
+                    <p class="t-desc">Прохождение отбора в акселератор Sber500 при участии НИУ ВШЭ. Вход в реестр "ТОП-50 лучших ИТ-стартапов 2025-26 года".</p>
+                    <div class="t-tags">
+                        <span class="t-tag">#Sber500</span>
+                        <span class="t-tag">#HSE</span>
+                        <span class="t-tag">#Investments</span>
+                    </div>
+                </div>
+
+                <div class="t-event" data-type="gov">
+                    <div class="t-date">Декабрь 2024</div>
+                    <h3 class="t-title">✅ Успешный Пилот: Минцифры РФ</h3>
+                    <p class="t-desc">Завершение пилотного этапа. Детектор Уязвимостей получил положительное заключение по результатам государственных испытаний. Архитектура нулевого доверия (Zero-Trust) валидирована для КИИ.</p>
+                    <div class="t-tags">
+                        <span class="t-tag">#Минцифры</span>
+                        <span class="t-tag">#КИИ</span>
+                        <span class="t-tag">#ГосТест</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Filter logic
+        const buttons = document.querySelectorAll('.filter-btn');
+        const events = document.querySelectorAll('.t-event');
+
+        buttons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                buttons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                const filter = btn.getAttribute('data-filter');
+                
+                events.forEach((ev, index) => {
+                    if (filter === 'all' || ev.getAttribute('data-type') === filter) {
+                        ev.style.display = 'block';
+                        ev.style.animation = 'none';
+                        // trigger reflow
+                        void ev.offsetWidth;
+                        ev.style.animation = `fadeIn 0.5s ease ${index * 0.1}s forwards`;
+                    } else {
+                        ev.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Chart animation on load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const bars = document.querySelectorAll('.bar');
+                const vals = document.querySelectorAll('.bar-val');
+                bars.forEach((bar, i) => {
+                    bar.style.height = bar.getAttribute('data-h');
+                    bar.style.background = bar.getAttribute('data-color');
+                    setTimeout(() => {
+                        vals[i].style.opacity = '1';
+                        vals[i].style.transition = 'opacity 0.5s';
+                    }, 1000 + (i * 100));
+                });
+            }, 300);
+        });
+    </script>
+</body>
+</html>
