@@ -95,7 +95,7 @@
         .huge-number { font-size: 6rem; font-weight: 900; color: var(--sber-green); line-height: 1; margin-bottom: 10px; font-family: 'JetBrains Mono', monospace; letter-spacing: -4px;}
         .huge-label { font-size: 1.2rem; font-weight: 800; color: var(--text-gray); text-transform: uppercase; letter-spacing: 2px;}
 
-        .diagram-img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px; mix-blend-mode: multiply; }
+        .diagram-img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 12px; }
         .grid-cyber { position: absolute; inset: 0; background-image: linear-gradient(rgba(33,160,56,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(33,160,56,0.05) 1px, transparent 1px); background-size: 20px 20px; z-index: 0; pointer-events: none; }
         .content-right > * { z-index: 1; position: relative; }
 
@@ -158,7 +158,7 @@
                         <text x="300" y="105" font-family="'JetBrains Mono', monospace" font-weight="700" font-size="12" fill="rgba(255,255,255,0.8)" text-anchor="middle" letter-spacing="4">НАЖАТЬ ДЛЯ ЗАПУСКА АВТОПИЛОТА</text>
                     </svg>
                     
-                    <img src="schemas/puml_architecture.png" class="floating-schema" alt="Background Architecture Schema">
+                    <img src="schemas/architecture.svg" class="floating-schema" alt="Архитектура системы C4">
                 </div>
             </div>
         </div>
@@ -210,8 +210,7 @@
             </div>
             <div class="content-right" style="padding: 20px;">
                 <div class="grid-cyber"></div>
-                <img src="schemas/puml_resolution_flow.png" alt="Resolution Flow GOST Schema" class="diagram-img">
-                <div style="position:absolute; bottom:15px; right:20px; font-family:'JetBrains Mono'; font-size:10px; color:#94a3b8;">ГОСТ 19.505-79 C4-DIAGRAM</div>
+                <img src="schemas/resolution_flow.svg" alt="Жизненный Цикл Инцидента" class="diagram-img">
             </div>
         </div>
 
@@ -265,8 +264,7 @@
             </div>
             <div class="content-right" style="padding: 20px;">
                 <div class="grid-cyber"></div>
-                <img src="schemas/puml_ai_orchestration.png" alt="AI Orchestration GOST Schema" class="diagram-img">
-                <div style="position:absolute; bottom:15px; right:20px; font-family:'JetBrains Mono'; font-size:10px; color:#94a3b8;">ГОСТ 19.404-79 AI-ORCHESTRATION</div>
+                <img src="schemas/ai_orchestration.svg" alt="Схема Интеллектуальной Оркестрации" class="diagram-img">
             </div>
         </div>
 
@@ -351,8 +349,7 @@
                 </div>
             </div>
             <div class="content-right" style="padding: 20px;">
-                <img src="schemas/puml_architecture.png" alt="Topology GOST Schema" class="diagram-img">
-                <div style="position:absolute; bottom:15px; right:20px; font-family:'JetBrains Mono'; font-size:10px; color:#94a3b8;">ГОСТ 19.404-79 TOPOLOGY</div>
+                <img src="schemas/architecture.svg" alt="Архитектура системы C4" class="diagram-img">
             </div>
         </div>
 

@@ -1,0 +1,223 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VulnDetector // Sber500 Final</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Playfair+Display:ital,wght@1,900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sber-green: #21a038;
+            --krokodil-red: #d32f2f;
+            --paper-texture: #f4f1ea;
+            --corporate-white: #ffffff;
+            --text-main: #1e293b;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body { font-family: 'Inter', sans-serif; background: #000; overflow: hidden; height: 100vh; }
+
+        .slide-wrapper { width: 100vw; height: 100vh; position: relative; }
+
+        .slide {
+            position: absolute; width: 100%; height: 100%;
+            padding: 80px 120px;
+            display: flex; flex-direction: column; justify-content: center;
+            opacity: 0; transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+            background: var(--corporate-white);
+        }
+
+        /* SATIRE STYLE */
+        .slide.satire {
+            background: var(--paper-texture);
+            background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+            border: 30px solid var(--krokodil-red);
+            text-align: center;
+            align-items: center;
+            transform: scale(1.1);
+        }
+        .slide.satire.active { transform: scale(1); }
+        
+        .slide.satire h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 5rem; color: var(--krokodil-red); font-style: italic;
+            margin-bottom: 2rem;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+        }
+        
+        .satire-box {
+            width: 80%; height: 55%;
+            border: 5px solid #000;
+            background: #fff;
+            display: flex; align-items: center; justify-content: center;
+            position: relative;
+            box-shadow: 15px 15px 0px rgba(0,0,0,0.2);
+        }
+        .satire-box::after {
+            content: "КАРИКАТУРА: БЮРОКРАТ В ГОРАХ ТИКЕТОВ";
+            font-size: 1.5rem; font-weight: 900; color: #999;
+        }
+
+        .slide.active { opacity: 1; pointer-events: all; }
+
+        /* CORPORATE STYLE */
+        h1 { font-size: 4.5rem; font-weight: 900; line-height: 0.95; margin-bottom: 2rem; color: #000; }
+        h2 { font-size: 3rem; color: var(--sber-green); font-weight: 800; margin-bottom: 2rem; display: flex; align-items: center; gap: 20px; }
+        h2::before { content: ""; width: 8px; height: 45px; background: var(--sber-green); border-radius: 4px; }
+        
+        p { font-size: 1.5rem; line-height: 1.4; color: #334155; margin-bottom: 25px; max-width: 900px; }
+        
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-top: 2rem; width: 100%; }
+        .card { background: #f8fafc; padding: 35px; border-radius: 20px; border: 1px solid #e2e8f0; }
+        .card h3 { font-size: 2.8rem; color: var(--sber-green); margin-bottom: 10px; font-weight: 900; }
+        .card p { font-size: 0.9rem; font-weight: 800; color: #64748b; text-transform: uppercase; margin: 0; }
+
+        .nav { position: fixed; bottom: 50px; left: 120px; display: flex; gap: 12px; z-index: 100; }
+        .dot { width: 12px; height: 12px; background: #94a3b8; border-radius: 50%; cursor: pointer; transition: 0.3s; }
+        .dot.active { background: var(--sber-green); transform: scale(1.5); }
+
+        .header { position: fixed; top: 50px; left: 120px; font-weight: 900; color: var(--sber-green); font-size: 1rem; letter-spacing: 2px; }
+        .tag { position: fixed; top: 50px; right: 120px; color: #cbd5e1; font-weight: 700; font-size: 0.7rem; letter-spacing: 4px; }
+
+        .btn {
+            display: inline-block; padding: 22px 60px; background: var(--sber-green);
+            color: #fff; text-decoration: none; border-radius: 60px; font-weight: 900; font-size: 1.5rem;
+            transition: 0.4s; margin-top: 2rem; 
+        }
+        .btn:hover { background: #1a8a2e; transform: translateY(-5px); }
+
+    </style>
+</head>
+<body>
+    <div class="header">VULNDETECTOR // DEMO DAY</div>
+    <div class="tag">BATCH SBER500 - 2026</div>
+
+    <div class="slide-wrapper">
+        <!-- 1: TITLE -->
+        <div class="slide active">
+            <h1>ДЕТЕКТОР <br>УЯЗВИМОСТЕЙ</h1>
+            <p>Умная оркестрация ИБ для Enterprise-сегмента. Автоматизация Remediation без лишних интерфейсов.</p>
+            <div class="grid">
+                <div class="card"><h3>10с</h3><p>RESPONSE SLA</p></div>
+                <div class="card"><h3>30%</h3><p>COST REDUCTION</p></div>
+                <div class="card"><h3>AI</h3><p>GIGACHAT INSIDE</p></div>
+            </div>
+        </div>
+
+        <!-- 2: PROBLEM -->
+        <div class="slide">
+            <h2>ПРОБЛЕМА</h2>
+            <p>Классическая безопасность работает в режиме «пожарной команды», утопая в тикетах и PDF-отчетах.</p>
+            <div class="grid">
+                <div class="card" style="border-color: #fecaca;"><h3>#1</h3><p>ВРЕМЯ РЕАКЦИИ — НЕДЕЛИ</p></div>
+                <div class="card" style="border-color: #fecaca;"><h3>#2</h3><p>РУЧНАЯ ПРИОРИТИЗАЦИЯ</p></div>
+                <div class="card" style="border-color: #fecaca;"><h3>#3</h3><p>БЮРОКРАТИЯ И ОТЧЕТЫ</p></div>
+            </div>
+        </div>
+
+        <!-- 3: SATIRE 1 -->
+        <div class="slide satire">
+            <h3>ДОРОГОЙ БЮРОКРАТ!</h3>
+            <div class="satire-box"></div>
+            <p style="margin-top: 30px; font-weight: 900; color: #000; font-size: 2rem;">«ПЕРВЫМ ДЕЛОМ — ТИКЕТ, А ВЗЛОМ ПОДОЖДЕТ...»</p>
+        </div>
+
+        <!-- 4: SOLUTION -->
+        <div class="slide">
+            <h2>РЕШЕНИЕ: ИТ-ИММУНИТЕТ</h2>
+            <p>Платформа перехватывает новые уязвимости и сама ставит задачи в Kanban/Jira инженерам.</p>
+            <div class="grid">
+                <div class="card"><h3>RAG</h3><p>База знаний СЗИ</p></div>
+                <div class="card"><h3>Zero</h3><p>Никаких дашбордов</p></div>
+                <div class="card"><h3>Fast</h3><p>Прямой мост к DevOps</p></div>
+            </div>
+        </div>
+
+        <!-- 5: SYNERGY -->
+        <div class="slide">
+            <h2>СИНЕРГИЯ СО СБЕРОМ</h2>
+            <p>Мы используем мощь GigaChat для анализа логов и разворачиваемся в облаке SberCloud.</p>
+            <ul>
+                <li style="font-size: 1.5rem; margin-bottom: 15px;">🚀 Потребление 10 000+ токенов на один скан.</li>
+                <li style="font-size: 1.5rem; margin-bottom: 15px;">🛡️ Замена импортных сканеров и SIEM-систем.</li>
+                <li style="font-size: 1.5rem; margin-bottom: 15px;">🤝 Интеграция в B2B-предложения Сбера.</li>
+            </ul>
+        </div>
+
+        <!-- 6: SATIRE 2 -->
+        <div class="slide satire">
+            <h3>ОТЧЕТ НА ОТЧЕТЕ</h3>
+            <div class="satire-box" style="border-color: var(--sber-green);"></div>
+            <p style="margin-top: 30px; font-weight: 900; color: #000; font-size: 2rem;">«СОГЛАСОВАНО 15 ПОДПИСЯМИ, А СЕРВЕР УЖЕ УПАЛ»</p>
+        </div>
+
+        <!-- 7: MARKET & TEAM -->
+        <div class="slide">
+            <h2>РЫНОК И КОМАНДА</h2>
+            <p>Рынок ИБ в РФ — 128 млрд рублей. Наша цель — ТОП-100 компаний.</p>
+            <div class="card" style="width: 100%;">
+                <h3 style="font-size: 2rem;">CEO: ПАВЕЛ ЩЕЛКАНОГОВ</h3>
+                <p>ЭКСПЕРТ ПО HFT И ИНФРАСТРУКТУРЕ. КОМАНДА AI-ИНЖЕНЕРОВ.</p>
+            </div>
+        </div>
+
+        <!-- 8: TRACTION -->
+        <div class="slide">
+            <h2>РЕЗУЛЬТАТЫ (TRACTION)</h2>
+            <p>Успешные пилоты в Aqvalife и Orskemi. Обработано более 250 лидов.</p>
+            <div class="grid">
+                <div class="card"><h3>SLA</h3><p>Выполнение 100%</p></div>
+                <div class="card"><h3>Pilot</h3><p>Production Ready</p></div>
+                <div class="card"><h3>Next</h3><p>Scale Up</p></div>
+            </div>
+        </div>
+
+        <!-- 9: CTA -->
+        <div class="slide" style="text-align: center; align-items: center;">
+            <h1>ЗАЩИТИТЕ <br>СВОЁ БУДУЩЕЕ</h1>
+            <p>Готовы к интеграции. Готовы к победе.</p>
+            <a href="#" class="btn">ЗАПУСТИТЬ ДЕМО-СТЕНД</a>
+            <p style="margin-top: 40px; font-family: monospace; color: var(--sber-green); font-weight: 900; font-size: 1.5rem;">vulndetector.pro/demo</p>
+        </div>
+    </div>
+
+    <div class="nav" id="dots"></div>
+
+    <script>
+        const s = document.querySelectorAll('.slide');
+        const d = document.getElementById('dots');
+        let c = 0;
+        let isMoving = false;
+
+        s.forEach((_, i) => {
+            const di = document.createElement('div');
+            di.className = `dot ${i === 0 ? 'active' : ''}`;
+            di.onclick = () => show(i);
+            d.appendChild(di);
+        });
+
+        function show(n) {
+            if(n === c) return;
+            s[c].classList.remove('active');
+            document.querySelectorAll('.dot')[c].classList.remove('active');
+            c = n;
+            s[c].classList.add('active');
+            document.querySelectorAll('.dot')[c].classList.add('active');
+        }
+
+        window.onwheel = (e) => {
+            if (isMoving) return;
+            isMoving = true;
+            show((c + (e.deltaY > 0 ? 1 : -1) + s.length) % s.length);
+            setTimeout(() => isMoving = false, 800);
+        };
+
+        document.onkeydown = (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') show((c + 1) % s.length);
+            if (e.key === 'ArrowLeft') show((c - 1 + s.length) % s.length);
+        };
+    </script>
+</body>
+</html>

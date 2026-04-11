@@ -1,0 +1,139 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 680" font-family="'Inter','Arial',sans-serif">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0f1a"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#22c55e"/>
+      <stop offset="100%" stop-color="#16a34a"/>
+    </linearGradient>
+    <linearGradient id="cyanGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#0ea5e9"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="680" fill="url(#bgGrad)" rx="16"/>
+  
+  <!-- Grid overlay -->
+  <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse">
+    <path d="M 30 0 L 0 0 0 30" fill="none" stroke="rgba(33,160,56,0.06)" stroke-width="0.5"/>
+  </pattern>
+  <rect width="900" height="680" fill="url(#grid)"/>
+
+  <!-- Title -->
+  <text x="450" y="36" text-anchor="middle" fill="#94a3b8" font-size="13" font-weight="700" letter-spacing="3">ГОСТ 19.701-90 · C4-АРХИТЕКТУРА</text>
+  <text x="450" y="62" text-anchor="middle" fill="#ffffff" font-size="18" font-weight="900" letter-spacing="1">Архитектура ПАК «Детектор Уязвимостей» v2.1</text>
+
+  <!-- EXTERNAL ZONE -->
+  <rect x="300" y="82" width="300" height="62" rx="10" fill="none" stroke="#38bdf8" stroke-width="1.5" stroke-dasharray="6,3" opacity="0.6"/>
+  <text x="310" y="97" fill="#38bdf8" font-size="9" font-weight="700" letter-spacing="2" opacity="0.7">ВНЕШНИЙ КОНТУР</text>
+  <rect x="330" y="102" width="240" height="34" rx="8" fill="rgba(56,189,248,0.1)" stroke="#38bdf8" stroke-width="1"/>
+  <text x="450" y="124" text-anchor="middle" fill="#e2e8f0" font-size="12" font-weight="700">БД Уязвимостей (ФСТЭК БДУ)</text>
+
+  <!-- INTERNAL ZONE - big border -->
+  <rect x="30" y="165" width="840" height="420" rx="14" fill="none" stroke="#22c55e" stroke-width="2" opacity="0.4"/>
+  <rect x="30" y="165" width="840" height="420" rx="14" fill="rgba(33,160,56,0.03)"/>
+  <text x="50" y="185" fill="#22c55e" font-size="10" font-weight="800" letter-spacing="3">ВНУТРЕННИЙ ЗАЩИЩЁННЫЙ КОНТУР (ZERO-TRUST)</text>
+
+  <!-- Sub-zone 1: Аналитическое Ядро -->
+  <rect x="50" y="200" width="380" height="140" rx="10" fill="rgba(30,41,59,0.8)" stroke="#334155" stroke-width="1"/>
+  <text x="65" y="220" fill="#94a3b8" font-size="9" font-weight="700" letter-spacing="2">АНАЛИТИЧЕСКОЕ ЯДРО</text>
+  <!-- Server -->
+  <rect x="70" y="232" width="160" height="52" rx="8" fill="rgba(14,165,233,0.12)" stroke="#0ea5e9" stroke-width="1"/>
+  <text x="150" y="255" text-anchor="middle" fill="#e2e8f0" font-size="11" font-weight="700">Сервер Обработки</text>
+  <text x="150" y="272" text-anchor="middle" fill="#64748b" font-size="9">(Основная логика)</text>
+  <!-- Database -->
+  <rect x="250" y="232" width="160" height="52" rx="8" fill="rgba(14,165,233,0.12)" stroke="#0ea5e9" stroke-width="1"/>
+  <ellipse cx="330" cy="238" rx="60" ry="6" fill="none" stroke="#0ea5e9" stroke-width="0.8" opacity="0.5"/>
+  <text x="330" y="258" text-anchor="middle" fill="#e2e8f0" font-size="11" font-weight="700">База Данных</text>
+  <text x="330" y="275" text-anchor="middle" fill="#64748b" font-size="9">(Активы и инциденты)</text>
+  <!-- Connection -->
+  <line x1="230" y1="258" x2="250" y2="258" stroke="#38bdf8" stroke-width="1.5" marker-end="url(#arrowCyan)"/>
+
+  <!-- Sub-zone 2: Модуль ИИ -->
+  <rect x="460" y="200" width="390" height="140" rx="10" fill="rgba(30,41,59,0.8)" stroke="#334155" stroke-width="1"/>
+  <text x="475" y="220" fill="#94a3b8" font-size="9" font-weight="700" letter-spacing="2">МОДУЛЬ ИСКУССТВЕННОГО ИНТЕЛЛЕКТА</text>
+  <rect x="490" y="235" width="200" height="55" rx="8" fill="rgba(33,160,56,0.15)" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="590" y="258" text-anchor="middle" fill="#22c55e" font-size="12" font-weight="800">GigaChat</text>
+  <text x="590" y="275" text-anchor="middle" fill="#86efac" font-size="10">(Нейросеть Сбер)</text>
+  <!-- Note -->
+  <rect x="710" y="240" width="125" height="46" rx="6" fill="rgba(163,230,53,0.08)" stroke="#a3e635" stroke-width="0.8"/>
+  <text x="773" y="257" text-anchor="middle" fill="#a3e635" font-size="8.5" font-weight="600">Валидация уязвимостей</text>
+  <text x="773" y="272" text-anchor="middle" fill="#a3e635" font-size="8.5" font-weight="600">и генерация патчей</text>
+  <line x1="690" y1="262" x2="710" y2="262" stroke="#a3e635" stroke-width="0.8" stroke-dasharray="3,2"/>
+
+  <!-- Sub-zone 3: Модуль Оркестрации -->
+  <rect x="50" y="360" width="380" height="140" rx="10" fill="rgba(30,41,59,0.8)" stroke="#334155" stroke-width="1"/>
+  <text x="65" y="380" fill="#94a3b8" font-size="9" font-weight="700" letter-spacing="2">МОДУЛЬ ОРКЕСТРАЦИИ ИНЦИДЕНТОВ</text>
+  <!-- Orchestrator -->
+  <rect x="70" y="392" width="160" height="52" rx="8" fill="rgba(14,165,233,0.12)" stroke="#0ea5e9" stroke-width="1"/>
+  <text x="150" y="415" text-anchor="middle" fill="#e2e8f0" font-size="11" font-weight="700">Шлюз Задач</text>
+  <text x="150" y="432" text-anchor="middle" fill="#64748b" font-size="9">(Оркестратор)</text>
+  <!-- Kanboard -->
+  <rect x="250" y="392" width="160" height="52" rx="8" fill="rgba(14,165,233,0.12)" stroke="#0ea5e9" stroke-width="1"/>
+  <text x="330" y="415" text-anchor="middle" fill="#e2e8f0" font-size="11" font-weight="700">Система Трекинга</text>
+  <text x="330" y="432" text-anchor="middle" fill="#64748b" font-size="9">(Задачи Kanban)</text>
+  <line x1="230" y1="418" x2="250" y2="418" stroke="#38bdf8" stroke-width="1.5"/>
+
+  <!-- Sub-zone 4: Окно Утверждения -->
+  <rect x="460" y="360" width="390" height="140" rx="10" fill="rgba(30,41,59,0.8)" stroke="#334155" stroke-width="1"/>
+  <text x="475" y="380" fill="#94a3b8" font-size="9" font-weight="700" letter-spacing="2">ОКНО УТВЕРЖДЕНИЯ (ШЛЮЗ)</text>
+  <rect x="490" y="395" width="220" height="55" rx="8" fill="rgba(244,114,182,0.12)" stroke="#f472b6" stroke-width="1"/>
+  <text x="600" y="418" text-anchor="middle" fill="#f9a8d4" font-size="12" font-weight="700">Бот Утверждения</text>
+  <text x="600" y="435" text-anchor="middle" fill="#64748b" font-size="10">(Telegram-шлюз)</text>
+
+  <!-- ACTOR: ИБ Офицер -->
+  <circle cx="780" cy="530" r="14" fill="none" stroke="#f472b6" stroke-width="1.5"/>
+  <line x1="780" y1="544" x2="780" y2="570" stroke="#f472b6" stroke-width="1.5"/>
+  <line x1="765" y1="555" x2="795" y2="555" stroke="#f472b6" stroke-width="1.5"/>
+  <line x1="780" y1="570" x2="768" y2="590" stroke="#f472b6" stroke-width="1.5"/>
+  <line x1="780" y1="570" x2="792" y2="590" stroke="#f472b6" stroke-width="1.5"/>
+  <text x="780" y="610" text-anchor="middle" fill="#f9a8d4" font-size="10" font-weight="700">ИБ Офицер</text>
+
+  <!-- ARROWS (Data Flow) -->
+  <defs>
+    <marker id="arrowCyan" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrowGreen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#22c55e"/>
+    </marker>
+    <marker id="arrowPink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#f472b6"/>
+    </marker>
+  </defs>
+
+  <!-- BDU → Backend -->
+  <line x1="450" y1="144" x2="150" y2="232" stroke="#38bdf8" stroke-width="1.5" marker-end="url(#arrowCyan)" filter="url(#glow)"/>
+  <text x="280" y="180" fill="#38bdf8" font-size="8" font-weight="600" transform="rotate(-15, 280, 180)">Синхронизация угроз</text>
+
+  <!-- Backend → Orchestrator -->
+  <line x1="150" y1="284" x2="150" y2="392" stroke="#38bdf8" stroke-width="1.5" marker-end="url(#arrowCyan)"/>
+  <text x="158" y="340" fill="#38bdf8" font-size="8" font-weight="600">Передача инцидента</text>
+
+  <!-- Orchestrator → GigaChat -->
+  <line x1="230" y1="405" x2="490" y2="270" stroke="#22c55e" stroke-width="1.5" marker-end="url(#arrowGreen)" filter="url(#glow)"/>
+  <text x="340" y="325" fill="#22c55e" font-size="8" font-weight="600" transform="rotate(-22, 340, 325)">Запрос создания патча</text>
+
+  <!-- GigaChat → Orchestrator -->
+  <line x1="490" y1="280" x2="230" y2="415" stroke="#a3e635" stroke-width="1" stroke-dasharray="5,3" marker-end="url(#arrowGreen)"/>
+  <text x="370" y="365" fill="#a3e635" font-size="8" font-weight="600" transform="rotate(-22, 370, 365)">Готовый скрипт</text>
+
+  <!-- Orchestrator → Bot -->
+  <line x1="230" y1="430" x2="490" y2="422" stroke="#f472b6" stroke-width="1.5" marker-end="url(#arrowPink)"/>
+  <text x="360" y="416" fill="#f472b6" font-size="8" font-weight="600">Оповещение с патчем</text>
+
+  <!-- Bot → Actor -->
+  <line x1="600" y1="450" x2="780" y2="525" stroke="#f472b6" stroke-width="1.5" marker-end="url(#arrowPink)"/>
+  <text x="680" y="478" fill="#f472b6" font-size="8" font-weight="600" transform="rotate(25, 680, 478)">Интерактивный диалог</text>
+
+  <!-- Footer -->
+  <text x="880" y="668" text-anchor="end" fill="#475569" font-size="9" font-weight="600" letter-spacing="1">VULNDETECTOR // SBER500</text>
+</svg>

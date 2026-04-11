@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        :root {
+            --bg-color: #050508;
+            --accent: #00d4ff;
+            --success: #00ff9f;
+            --danger: #ff3355;
+            --surface: rgba(15, 17, 21, 0.9);
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            padding: 40px;
+        }
+        .header {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 40px;
+            font-family: var(--font-mono);
+        }
+        .section {
+            margin-bottom: 80px;
+            padding: 40px;
+            background: var(--surface);
+            border: 1px solid rgba(0, 240, 255, 0.1);
+            border-radius: 16px;
+        }
+        
+        /* Architecture Schema */
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            align-items: center;
+        }
+        .row {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            width: 100%;
+        }
+        .node {
+            background: rgba(0,0,0,0.6);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            width: 250px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative;
+        }
+        .node-icon { font-size: 40px; margin-bottom: 15px; }
+        .node-title { font-weight: 800; font-size: 16px; margin-bottom: 10px; color: #fff; }
+        .node-desc { font-size: 12px; color: #8f9bb3; font-family: var(--font-mono); }
+        
+        .perimeter {
+            border: 2px dashed rgba(0, 255, 159, 0.5);
+            background: rgba(0, 255, 159, 0.02);
+            border-radius: 16px;
+            padding: 40px;
+            position: relative;
+            margin-top: 20px;
+            box-shadow: inset 0 0 50px rgba(0,255,159,0.05);
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .perimeter-label {
+            position: absolute;
+            top: -12px;
+            left: 30px;
+            background: var(--bg-color);
+            padding: 0 15px;
+            color: var(--success);
+            font-family: var(--font-mono);
+            font-size: 14px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        
+        .node.sber {
+            border-color: var(--success);
+            background: rgba(0,255,159,0.05);
+        }
+        .node.sber .node-title { color: var(--success); }
+
+        /* Lifecycle Schema */
+        .lifecycle {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+        .step {
+            flex: 1;
+            background: rgba(0,0,0,0.6);
+            border-top: 4px solid var(--accent);
+            border-radius: 8px;
+            padding: 25px 15px;
+            text-align: center;
+            position: relative;
+        }
+        .step-num {
+            position: absolute;
+            top: -15px; left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            color: #000;
+            width: 30px; height: 30px;
+            border-radius: 15px;
+            font-weight: 800;
+            line-height: 30px;
+            font-family: var(--font-mono);
+        }
+        .step-title { font-weight: 800; font-size: 14px; margin: 15px 0 10px 0; }
+        .step-desc { font-size: 12px; color: #8f9bb3; }
+        .arrow { color: rgba(255,255,255,0.2); font-size: 30px; }
+
+    </style>
+</head>
+<body>
+
+    <div class="section" id="arch-schema">
+        <div class="header">SYSTEM ARCHITECTURE (VulnDetector)</div>
+        <div class="wrapper">
+            
+            <div class="row">
+                <div class="node">
+                    <div class="node-icon">📚</div>
+                    <div class="node-title">External Threat Intel</div>
+                    <div class="node-desc">FSTEC, CVE, TG-Channels (RAG DB)</div>
+                </div>
+                <div class="node">
+                    <div class="node-icon">💻</div>
+                    <div class="node-title">CISO Dashboard</div>
+                    <div class="node-desc">WebUI / IT-Immunity Index</div>
+                </div>
+            </div>
+
+            <div class="perimeter">
+                <div class="perimeter-label">INTERNAL ZERO-TRUST PERIMETER</div>
+                <div class="row">
+                    <div class="node">
+                        <div class="node-icon">⚙️</div>
+                        <div class="node-title">Backend Core</div>
+                        <div class="node-desc">NestJS Clean Architecture</div>
+                    </div>
+                    
+                    <div class="node sber">
+                        <div class="node-icon">🧠</div>
+                        <div class="node-title">Sber GigaChat LLM</div>
+                        <div class="node-desc">AI-Daemon / Auditing & IaC Patch generation based on FPF</div>
+                    </div>
+                    
+                    <div class="node">
+                        <div class="node-icon">🛡️</div>
+                        <div class="node-title">Orchestration</div>
+                        <div class="node-desc">KanbanBridge & ApproveCenter (Zero-Trust TG Bot)</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="section" id="flow-schema">
+        <div class="header">ENTERPRISE INCIDENT WORKFLOW</div>
+        <div class="lifecycle">
+            
+            <div class="step" style="border-color: #4a90e2;">
+                <div class="step-num" style="background:#4a90e2">1</div>
+                <div class="node-icon">📡</div>
+                <div class="step-title">DISCOVERY</div>
+                <div class="step-desc">Dynamic inventory & IOC collection</div>
+            </div>
+            
+            <div class="arrow">➔</div>
+            
+            <div class="step" style="border-color: #50e3c2;">
+                <div class="step-num" style="background:#50e3c2">2</div>
+                <div class="node-icon">🧠</div>
+                <div class="step-title">AI VERIFICATION</div>
+                <div class="step-desc">Sber LLM audits defects via FPF</div>
+            </div>
+            
+            <div class="arrow">➔</div>
+            
+            <div class="step" style="border-color: #7ed321;">
+                <div class="step-num" style="background:#7ed321">3</div>
+                <div class="node-icon">📋</div>
+                <div class="step-title">ORCHESTRATION</div>
+                <div class="step-desc">Kanban task & IaC Patch creation</div>
+            </div>
+            
+            <div class="arrow">➔</div>
+            
+            <div class="step" style="border-color: #f5a623;">
+                <div class="step-num" style="background:#f5a623">4</div>
+                <div class="node-icon">🛡️</div>
+                <div class="step-title">APPROVAL</div>
+                <div class="step-desc">CISO single-click deployment</div>
+            </div>
+            
+            <div class="arrow">➔</div>
+            
+            <div class="step" style="border-color: #d0021b;">
+                <div class="step-num" style="background:#d0021b">5</div>
+                <div class="node-icon">✅</div>
+                <div class="step-title">RESOLUTION</div>
+                <div class="step-desc">Infrastructure fortified</div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>

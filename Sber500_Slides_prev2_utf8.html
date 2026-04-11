@@ -1,0 +1,237 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VulnDetector // ITSM Orchestrator // Sber500</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sber-green: #21a038;
+            --text-dark: #000000;
+            --text-gray: #64748b;
+            --bg-light: #ffffff;
+            --accent-red: #ff4d4f;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: var(--bg-light); 
+            color: var(--text-dark); 
+            overflow: hidden; 
+            height: 100vh;
+        }
+
+        .slide-wrapper { width: 100vw; height: 100vh; position: relative; }
+
+        .slide {
+            position: absolute; width: 100%; height: 100%;
+            padding: 8% 10%;
+            display: flex; flex-direction: column; justify-content: center;
+            opacity: 0; transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none;
+            background: var(--bg-light);
+            transform: translateX(50px);
+        }
+
+        .slide.active { opacity: 1; pointer-events: all; transform: translateX(0); z-index: 10; }
+
+        h1 { 
+            font-size: 7rem; 
+            font-weight: 900; 
+            line-height: 0.85; 
+            margin-bottom: 2rem; 
+            letter-spacing: -4px; 
+            text-transform: uppercase;
+        }
+
+        h2 { 
+            font-size: 3.5rem; 
+            font-weight: 900; 
+            color: var(--sber-green); 
+            margin-bottom: 2rem; 
+            letter-spacing: -2px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        h2::after { content: ""; flex: 1; height: 2px; background: #e2e8f0; }
+
+        p { font-size: 2rem; font-weight: 400; color: var(--text-gray); line-height: 1.2; max-width: 1200px; }
+        b { color: var(--text-dark); font-weight: 900; }
+
+        .comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 3rem; }
+        .comp-card { padding: 40px; border-radius: 20px; border: 2px solid #f1f5f9; }
+        .comp-card.old { border-left: 10px solid #cbd5e1; }
+        .comp-card.new { border-left: 10px solid var(--sber-green); background: #f0fdf4; }
+        .comp-card h4 { font-size: 1.2rem; text-transform: uppercase; color: var(--text-gray); margin-bottom: 10px; }
+        .comp-card .time { font-size: 4rem; font-weight: 900; color: var(--text-dark); }
+
+        .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-top: 3rem; }
+        .feature-item { border-top: 4px solid var(--sber-green); padding-top: 20px; }
+        .feature-item h3 { font-size: 1.8rem; font-weight: 900; margin-bottom: 10px; }
+        .feature-item p { font-size: 1rem; color: var(--text-gray); }
+
+        .nav-dots { position: fixed; bottom: 40px; right: 80px; display: flex; gap: 15px; z-index: 100; }
+        .dot { width: 10px; height: 10px; background: #e2e8f0; border-radius: 50%; cursor: pointer; transition: 0.3s; }
+        .dot.active { background: var(--sber-green); transform: scale(1.5); }
+
+        .header { position: fixed; top: 40px; left: 80px; display: flex; align-items: center; gap: 20px; z-index: 100; }
+        .logo { font-weight: 900; font-size: 1.2rem; }
+        .logo span { color: var(--sber-green); }
+        .tag { font-weight: 700; color: #94a3b8; font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; }
+
+        .cta-btn {
+            display: inline-block; padding: 25px 60px; background: var(--sber-green);
+            color: #fff; text-decoration: none; border-radius: 50px; font-weight: 900; font-size: 1.8rem;
+            margin-top: 3rem; transition: 0.3s;
+        }
+        .cta-btn:hover { background: #000; }
+
+        .fact-badge { display: inline-block; padding: 5px 15px; background: #fee2e2; color: var(--accent-red); border-radius: 5px; font-weight: 800; font-size: 0.9rem; margin-bottom: 15px; }
+
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">VULN<span>DETECTOR</span></div>
+        <div class="tag">ITSM ORCHESTRATOR // SBER500</div>
+    </div>
+
+    <div class="slide-wrapper">
+        <!-- 1: TITLE -->
+        <div class="slide active">
+            <h1>ОРКЕСТРАЦИЯ <br>ИТ-ИММУНИТЕТА</h1>
+            <p>Интеллектуальный управление инфраструктурой на базе <b>GigaChat</b> и стандарта <b>MCP</b>. Автоматизация DevOps без лишних интерфейсов.</p>
+            <div class="feature-grid">
+                <div class="feature-item"><h3>Zero-UI</h3><p>Интеграция в мессенджеры и рабочие чаты.</p></div>
+                <div class="feature-item"><h3>Smart RAG</h3><p>Использование накопленного опыта компании.</p></div>
+                <div class="feature-item"><h3>On-Premise</h3><p>100% суверенность данных в контуре Сбера.</p></div>
+            </div>
+        </div>
+
+        <!-- 2: PROBLEM -->
+        <div class="slide">
+            <div class="fact-badge">БЮРОКРАТИЯ СЖИГАЕТ ПРИБЫЛЬ</div>
+            <h2>СИНДРОМ «ХРОМОГО ВЕРБЛЮДА»</h2>
+            <p>Бюрократия — самый медленный верблюд в вашем караване. Инженеры тратят <b>30% времени</b> не на задачи, а на отчеты. Миллионы рублей сгорают в ручном заполнении логов.</p>
+            <div class="feature-grid" style="margin-top: 2rem;">
+                <div class="feature-item"><h3>Manual Fail</h3><p>Низкая скорость реакции SLA.</p></div>
+                <div class="feature-item"><h3>Bus Factor</h3><p>Потеря контекста при увольнении.</p></div>
+                <div class="feature-item"><h3>Grey Zones</h3><p>Попытки сокрытия инцидентов.</p></div>
+            </div>
+        </div>
+
+        <!-- 3: COMPARISON -->
+        <div class="slide">
+            <h2>РЕВОЛЮЦИЯ СКОРОСТИ</h2>
+            <p>Мы сокращаем MTTR (время восстановления) в <b>10 000 раз</b> за счет прямого проброса данных от сканера к ЛПР.</p>
+            <div class="comparison-grid">
+                <div class="comp-card old">
+                    <h4>Традиционный процесс</h4>
+                    <div class="time">14 ДНЕЙ</div>
+                    <p>Трактовка логов, ручные тикеты, совещания и бюрократия.</p>
+                </div>
+                <div class="comp-card new">
+                    <h4>VulnDetector Logic</h4>
+                    <div class="time">10 СЕКУНД</div>
+                    <p>Анализ GigaChat, расчет <b>ИТ-Иммунитета</b> и Immutable Ticket.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4: SOLUTION -->
+        <div class="slide">
+            <h2>ИТ-ИММУНИТЕТ (BFI)</h2>
+            <p>Это не антивирус. Это <b>интеллектуальный маршрутизатор задач</b>. Он детектирует уязвимости в самих бизнес-процессах и исправляет их.</p>
+            <div class="feature-grid">
+                <div class="feature-item"><h3>MCP Protocol</h3><p>Бесшовное управление IaaS-инфраструктурой.</p></div>
+                <div class="feature-item"><h3>Anti-Tamper</h3><p>Защита от подмены логов и удаления тикетов.</p></div>
+                <div class="feature-item"><h3>B2B Ready</h3><p>Интеграция с ЭДО СБИС и Диадок.</p></div>
+            </div>
+        </div>
+
+        <!-- 5: SYNERGY -->
+        <div class="slide">
+            <h2>СИНЕРГИЯ СО СБЕРОМ</h2>
+            <p>Драйвер потребления <b>токенов GigaChat</b> и облачных ресурсов SberCloud. Идеально ложится в стратегию технологического лидерства.</p>
+            <div class="feature-grid">
+                <div class="feature-item"><h3>BFI Metric</h3><p>Конкретный бизнес-риск вместо абстрактных CVE.</p></div>
+                <div class="feature-item"><h3>Unit Economics</h3><p>10 000+ токенов на цикл сканирования.</p></div>
+                <div class="feature-item"><h3>Safe AI</h3><p>ИИ не пишет код, он управляет бюрократией.</p></div>
+            </div>
+        </div>
+
+        <!-- 6: MARKET -->
+        <div class="slide">
+            <h2>РЫНОК И ПОЗИЦИЯ</h2>
+            <p>Объем рынка управления инфраструктурой — <b>128 млрд ₽</b>. Мы — ITSM нового поколения, не требующий сертификатов ФСТЭК.</p>
+            <div class="feature-grid">
+                <div class="feature-item"><h3>Enterprise</h3><p>Фокус на компании с критической ИТ-базой.</p></div>
+                <div class="feature-item"><h3>GovTech</h3><p>Соответствие всем стандартам Минцифры.</p></div>
+                <div class="feature-item"><h3>Import Sub</h3><p>Замена зарубежных систем оркестрации.</p></div>
+            </div>
+        </div>
+
+        <!-- 7: TRACTION -->
+        <div class="slide">
+            <h2>РЕЗУЛЬТАТЫ</h2>
+            <p>Пилоты в <b>Aqvalife</b> и <b>Orskemi</b> подтвердили гипотезу. Система готова к масштабированию на весь Enterprise Сбера.</p>
+            <div class="feature-grid">
+                <div class="feature-item"><h3>250+ Leads</h3><p>Сформированный спрос на платформу.</p></div>
+                <div class="feature-item"><h3>Real MTTR</h3><p>Реальные замеры скорости в песочнице.</p></div>
+                <div class="feature-item"><h3>B2B Flow</h3><p>Готовый биллинг через СБИС и Mandarin.</p></div>
+            </div>
+        </div>
+
+        <!-- 8: CTA -->
+        <div class="slide" style="text-align: center; align-items: center;">
+            <h1>ЗАПУСК <br>ИТ-ИММУНИТЕТА</h1>
+            <p>Превратите бюрократию в оцифрованный процесс одним кликом.</p>
+            <a href="#" class="cta-btn">ЗАПУСТИТЬ ДЕМО</a>
+            <p style="margin-top: 40px; color: var(--sber-green); font-weight: 900; font-size: 1.5rem;">
+                <a href="https://t.me/max_group_placeholder" target="_blank" style="color: inherit; text-decoration: none;">Подписаться на группу «Макс»</a>
+            </p>
+        </div>
+    </div>
+
+    <div class="nav-dots" id="dots"></div>
+
+    <script>
+        const s = document.querySelectorAll('.slide');
+        const d = document.getElementById('dots');
+        let c = 0;
+        let moving = false;
+
+        s.forEach((_, i) => {
+            const di = document.createElement('div');
+            di.className = `dot ${i === 0 ? 'active' : ''}`;
+            di.onclick = () => show(i);
+            d.appendChild(di);
+        });
+
+        function show(n) {
+            if (n === c || n < 0 || n >= s.length) return;
+            s[c].classList.remove('active');
+            document.querySelectorAll('.dot')[c].classList.remove('active');
+            c = n;
+            s[c].classList.add('active');
+            document.querySelectorAll('.dot')[c].classList.add('active');
+        }
+
+        window.addEventListener('wheel', (e) => {
+            if (moving) return;
+            moving = true;
+            if (e.deltaY > 0) show(c + 1);
+            else show(c - 1);
+            setTimeout(() => moving = false, 700);
+        }, { passive: true });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') show(c + 1);
+            if (e.key === 'ArrowLeft') show(c - 1);
+        });
+    </script>
+</body>
+</html>
