@@ -241,6 +241,7 @@
             border-radius: 6px 6px 0 0;
             transition: height 1.5s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
+            min-height: 4px; /* Чтобы всегда было видно хотя бы полоску */
         }
         .bar:hover {
             opacity: 0.8;
@@ -282,9 +283,9 @@
             </div>
             
             <div class="metric-card">
-                <div class="metric-label">Спрос (Заявки)</div>
-                <div class="metric-value" style="color:var(--text-dark);">250+</div>
-                <div style="font-size:0.8rem; color:var(--text-gray);">Входящие B2B лиды</div>
+                <div class="metric-label">Заказано отчетов</div>
+                <div class="metric-value" style="color:var(--text-dark);">2 189+</div>
+                <div style="font-size:0.8rem; color:var(--text-gray);">Всего проверок по запросам пользователей (2024-2026)</div>
             </div>
 
             <div class="metric-card" style="background:#f0fdf4; border-color:#bbf7d0;">
@@ -405,20 +406,22 @@
         });
 
         // Chart animation on load
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                const bars = document.querySelectorAll('.bar');
-                const vals = document.querySelectorAll('.bar-val');
-                bars.forEach((bar, i) => {
-                    bar.style.height = bar.getAttribute('data-h');
-                    bar.style.background = bar.getAttribute('data-color');
-                    setTimeout(() => {
-                        vals[i].style.opacity = '1';
-                        vals[i].style.transition = 'opacity 0.5s';
-                    }, 1000 + (i * 100));
-                });
-            }, 300);
-        });
+        function animateBars() {
+            const bars = document.querySelectorAll('.bar');
+            const vals = document.querySelectorAll('.bar-val');
+            bars.forEach((bar, i) => {
+                bar.style.height = bar.getAttribute('data-h');
+                bar.style.background = bar.getAttribute('data-color');
+                setTimeout(() => {
+                    vals[i].style.opacity = '1';
+                    vals[i].style.transition = 'opacity 0.5s';
+                }, 800 + (i * 100));
+            });
+        }
+        
+        window.addEventListener('DOMContentLoaded', animateBars);
+        window.addEventListener('load', animateBars); // На всякий случай оба
+        setTimeout(animateBars, 1000); // И еще один через секунду если события пропущены
     </script>
 </body>
 </html>
