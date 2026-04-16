@@ -39,6 +39,29 @@
             z-index: 100;
         }
 
+        .header-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .header-link {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-decoration: none;
+            color: var(--text-gray);
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            transition: all 0.2s;
+        }
+
+        .header-link:hover {
+            color: var(--text-dark);
+            background: #f1f5f9;
+        }
+
+        header .logo-area { display: flex; align-items: center; gap: 40px; }
+
         .logo {
             font-family: 'JetBrains Mono', monospace;
             font-weight: 900;
@@ -266,7 +289,13 @@
 <body>
 
     <header>
-        <div class="logo">VULN<span>DETECTOR</span> // PUBLIC TRACTION DASHBOARD</div>
+        <div class="logo-area">
+            <div class="logo">VULN<span>DETECTOR</span> // PUBLIC TRACTION DASHBOARD</div>
+            <div class="header-links">
+                <a href="Sber_LLM_Visual.html" target="_blank" class="header-link">🧠 Sber LLM Integration</a>
+                <a href="Architecture_GOST_Visual.html" target="_blank" class="header-link">🚀 Общая схема (ГОСТ)</a>
+            </div>
+        </div>
         <div>
             <a href="Sber500_Slides.html" style="font-weight: 600; color: var(--accent-green); text-decoration: none; border: 1px solid var(--accent-green); padding: 8px 16px; border-radius: 20px;">Вернуться к презентации</a>
         </div>

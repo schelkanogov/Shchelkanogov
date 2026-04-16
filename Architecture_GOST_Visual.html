@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VulnDetector // Архитектурная Схема (ГОСТ + Sber Cloud)</title>
+    <style>
+        :root {
+            --bg-color: #050a10;
+            --panel-bg: rgba(13, 25, 41, 0.7);
+            --border-color: rgba(0, 194, 255, 0.2);
+            --accent-blue: #00c2ff;
+            --accent-green: #21ebff;
+            --sber-green: #21a038;
+            --text-main: #e0f2fe;
+            --text-dim: #94a3b8;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=JetBrains+Mono:wght@300;500&display=swap');
+
+        body {
+            margin: 0;
+            padding: 40px;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(0, 194, 255, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(33, 160, 56, 0.05) 0%, transparent 40%);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            letter-spacing: 2px;
+            background: linear-gradient(90deg, #fff, var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+        }
+
+        .header p {
+            color: var(--text-dim);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+        }
+
+        .architecture-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .layer {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 30px;
+            position: relative;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .layer:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 194, 255, 0.1);
+        }
+
+        .layer-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--accent-blue);
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .component {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .component-icon {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .component-name {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .component-desc {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            line-height: 1.4;
+        }
+
+        /* Special Highlights */
+        .token-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: linear-gradient(135deg, #ffd700, #ffa500);
+            color: #000;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            box-shadow: 0 4px 10px rgba(255, 215, 0, 0.3);
+        }
+
+        .sber-highlight {
+            border-color: var(--sber-green);
+        }
+
+        .tunnel-line {
+            position: absolute;
+            height: 2px;
+            background: repeating-linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 10px, transparent 10px, transparent 20px);
+            opacity: 0.3;
+            z-index: -1;
+        }
+
+        .legend {
+            margin-top: 60px;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dot { height: 10px; width: 10px; border-radius: 50%; }
+
+        /* Animation */
+        @keyframes pulse {
+            0% { opacity: 0.4; }
+            50% { opacity: 1; }
+            100% { opacity: 0.4; }
+        }
+
+        .pulse { animation: pulse 2s infinite ease-in-out; }
+
+        .footer-note {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Общая архитектура Системы</h1>
+        <p>ПАК «VulnDetector» // Соответствие ГОСТ 19.404-79 // Интеграция Sber GigaChat</p>
+    </div>
+
+    <div class="architecture-grid">
+        <!-- LAYER 1: EXTERNAL / CLOUD -->
+        <div class="layer">
+            <div class="layer-title">🌐 Внешняя среда (Internet)</div>
+            
+            <div class="component sber-highlight">
+                <span class="token-badge">API TOKEN AUTH</span>
+                <span class="component-icon">☁️</span>
+                <span class="component-name">Sber GigaChat Cloud</span>
+                <span class="component-desc">Высокопроизводительная классификация публичных заявок. Использует JWT токены.</span>
+            </div>
+
+            <div class="component">
+                <span class="component-icon">📱</span>
+                <span class="component-name">Telegram API</span>
+                <span class="component-desc">Шлюз уведомлений и оперативного управления через ботов.</span>
+            </div>
+
+            <div class="component">
+                <span class="component-icon">📊</span>
+                <span class="component-name">GitHub Pages</span>
+                <span class="component-desc">Публичный Traction Dashboard и хостинг презентационных материалов.</span>
+            </div>
+        </div>
+
+        <!-- LAYER 2: TUNNEL & ORCHESTRATION -->
+        <div class="layer">
+            <div class="layer-title">🚀 Магистраль & Оркестрация</div>
+            
+            <div class="component">
+                <span class="component-icon">🤖</span>
+                <span class="component-name">VulnDetector Core</span>
+                <span class="component-desc">Автономный движок сканирования и принятия решений (Autonomous Engine).</span>
+            </div>
+
+            <div class="component" style="background: rgba(0, 194, 255, 0.05); border: 1px solid var(--accent-blue);">
+                <span class="component-icon">🔌</span>
+                <span class="component-name">KanbanBridge (Orchestrator)</span>
+                <span class="component-desc">Управление бизнес-логикой. Инъекция токенов, маршрутизация между ИИ-моделями.</span>
+            </div>
+
+            <div class="component">
+                <span class="component-icon">🔗</span>
+                <span class="component-name">Secure Tunnel (Map)</span>
+                <span class="component-desc">Защищенный проброс портов (Cloudflare Warp / Ngrok) для распределенной работы.</span>
+            </div>
+            
+            <div class="component" style="border: 1px dashed var(--accent-green);">
+                <span class="component-icon">🛡️</span>
+                <span class="component-name">Daemon Supervisor</span>
+                <span class="component-desc">Контроль жизненного цикла всех фоновых процессов 24/7.</span>
+            </div>
+        </div>
+
+        <!-- LAYER 3: LOCAL SECURE LAN -->
+        <div class="layer">
+            <div class="layer-title">🏗️ Защищенный контур (LAN)</div>
+
+            <div class="component sber-highlight" style="background: rgba(33, 160, 56, 0.05);">
+                <span class="token-badge" style="background: var(--sber-green); color: white;">LOCAL RPC IP</span>
+                <span class="component-icon">🧠</span>
+                <span class="component-name">Sber GigaChat On-Premise</span>
+                <span class="component-desc">Cognitive Engine внутри периметра для анализа уязвимостей и закрытых данных.</span>
+            </div>
+
+            <div class="component">
+                <span class="component-icon">🗄️</span>
+                <span class="component-name">RAG / Local Vector DB</span>
+                <span class="component-desc">База знаний (2200+ лидов) и экспертные паттерны ИБ.</span>
+            </div>
+
+            <div class="component">
+                <span class="component-icon">📋</span>
+                <span class="component-name">Local Kanboard CMS</span>
+                <span class="component-desc">Мастер-система учета задач и истории взаимодействий с ИИ-агентами.</span>
+            </div>
+
+            <div class="component">
+                <span class="token-badge" style="background: #ef4444; color: white;">ENCRYPTED</span>
+                <span class="component-icon">🔐</span>
+                <span class="component-name">Secret Manager (.env)</span>
+                <span class="component-desc">Хранилище сессионных куки и API токенов Sber Cloud.</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="legend">
+        <div class="legend-item"><div class="dot" style="background: var(--accent-blue);"></div> Взаимодействие через Tunnel</div>
+        <div class="legend-item"><div class="dot" style="background: var(--sber-green);"></div> Стек Sber (Cloud/Local)</div>
+        <div class="legend-item"><div class="dot pulse" style="background: var(--accent-green);"></div> Автономная работа</div>
+    </div>
+
+    <div class="footer-note">
+        Разработано П. Щелканоговым для Sber500 // 2026. Конфиденциально.
+    </div>
+
+</body>
+</html>
